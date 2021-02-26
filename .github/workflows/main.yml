@@ -83,7 +83,7 @@ jobs:
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
 
       - name: "Tests"
-        run: "vendor/bin/tester -s -p php --colors 1 -C tests/KdybyTests/"
+        run: "vendor/bin/tester -s -p php --colors 1 -C tests/cases"
 
   tests-code-coverage:
     name: "Tests with code coverage"
@@ -141,7 +141,7 @@ jobs:
         run: "${{ env.composer-install }}"
 
       - name: "Tests"
-        run: "vendor/bin/tester -s -p php --colors 1 -C tests/KdybyTests/"
+        run: "vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./coverage.xml --coverage-src ./src tests/cases"
 
       - name: "Coveralls.io"
         env:

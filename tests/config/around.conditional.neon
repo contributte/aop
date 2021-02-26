@@ -1,0 +1,5 @@
+aspects:
+	- Tests\Cases\ConditionalAroundAspect
+
+services:
+	- Tests\Cases\CommonService

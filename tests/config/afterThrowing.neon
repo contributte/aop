@@ -1,0 +1,5 @@
+aspects:
+	- Tests\Cases\AfterThrowingAspect
+
+services:
+	- Tests\Cases\CommonService

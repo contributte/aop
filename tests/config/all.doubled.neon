@@ -1,0 +1,14 @@
+aspects:
+	- Tests\Cases\AroundAspect
+	- Tests\Cases\SecondAroundAspect
+	- Tests\Cases\BeforeAspect
+	- Tests\Cases\SecondBeforeAspect
+	- Tests\Cases\AfterAspect
+	- Tests\Cases\SecondAfterAspect
+	- Tests\Cases\AfterReturningAspect
+	- Tests\Cases\SecondAfterReturningAspect
+	- Tests\Cases\AfterThrowingAspect
+	- Tests\Cases\SecondAfterThrowingAspect
+
+services:
+	- Tests\Cases\CommonService

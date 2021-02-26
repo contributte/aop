@@ -1,21 +1,16 @@
 {
-	"name": "kdyby/aop",
+	"name": "contributte/aop",
 	"type": "library",
 	"description": "AOP for Nette Framework Dependency Injection Container",
-	"keywords": ["nette", "kdyby", "aop", "di", "dic", "aspect"],
-	"homepage": "http://kdyby.org",
-	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"keywords": ["nette", "contributte", "aop", "di", "dic", "aspect"],
+	"homepage": "https://github.com/contributte/aop",
+	"license": "MIT",
 	"authors": [
 		{
-			"name": "Filip Procházka",
-			"homepage": "http://filip-prochazka.com",
-			"email": "filip@prochazka.su"
+			"name": "Dalibor Korpar",
+			"email": "dalibor.korpar@gmail.com"
 		}
 	],
-	"support": {
-		"email": "filip@prochazka.su",
-		"issues": "https://github.com/kdyby/aop/issues"
-	},
 	"minimum-stability": "dev",
 	"prefer-stable": true,
 	"require": {
@@ -50,17 +45,17 @@
 		"doctrine/collections": "~1.6"
 	},
 	"autoload": {
-		"psr-0": {
-			"Kdyby\\Aop\\": "src/"
+		"psr-4": {
+			"Contributte\\Aop\\": "src"
 		},
 		"classmap": [
-			"src/Kdyby/Aop/annotations.php",
-			"src/Kdyby/Aop/exceptions.php"
+			"src/annotations.php",
+			"src/exceptions.php"
 		]
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "3.1-dev"
+			"dev-master": "1.0-dev"
 		}
 	}
 }

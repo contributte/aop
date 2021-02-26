@@ -1,0 +1,10 @@
+aspects:
+	a:
+		class: Tests\Cases\AspectWithArguments
+
+	b:
+		class: Tests\Cases\AspectWithArguments(@httpRequest)
+
+	- Tests\Cases\AspectWithArguments
+
+	- Tests\Cases\AspectWithArguments(@httpRequest)

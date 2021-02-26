@@ -1,5 +1,0 @@
-aspects:
-	- KdybyTests\Aop\AfterThrowingAspect
-
-services:
-	- KdybyTests\Aop\CommonService

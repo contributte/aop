@@ -1,5 +1,0 @@
-aspects:
-	- KdybyTests\Aop\AroundBlockingAspect
-
-services:
-	- KdybyTests\Aop\CommonService

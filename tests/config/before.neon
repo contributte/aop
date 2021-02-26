@@ -1,0 +1,5 @@
+aspects:
+	- Tests\Cases\BeforeAspect
+
+services:
+	- Tests\Cases\CommonService

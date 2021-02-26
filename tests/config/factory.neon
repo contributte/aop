@@ -1,0 +1,10 @@
+aspects:
+	- Tests\Cases\AroundAspect
+	- Tests\Cases\BeforeAspect
+	- Tests\Cases\AfterAspect
+	- Tests\Cases\AfterReturningAspect
+	- Tests\Cases\AfterThrowingAspect
+
+services:
+	- Tests\Cases\CommonService
+	- Tests\Cases\ICommonServiceFactory

@@ -1,0 +1,5 @@
+aspects:
+	- Tests\Cases\AroundBlockingAspect
+
+services:
+	- Tests\Cases\CommonService
