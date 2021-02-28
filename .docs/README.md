@@ -28,7 +28,9 @@ extensions:
 	aop: Contributte\Aop\DI\AopExtension
 	annotations: Nettrine\Annotations\DI\AnnotationsExtension
 	aspects: Contributte\Aop\DI\AspectsExtension
+	nettrine.cache: Nettrine\Cache\DI\CacheExtension
 ```
+Nettrine cache is there because of annotations, you can avoid it if you want.
 
 You can find the [documentation of annotations extension here](https://github.com/nettrine/annotations/tree/master/.docs).
 
