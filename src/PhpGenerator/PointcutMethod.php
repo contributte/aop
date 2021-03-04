@@ -49,22 +49,22 @@ class PointcutMethod
 			$params[$param->getName()] = $factory->fromParameterReflection($param);
 		}
 
-		$method->setParameters($params);
+		$method->method->setParameters($params);
 		if ($from instanceof Nette\Reflection\Method) {
 			$isInterface = $from->getDeclaringClass()->isInterface();
-			$method->setStatic($from->isStatic());
-			$method->setVisibility($from->isPrivate() ? 'private' : ($from->isProtected() ? 'protected' : ($isInterface ? null : 'public')));
-			$method->setFinal($from->isFinal());
-			$method->setAbstract($from->isAbstract() && !$isInterface);
-			$method->setBody($from->isAbstract() ? false : '');
+			$method->method->setStatic($from->isStatic());
+			$method->method->setVisibility($from->isPrivate() ? 'private' : ($from->isProtected() ? 'protected' : ($isInterface ? null : 'public')));
+			$method->method->setFinal($from->isFinal());
+			$method->method->setAbstract($from->isAbstract() && !$isInterface);
+			$method->method->setBody($from->isAbstract() ? false : '');
 		}
 
-		$method->setReturnReference($from->returnsReference());
-		$method->setVariadic($from->isVariadic());
-		$method->setComment(Code\Helpers::unformatDocComment($from->getDocComment()));
+		$method->method->setReturnReference($from->returnsReference());
+		$method->method->setVariadic($from->isVariadic());
+		$method->method->setComment(Code\Helpers::unformatDocComment($from->getDocComment()));
 		if ($from->hasReturnType()) {
-			$method->setReturnType(($from->getReturnType()->getName()));
-			$method->setReturnNullable($from->getReturnType()->allowsNull());
+			$method->method->setReturnType(($from->getReturnType()->getName()));
+			$method->method->setReturnNullable($from->getReturnType()->allowsNull());
 		}
 
 		return $method;
@@ -152,28 +152,28 @@ class PointcutMethod
 
 	public function beforePrint(): void
 	{
-		$this->setBody('');
+		$this->method->setBody('');
 
-		if (strtolower($this->getName()) === '__construct') {
-			$this->addParameter('_contributte_aopContainer')
-				->setTypeHint(Nette\DI\Container::class);
-			$this->addBody('$this->_contributte_aopContainer = $_contributte_aopContainer;');
+		if (strtolower($this->method->getName()) === '__construct') {
+			$this->method->addParameter('_contributte_aopContainer')
+				->setType(Nette\DI\Container::class);
+			$this->method->addBody('$this->_contributte_aopContainer = $_contributte_aopContainer;');
 		}
 
-		$this->addBody('$__arguments = func_get_args(); $__exception = $__result = NULL;');
+		$this->method->addBody('$__arguments = func_get_args(); $__exception = $__result = NULL;');
 
 		if ($this->before) {
 			foreach ($this->before as $before) {
-				$this->addBody($before);
+				$this->method->addBody($before);
 			}
 		}
 
 		if ($this->afterThrowing || $this->after) {
-			$this->addBody('try {');
+			$this->method->addBody('try {');
 		}
 
 		if (!$this->around) {
-			$parentCall = Code\Helpers::format('$__result = call_user_func_array("parent::?", $__arguments);', $this->getName());
+			$parentCall = Code\Helpers::format('$__result = call_user_func_array("parent::?", $__arguments);', $this->method->getName());
 		} else {
 			$parentCall = Code\Helpers::format('$__around = new \Contributte\Aop\JoinPoint\AroundMethod($this, __FUNCTION__, $__arguments);');
 			foreach ($this->around as $around) {
@@ -183,48 +183,48 @@ class PointcutMethod
 			$parentCall .= "\n" . Code\Helpers::format('$__result = $__around->proceed();');
 		}
 
-		$this->addBody(($this->afterThrowing || $this->after) ? Nette\Utils\Strings::indent($parentCall) : $parentCall);
+		$this->method->addBody(($this->afterThrowing || $this->after) ? Nette\Utils\Strings::indent($parentCall) : $parentCall);
 
 		if ($this->afterThrowing || $this->after) {
-			$this->addBody('} catch (\Exception $__exception) {');
+			$this->method->addBody('} catch (\Exception $__exception) {');
 		}
 
 		if ($this->afterThrowing) {
 			foreach ($this->afterThrowing as $afterThrowing) {
-				$this->addBody(Nette\Utils\Strings::indent($afterThrowing));
+				$this->method->addBody(Nette\Utils\Strings::indent($afterThrowing));
 			}
 		}
 
 		if ($this->afterThrowing || $this->after) {
-			$this->addBody('}');
+			$this->method->addBody('}');
 		}
 
 		if ($this->afterReturning) {
 			if ($this->afterThrowing || $this->after) {
-				$this->addBody('if (empty($__exception)) {');
+				$this->method->addBody('if (empty($__exception)) {');
 			}
 
 			foreach ($this->afterReturning as $afterReturning) {
-				$this->addBody(($this->afterThrowing || $this->after) ? Nette\Utils\Strings::indent($afterReturning) : $afterReturning);
+				$this->method->addBody(($this->afterThrowing || $this->after) ? Nette\Utils\Strings::indent($afterReturning) : $afterReturning);
 			}
 
 			if ($this->afterThrowing || $this->after) {
-				$this->addBody('}');
+				$this->method->addBody('}');
 			}
 		}
 
 		if ($this->after) {
 			foreach ($this->after as $after) {
-				$this->addBody($after);
+				$this->method->addBody($after);
 			}
 		}
 
 		if ($this->afterThrowing || $this->after) {
-			$this->addBody('if ($__exception) { throw $__exception; }');
+			$this->method->addBody('if ($__exception) { throw $__exception; }');
 		}
 
-		if ($this->getReturnType() !== 'void') {
-			$this->addBody('return $__result;');
+		if ($this->method->getReturnType() !== 'void') {
+			$this->method->addBody('return $__result;');
 		}
 	}
 
@@ -235,7 +235,7 @@ class PointcutMethod
 	 */
 	public static function expandTypeHints(Nette\Reflection\Method $from, PointcutMethod $method): PointcutMethod
 	{
-		$parameters = $method->getParameters();
+		$parameters = $method->method->getParameters();
 		/** @var Code\Parameter[] $parameters */
 
 		foreach ($from->getParameters() as $paramRefl) {
@@ -258,10 +258,10 @@ class PointcutMethod
 			}
 		}
 
-		$method->setParameters($parameters);
+		$method->method->setParameters($parameters);
 
-		if (!$method->getVisibility()) {
-			$method->setVisibility('public');
+		if (!$method->method->getVisibility()) {
+			$method->method->setVisibility('public');
 		}
 
 		return $method;
