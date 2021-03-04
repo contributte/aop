@@ -1,46 +1,36 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut;
 
-
+use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\ParserException;
 use Nette;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Tokenizer\Stream;
 use Nette\Tokenizer\Tokenizer;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class Parser
 {
+
 	use Nette\SmartObject;
 
-	const TOK_BRACKET = 'bracket';
-	const TOK_VISIBILITY = 'visibility';
-	const TOK_KEYWORD = 'keyword';
-	const TOK_OPERATOR = 'operator';
-	const TOK_LOGIC = 'logic';
-	const TOK_NOT = 'not';
-	const TOK_METHOD = 'method';
-	const TOK_IDENTIFIER = 'identifier';
-	const TOK_WHITESPACE = 'whitespace';
-	const TOK_STRING = 'string';
-	const TOK_WILDCARD = 'wildcard';
+	public const TOK_BRACKET = 'bracket';
+	public const TOK_VISIBILITY = 'visibility';
+	public const TOK_KEYWORD = 'keyword';
+	public const TOK_OPERATOR = 'operator';
+	public const TOK_LOGIC = 'logic';
+	public const TOK_NOT = 'not';
+	public const TOK_METHOD = 'method';
+	public const TOK_IDENTIFIER = 'identifier';
+	public const TOK_WHITESPACE = 'whitespace';
+	public const TOK_STRING = 'string';
+	public const TOK_WILDCARD = 'wildcard';
 
-	/**
-	 * @var Tokenizer
-	 */
+	/** @var Tokenizer */
 	private $tokenizer;
 
-	/**
-	 * @var MatcherFactory
-	 */
+	/** @var MatcherFactory */
 	private $matcherFactory;
-
-
 
 	public function __construct(MatcherFactory $matcherFactory)
 	{
@@ -51,8 +41,8 @@ class Parser
 			self::TOK_OPERATOR => '(?:===?|!==?|<=|>=|<|>|n?in|contains|matches)',
 			self::TOK_LOGIC => '(?:\\&\\&|\\|\\||,)',
 			self::TOK_NOT => '!',
-			self::TOK_METHOD => '(?:-\\>|::)[_a-z0-9\\*\\[\\]\\|\\!]+(?=(?:\\(|\\)|\s|\z))', # including wildcard
-			self::TOK_IDENTIFIER => '[_a-z0-9\x7F-\xFF\\*\\.\\$\\%\\\\-]+(?<!\\-)', # including wildcard
+			self::TOK_METHOD => '(?:-\\>|::)[_a-z0-9\\*\\[\\]\\|\\!]+(?=(?:\\(|\\)|\s|\z))', // including wildcard
+			self::TOK_IDENTIFIER => '[_a-z0-9\x7F-\xFF\\*\\.\\$\\%\\\\-]+(?<!\\-)', // including wildcard
 			self::TOK_WHITESPACE => '[\n\r\s]+',
 			self::TOK_STRING => '\'(?:\\\\.|[^\'\\\\])*\'|"(?:\\\\.|[^"\\\\])*"',
 			self::TOK_WILDCARD => '\\*',
@@ -70,7 +60,7 @@ class Parser
 			$tokens->ignored = [self::TOK_WHITESPACE];
 
 		} catch (Nette\Tokenizer\Exception $e) {
-			throw new \Contributte\Aop\ParserException("Input contains unexpected expressions", 0, $e);
+			throw new ParserException('Input contains unexpected expressions', 0, $e);
 		}
 
 		return $this->doParse($tokens);
@@ -81,19 +71,19 @@ class Parser
 	/**
 	 * @param $tokens
 	 * @return Rules|mixed
-	 * @throws \Contributte\Aop\ParserException
+	 * @throws ParserException
 	 */
 	protected function doParse(Stream $tokens)
 	{
-		$inverseNext = FALSE;
-		$operator = NULL;
+		$inverseNext = false;
+		$operator = null;
 		$rules = [];
 		while ($token = $tokens->nextToken()) {
 			if ($tokens->isCurrent(self::TOK_KEYWORD)) {
 				$rule = $this->{'parse' . $token->value}($tokens);
 				if ($inverseNext) {
 					$rule = new Matcher\Inverse($rule);
-					$inverseNext = FALSE;
+					$inverseNext = false;
 				}
 
 				$rules[] = $rule;
@@ -102,7 +92,7 @@ class Parser
 				$rule = $this->parseMethod($tokens);
 				if ($inverseNext) {
 					$rule = new Matcher\Inverse($rule);
-					$inverseNext = FALSE;
+					$inverseNext = false;
 				}
 
 				$rules[] = $rule;
@@ -114,11 +104,11 @@ class Parser
 				break;
 
 			} elseif ($tokens->isCurrent(self::TOK_NOT)) {
-				$inverseNext = TRUE;
+				$inverseNext = true;
 
 			} elseif ($tokens->isCurrent(self::TOK_LOGIC)) {
-				if ($operator !== NULL && $operator !== $tokens->currentValue()) {
-					throw new \Contributte\Aop\ParserException('Unexpected operator ' . $tokens->currentValue() . '. If you wanna combine them, you must wrap them in brackets like this `a || (b && c)`.');
+				if ($operator !== null && $operator !== $tokens->currentValue()) {
+					throw new ParserException('Unexpected operator ' . $tokens->currentValue() . '. If you wanna combine them, you must wrap them in brackets like this `a || (b && c)`.');
 				}
 
 				$operator = $tokens->currentValue();
@@ -151,7 +141,7 @@ class Parser
 
 	protected function parseMethod(Stream $tokens)
 	{
-		$visibility = NULL;
+		$visibility = null;
 		$arguments = [];
 
 		if ($tokens->isCurrent(self::TOK_KEYWORD)) {
@@ -177,6 +167,7 @@ class Parser
 				$arguments = [$this->matcherFactory->getMatcher('arguments', $criteria)];
 			}
 		}
+
 		$tokens->nextToken(); // method end )
 
 		if ($method === '*' && empty($visibility) && !$arguments) {
@@ -220,7 +211,7 @@ class Parser
 	{
 		$tokens->nextUntil('(');
 		if (!$criteria = $this->parseArguments($tokens)) {
-			throw new \Contributte\Aop\ParserException('Settings criteria cannot be empty.');
+			throw new ParserException('Settings criteria cannot be empty.');
 		}
 
 		return $this->matcherFactory->getMatcher('setting', $criteria);
@@ -232,7 +223,7 @@ class Parser
 	{
 		$tokens->nextUntil('(');
 		if (!$criteria = $this->parseArguments($tokens)) {
-			throw new \Contributte\Aop\ParserException('Evaluate expression cannot be empty.');
+			throw new ParserException('Evaluate expression cannot be empty.');
 		}
 
 		return $this->matcherFactory->getMatcher('evaluate', $criteria);
@@ -264,13 +255,13 @@ class Parser
 
 	protected function parseArguments(Stream $tokens)
 	{
-		$operator = NULL;
+		$operator = null;
 		$conditions = [];
 
 		while ($token = $tokens->nextToken()) {
 			if ($tokens->isCurrent(self::TOK_LOGIC)) {
-				if ($operator !== NULL && $operator !== $tokens->currentValue()) {
-					throw new \Contributte\Aop\ParserException('Unexpected operator ' . $tokens->currentValue() . '. If you wanna combine them, you must wrap them in brackets.');
+				if ($operator !== null && $operator !== $tokens->currentValue()) {
+					throw new ParserException('Unexpected operator ' . $tokens->currentValue() . '. If you wanna combine them, you must wrap them in brackets.');
 				}
 
 				$operator = $tokens->currentValue();
@@ -280,6 +271,7 @@ class Parser
 				if ($conditions || $tokens->isNext('(')) {
 					$conditions[] = $this->parseArguments($tokens);
 				}
+
 				continue;
 			}
 
@@ -298,7 +290,7 @@ class Parser
 
 			if ($tokens->isCurrent(self::TOK_LOGIC, ')')) {
 				$tokens->position -= 1;
-				$conditions[] = [$left, Matcher\Criteria::EQ, new PhpLiteral("TRUE")];
+				$conditions[] = [$left, Matcher\Criteria::EQ, new PhpLiteral('TRUE')];
 				continue;
 			}
 
@@ -316,12 +308,12 @@ class Parser
 							$right[] = self::sanitizeArgumentExpression($tokens->currentValue(), $token);
 
 						} elseif (!$tokens->isCurrent(',', self::TOK_WHITESPACE)) {
-							throw new \Contributte\Aop\ParserException('Unexpected token ' . $token->type);
+							throw new ParserException('Unexpected token ' . $token->type);
 						}
 					}
 
 					if (empty($right)) {
-						throw new \Contributte\Aop\ParserException("Argument for $comparator cannot be an empty array.");
+						throw new ParserException("Argument for $comparator cannot be an empty array.");
 					}
 
 					$conditions[] = [$left, $comparator, $right];
@@ -344,7 +336,7 @@ class Parser
 				$tokens->nextToken();
 			}
 
-			return NULL;
+			return null;
 		}
 
 		try {
@@ -361,9 +353,8 @@ class Parser
 					$criteria->where($condition[0], $condition[1], $condition[2]);
 				}
 			}
-
-		} catch (\Contributte\Aop\InvalidArgumentException $e) {
-			throw new \Contributte\Aop\ParserException('Invalid arguments', 0, $e);
+		} catch (InvalidArgumentException $e) {
+			throw new ParserException('Invalid arguments', 0, $e);
 		}
 
 		if ($tokens->isCurrent(')')) {
@@ -393,24 +384,23 @@ class Parser
 	 * @param Stream $tokens
 	 * @param array|string $types
 	 * @param array|string $allowedToSkip
-	 * @return NULL|string
-	 * @throws \Contributte\Aop\ParserException
+	 * @return string|NULL
+	 * @throws ParserException
 	 */
 	protected static function nextValue(Stream $tokens, $types, $allowedToSkip = [])
 	{
 		do {
-			if (call_user_func_array([$tokens, 'isCurrent'], (array)$types)) {
+			if (call_user_func_array([$tokens, 'isCurrent'], (array) $types)) {
 				return $tokens->currentValue();
 			}
 
-			if (!$allowedToSkip || !call_user_func_array([$tokens, 'isCurrent'], (array)$allowedToSkip)) {
+			if (!$allowedToSkip || !call_user_func_array([$tokens, 'isCurrent'], (array) $allowedToSkip)) {
 				$type = $tokens->currentToken();
-				throw new \Contributte\Aop\ParserException('Unexpected token ' . $type->type . ' at offset ' . $type->offset);
+				throw new ParserException('Unexpected token ' . $type->type . ' at offset ' . $type->offset);
 			}
-
 		} while ($token = $tokens->nextToken());
 
-		throw new \Contributte\Aop\ParserException('Expected token ' . implode(', ', (array)$types));
+		throw new ParserException('Expected token ' . implode(', ', (array) $types));
 	}
 
 }

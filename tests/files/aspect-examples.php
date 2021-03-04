@@ -1,22 +1,19 @@
 <?php
 
-
 namespace Tests\Cases;
 
-use Nette;
 use Contributte\Aop;
-
-
+use Nette;
+use RuntimeException;
 
 class CommonService
 {
 
 	public $calls = [];
 
-	public $throw = FALSE;
+	public $throw = false;
 
 	public $return = 2;
-
 
 	public function __construct()
 	{
@@ -27,7 +24,7 @@ class CommonService
 		$this->calls[] = func_get_args();
 
 		if ($this->throw) {
-			throw new \RuntimeException("Something's fucky");
+			throw new RuntimeException("Something's fucky");
 		}
 
 		return $this->return * $argument;
@@ -52,14 +49,10 @@ class BeforeAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\BeforeMethod[]
-	 */
+	/** @var array|Aop\JoinPoint\BeforeMethod[] */
 	public $calls = [];
 
-	public $modifyArgs = FALSE;
-
-
+	public $modifyArgs = false;
 
 	/**
 	 * @Aop\Before("method(Tests\Cases\CommonService->magic)")
@@ -81,16 +74,13 @@ class BeforeAspect
 
 class ConditionalBeforeAspect
 {
+
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\BeforeMethod[]
-	 */
+	/** @var array|Aop\JoinPoint\BeforeMethod[] */
 	public $calls = [];
 
-	public $modifyArgs = FALSE;
-
-
+	public $modifyArgs = false;
 
 	/**
 	 * @Aop\Before("method(Tests\Cases\CommonService->magic($argument == 1))")
@@ -122,16 +112,12 @@ class AroundAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\AroundMethod[]
-	 */
+	/** @var array|Aop\JoinPoint\AroundMethod[] */
 	public $calls = [];
 
-	public $modifyArgs = FALSE;
+	public $modifyArgs = false;
 
-	public $modifyReturn = FALSE;
-
-
+	public $modifyReturn = false;
 
 	/**
 	 * @Aop\Around("method(Tests\Cases\CommonService->magic)")
@@ -148,7 +134,7 @@ class AroundAspect
 
 		$result = $around->proceed();
 
-		if ($this->modifyReturn !== FALSE) {
+		if ($this->modifyReturn !== false) {
 			$result = $this->modifyReturn;
 		}
 
@@ -164,16 +150,12 @@ class ConditionalAroundAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\AroundMethod[]
-	 */
+	/** @var array|Aop\JoinPoint\AroundMethod[] */
 	public $calls = [];
 
-	public $modifyArgs = FALSE;
+	public $modifyArgs = false;
 
-	public $modifyReturn = FALSE;
-
-
+	public $modifyReturn = false;
 
 	/**
 	 * @Aop\Around("method(Tests\Cases\CommonService->magic($argument == 1))")
@@ -190,7 +172,7 @@ class ConditionalAroundAspect
 
 		$result = $around->proceed();
 
-		if ($this->modifyReturn !== FALSE) {
+		if ($this->modifyReturn !== false) {
 			$result = $this->modifyReturn;
 		}
 
@@ -213,18 +195,14 @@ class AroundBlockingAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\AroundMethod[]
-	 */
+	/** @var array|Aop\JoinPoint\AroundMethod[] */
 	public $calls = [];
 
-	public $modifyArgs = FALSE;
+	public $modifyArgs = false;
 
-	public $modifyReturn = FALSE;
+	public $modifyReturn = false;
 
-	public $modifyThrow = FALSE;
-
-
+	public $modifyThrow = false;
 
 	/**
 	 * @Aop\Around("method(Tests\Cases\CommonService->magic)")
@@ -240,12 +218,12 @@ class AroundBlockingAspect
 		}
 
 		if ($this->modifyThrow) {
-			throw new \RuntimeException("Everybody is dead Dave.");
+			throw new RuntimeException('Everybody is dead Dave.');
 		}
 
-		$result = NULL; // do not call proceed
+		$result = null; // do not call proceed
 
-		if ($this->modifyReturn !== FALSE) {
+		if ($this->modifyReturn !== false) {
 			$result = $this->modifyReturn;
 		}
 
@@ -268,14 +246,10 @@ class AfterReturningAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\AfterReturning[]
-	 */
+	/** @var array|Aop\JoinPoint\AfterReturning[] */
 	public $calls = [];
 
-	public $modifyReturn = FALSE;
-
-
+	public $modifyReturn = false;
 
 	/**
 	 * @Aop\AfterReturning("method(Tests\Cases\CommonService->magic)")
@@ -284,7 +258,7 @@ class AfterReturningAspect
 	{
 		$this->calls[] = $after;
 
-		if ($this->modifyReturn !== FALSE) {
+		if ($this->modifyReturn !== false) {
 			$after->setResult($this->modifyReturn);
 		}
 	}
@@ -298,14 +272,10 @@ class ConditionalAfterReturningAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\AfterReturning[]
-	 */
+	/** @var array|Aop\JoinPoint\AfterReturning[] */
 	public $calls = [];
 
-	public $modifyReturn = FALSE;
-
-
+	public $modifyReturn = false;
 
 	/**
 	 * @Aop\AfterReturning("method(Tests\Cases\CommonService->magic) && evaluate(this.return == 2)")
@@ -314,7 +284,7 @@ class ConditionalAfterReturningAspect
 	{
 		$this->calls[] = $after;
 
-		if ($this->modifyReturn !== FALSE) {
+		if ($this->modifyReturn !== false) {
 			$after->setResult($this->modifyReturn);
 		}
 	}
@@ -335,12 +305,8 @@ class AfterThrowingAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\AfterThrowing[]
-	 */
+	/** @var array|Aop\JoinPoint\AfterThrowing[] */
 	public $calls = [];
-
-
 
 	/**
 	 * @Aop\AfterThrowing("method(Tests\Cases\CommonService->magic)")
@@ -366,12 +332,8 @@ class AfterAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\AfterMethod[]
-	 */
+	/** @var array|Aop\JoinPoint\AfterMethod[] */
 	public $calls = [];
-
-
 
 	/**
 	 * @Aop\After("method(Tests\Cases\CommonService->magic)")
@@ -397,8 +359,6 @@ class AspectWithArguments
 
 	public $args;
 
-
-
 	public function __construct(Nette\Http\Request $httpRequest)
 	{
 		$this->args = func_get_args();
@@ -422,12 +382,8 @@ class ConstructorBeforeAspect
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array|Aop\JoinPoint\BeforeMethod[]
-	 */
+	/** @var array|Aop\JoinPoint\BeforeMethod[] */
 	public $calls = [];
-
-
 
 	/**
 	 * @Aop\Before("method(Tests\Cases\CommonService->__construct)")

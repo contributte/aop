@@ -1,25 +1,18 @@
 <?php
 
-
 namespace Contributte\Aop\PhpGenerator;
 
-
+use Contributte\Aop\Pointcut\ServiceDefinition;
 use Nette;
 use Nette\PhpGenerator as Code;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AdvisedClassType
 {
 
 	use Nette\SmartObject;
 
-	const CG_INJECT_METHOD = '__injectAopContainer';
-	const CG_PUBLIC_PROXY_PREFIX = '__publicAopProxy_';
-
+	public const CG_INJECT_METHOD = '__injectAopContainer';
+	public const CG_PUBLIC_PROXY_PREFIX = '__publicAopProxy_';
 
 	public static function setMethodInstance(Code\ClassType $class, Code\Method $method): Code\Method
 	{
@@ -33,7 +26,7 @@ class AdvisedClassType
 
 	public static function generatePublicProxyMethod(Code\ClassType $class, Code\Method $originalMethod): void
 	{
-		$proxyMethod = new Code\Method(self::CG_PUBLIC_PROXY_PREFIX .  $originalMethod->getName());
+		$proxyMethod = new Code\Method(self::CG_PUBLIC_PROXY_PREFIX . $originalMethod->getName());
 
 		$proxyMethod->setVisibility('public');
 		$proxyMethod->setComment("@internal\n@deprecated");
@@ -45,6 +38,7 @@ class AdvisedClassType
 			$argumentsPass[] = '$' . $parameter->getName();
 			$args[$parameter->getName()] = $parameter;
 		}
+
 		$proxyMethod->addBody('return parent::?(?);', [ $originalMethod->getName(), new Code\PhpLiteral(implode(', ', $argumentsPass))]);
 
 		$proxyMethod->setParameters($args);
@@ -54,17 +48,17 @@ class AdvisedClassType
 
 
 	/**
-	 * @param \Contributte\Aop\Pointcut\ServiceDefinition $service
+	 * @param ServiceDefinition $service
 	 * @param Code\PhpNamespace $namespace
 	 * @return Code\ClassType
 	 */
-	public static function fromServiceDefinition(\Contributte\Aop\Pointcut\ServiceDefinition $service, Code\PhpNamespace $namespace): Code\ClassType
+	public static function fromServiceDefinition(ServiceDefinition $service, Code\PhpNamespace $namespace): Code\ClassType
 	{
 		$originalType = $service->getTypeReflection();
 		$class = $namespace->addClass(str_replace(['\\', '.'], '_', "{$originalType->getName()}Class_{$service->serviceId}"));
 
 		$class->setExtends('\\' . $originalType->getName());
-		$class->setFinal(TRUE);
+		$class->setFinal(true);
 
 		$class->addProperty('_contributte_aopContainer')
 			->setVisibility('private')

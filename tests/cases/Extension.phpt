@@ -4,22 +4,26 @@
  * Test: Contributte\Aop\Extension.
  *
  * @testCase Tests\Cases\ExtensionTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Contributte\Aop
  */
 
 namespace Tests\Cases;
 
-
+use Contributte\Aop\DI\AopExtension;
+use Contributte\Aop\DI\AspectsExtension;
 use Contributte\Aop\JoinPoint\AfterMethod;
 use Contributte\Aop\JoinPoint\AfterReturning;
 use Contributte\Aop\JoinPoint\AfterThrowing;
 use Contributte\Aop\JoinPoint\AroundMethod;
 use Contributte\Aop\JoinPoint\BeforeMethod;
+use Contributte\Aop\JoinPoint\ExceptionAware;
 use Contributte\Aop\JoinPoint\MethodInvocation;
+use Contributte\Aop\JoinPoint\ResultAware;
 use Nette;
 use Nettrine\Annotations\DI\AnnotationsExtension;
 use Nettrine\Cache\DI\CacheExtension;
+use ReflectionException;
+use RuntimeException;
+use SystemContainer;
 use Tester;
 use Tester\Assert;
 
@@ -28,15 +32,12 @@ require_once __DIR__ . '/../files/aspect-examples.php';
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class ExtensionTest extends Tester\TestCase
 {
 
 	/**
 	 * @param string $configFile
-	 * @return \SystemContainer|Nette\DI\Container
+	 * @return SystemContainer|Nette\DI\Container
 	 */
 	public function createContainer($configFile)
 	{
@@ -49,11 +50,10 @@ class ExtensionTest extends Tester\TestCase
 			$compiler->addExtension('annotations', new AnnotationsExtension());
 			$compiler->addExtension('nettrine.cache', new CacheExtension());
 		};
-		\Contributte\Aop\DI\AspectsExtension::register($config);
-		\Contributte\Aop\DI\AopExtension::register($config);
+		AspectsExtension::register($config);
+		AopExtension::register($config);
 
-		$container = $config->createContainer();
-		return $container;
+		return $config->createContainer();
 	}
 
 
@@ -61,11 +61,12 @@ class ExtensionTest extends Tester\TestCase
 	public function testAspectConfiguration()
 	{
 		$dic = $this->createContainer('aspect-configs');
-		foreach ($services = array_keys($dic->findByTag(\Contributte\Aop\DI\AspectsExtension::ASPECT_TAG)) as $serviceId) {
+		foreach ($services = array_keys($dic->findByTag(AspectsExtension::ASPECT_TAG)) as $serviceId) {
 			$service = $dic->getService($serviceId);
 			Assert::true($service instanceof AspectWithArguments);
 			Assert::same([$dic->getByType(Nette\Http\Request::class)], $service->args);
 		}
+
 		Assert::same(4, count($services));
 	}
 
@@ -131,8 +132,8 @@ class ExtensionTest extends Tester\TestCase
 		Assert::same([2], $service->calls[2]);
 
 		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalBeforeAspect', 0, new BeforeMethod($service, 'magic', [1]));
-		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalBeforeAspect', 1, NULL);
-		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalBeforeAspect', 2, NULL);
+		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalBeforeAspect', 1, null);
+		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalBeforeAspect', 2, null);
 	}
 
 
@@ -176,8 +177,8 @@ class ExtensionTest extends Tester\TestCase
 		Assert::same([2], $service->calls[2]);
 
 		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAroundAspect', 0, new AroundMethod($service, 'magic', [1]));
-		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAroundAspect', 1, NULL);
-		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAroundAspect', 2, NULL);
+		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAroundAspect', 1, null);
+		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAroundAspect', 2, null);
 	}
 
 
@@ -198,7 +199,7 @@ class ExtensionTest extends Tester\TestCase
 		Assert::true(empty($service->calls));
 		self::assertAspectInvocation($service, 'Tests\Cases\AroundBlockingAspect', 1, new AroundMethod($service, 'magic', [2]));
 
-		$service->throw = TRUE;
+		$service->throw = true;
 		Assert::null($service->magic(2));
 		Assert::true(empty($service->calls));
 		self::assertAspectInvocation($service, 'Tests\Cases\AroundBlockingAspect', 2, new AroundMethod($service, 'magic', [2]));
@@ -213,10 +214,10 @@ class ExtensionTest extends Tester\TestCase
 		Assert::true(empty($service->calls));
 		self::assertAspectInvocation($service, 'Tests\Cases\AroundBlockingAspect', 4, new AroundMethod($service, 'magic', [3]));
 
-		$advice->modifyThrow = TRUE;
+		$advice->modifyThrow = true;
 		Assert::throws(function () use ($service) {
 			$service->magic(2);
-		}, 'RuntimeException', "Everybody is dead Dave.");
+		}, 'RuntimeException', 'Everybody is dead Dave.');
 		Assert::true(empty($service->calls));
 		self::assertAspectInvocation($service, 'Tests\Cases\AroundBlockingAspect', 5, new AroundMethod($service, 'magic', [3]));
 	}
@@ -267,7 +268,7 @@ class ExtensionTest extends Tester\TestCase
 
 		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAfterReturningAspect', 0, new AfterReturning($service, 'magic', [0], 0));
 		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAfterReturningAspect', 1, new AfterReturning($service, 'magic', [2], 4));
-		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAfterReturningAspect', 2, NULL);
+		self::assertAspectInvocation($service, 'Tests\Cases\ConditionalAfterReturningAspect', 2, null);
 	}
 
 
@@ -278,13 +279,13 @@ class ExtensionTest extends Tester\TestCase
 		$service = $dic->getByType('Tests\Cases\CommonService');
 		/** @var CommonService $service */
 
-		$service->throw = TRUE;
+		$service->throw = true;
 		Assert::throws(function () use ($service) {
 			$service->magic(2);
 		}, 'RuntimeException', "Something's fucky");
 
 		Assert::same([2], $service->calls[0]);
-		self::assertAspectInvocation($service, 'Tests\Cases\AfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [2], new \RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\AfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [2], new RuntimeException("Something's fucky")));
 	}
 
 
@@ -299,13 +300,13 @@ class ExtensionTest extends Tester\TestCase
 		Assert::same([2], $service->calls[0]);
 		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 0, new AfterMethod($service, 'magic', [2], 4));
 
-		$service->throw = TRUE;
+		$service->throw = true;
 		Assert::throws(function () use ($service) {
 			$service->magic(2);
 		}, 'RuntimeException', "Something's fucky");
 
 		Assert::same([2], $service->calls[1]);
-		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 1, new AfterMethod($service, 'magic', [2], NULL, new \RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 1, new AfterMethod($service, 'magic', [2], null, new RuntimeException("Something's fucky")));
 	}
 
 
@@ -323,15 +324,15 @@ class ExtensionTest extends Tester\TestCase
 		self::assertAspectInvocation($service, 'Tests\Cases\AfterReturningAspect', 0, new AfterReturning($service, 'magic', [2], 4));
 		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 0, new AfterMethod($service, 'magic', [2], 4));
 
-		$service->throw = TRUE;
+		$service->throw = true;
 		Assert::throws(function () use ($service) {
 			$service->magic(3);
 		}, 'RuntimeException', "Something's fucky");
 		Assert::same([3], $service->calls[1]);
 		self::assertAspectInvocation($service, 'Tests\Cases\BeforeAspect', 1, new BeforeMethod($service, 'magic', [3]));
 		self::assertAspectInvocation($service, 'Tests\Cases\AroundAspect', 1, new AroundMethod($service, 'magic', [3]));
-		self::assertAspectInvocation($service, 'Tests\Cases\AfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [3], new \RuntimeException("Something's fucky")));
-		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 1, new AfterMethod($service, 'magic', [3], NULL, new \RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\AfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [3], new RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 1, new AfterMethod($service, 'magic', [3], null, new RuntimeException("Something's fucky")));
 	}
 
 
@@ -353,7 +354,7 @@ class ExtensionTest extends Tester\TestCase
 		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 0, new AfterMethod($service, 'magic', [2], 4));
 		self::assertAspectInvocation($service, 'Tests\Cases\SecondAfterAspect', 0, new AfterMethod($service, 'magic', [2], 4));
 
-		$service->throw = TRUE;
+		$service->throw = true;
 		Assert::throws(function () use ($service) {
 			$service->magic(3);
 		}, 'RuntimeException', "Something's fucky");
@@ -362,10 +363,10 @@ class ExtensionTest extends Tester\TestCase
 		self::assertAspectInvocation($service, 'Tests\Cases\SecondBeforeAspect', 1, new BeforeMethod($service, 'magic', [3]));
 		self::assertAspectInvocation($service, 'Tests\Cases\AroundAspect', 1, new AroundMethod($service, 'magic', [3]));
 		self::assertAspectInvocation($service, 'Tests\Cases\SecondAroundAspect', 1, new AroundMethod($service, 'magic', [3]));
-		self::assertAspectInvocation($service, 'Tests\Cases\AfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [3], new \RuntimeException("Something's fucky")));
-		self::assertAspectInvocation($service, 'Tests\Cases\SecondAfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [3], new \RuntimeException("Something's fucky")));
-		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 1, new AfterMethod($service, 'magic', [3], NULL, new \RuntimeException("Something's fucky")));
-		self::assertAspectInvocation($service, 'Tests\Cases\SecondAfterAspect', 1, new AfterMethod($service, 'magic', [3], NULL, new \RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\AfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [3], new RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\SecondAfterThrowingAspect', 0, new AfterThrowing($service, 'magic', [3], new RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\AfterAspect', 1, new AfterMethod($service, 'magic', [3], null, new RuntimeException("Something's fucky")));
+		self::assertAspectInvocation($service, 'Tests\Cases\SecondAfterAspect', 1, new AfterMethod($service, 'magic', [3], null, new RuntimeException("Something's fucky")));
 	}
 
 
@@ -377,7 +378,7 @@ class ExtensionTest extends Tester\TestCase
 	 * @param MethodInvocation $joinPoint
 	 * @return object
 	 */
-	private static function assertAspectInvocation($service, $adviceClass, $adviceCallIndex, MethodInvocation $joinPoint = NULL)
+	private static function assertAspectInvocation($service, $adviceClass, $adviceCallIndex, ?MethodInvocation $joinPoint = null)
 	{
 		$advices = array_filter(self::getAspects($service), function ($advice) use ($adviceClass) {
 			return get_class($advice) === $adviceClass;
@@ -386,7 +387,7 @@ class ExtensionTest extends Tester\TestCase
 		$advice = reset($advices);
 		Assert::true($advice instanceof $adviceClass);
 
-		if ($joinPoint === NULL) {
+		if ($joinPoint === null) {
 			Assert::true(empty($advice->calls[$adviceCallIndex]));
 
 			return $advice;
@@ -402,14 +403,14 @@ class ExtensionTest extends Tester\TestCase
 		Assert::same($joinPoint->getTargetObject(), $call->getTargetObject());
 		Assert::same($joinPoint->getTargetReflection()->getName(), $call->getTargetReflection()->getName());
 
-		if ($joinPoint instanceof \Contributte\Aop\JoinPoint\ResultAware) {
+		if ($joinPoint instanceof ResultAware) {
 			/** @var AfterReturning $call */
 			Assert::same($joinPoint->getResult(), $call->getResult());
 		}
 
-		if ($joinPoint instanceof \Contributte\Aop\JoinPoint\ExceptionAware) {
+		if ($joinPoint instanceof ExceptionAware) {
 			/** @var AfterThrowing $call */
-			Assert::equal($joinPoint->getException() ? get_class($joinPoint->getException()) : NULL, $call->getException() ? get_class($call->getException()) : NULL);
+			Assert::equal($joinPoint->getException() ? get_class($joinPoint->getException()) : null, $call->getException() ? get_class($call->getException()) : null);
 			Assert::equal($joinPoint->getException() ? $joinPoint->getException()->getMessage() : '', $call->getException() ? $call->getException()->getMessage() : '');
 		}
 
@@ -428,10 +429,10 @@ class ExtensionTest extends Tester\TestCase
 			$propRefl = (Nette\Reflection\ClassType::from($service))
 				->getProperty('_contributte_aopAdvices'); // internal property
 
-			$propRefl->setAccessible(TRUE);
+			$propRefl->setAccessible(true);
 			return $propRefl->getValue($service);
 
-		} catch (\ReflectionException $e) {
+		} catch (ReflectionException $e) {
 			return [];
 		}
 	}

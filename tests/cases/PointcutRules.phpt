@@ -4,18 +4,18 @@
  * Test: Contributte\Aop\PointcutRules.
  *
  * @testCase Tests\Cases\PointcutRulesTest
- * @author Filip Procházka <filip@prochazka.su>
- * @package Contributte\Aop
  */
 
 namespace Tests\Cases;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-
 use Contributte\Aop\Pointcut;
+use Contributte\Aop\Pointcut\Filter;
 use Contributte\Aop\Pointcut\Matcher;
 use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Contributte\Aop\Pointcut\Matcher\SettingMatcher;
+use Contributte\Aop\Pointcut\Method;
+use Contributte\Aop\Pointcut\ServiceDefinition;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use Nette\PhpGenerator as Code;
 use Tester;
@@ -26,9 +26,6 @@ require_once __DIR__ . '/../files/pointcut-examples.php';
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class PointcutRulesTest extends Tester\TestCase
 {
 
@@ -36,47 +33,56 @@ class PointcutRulesTest extends Tester\TestCase
 	{
 		$data = [];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\SmegHead')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\*')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('*')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\SmegHead')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\Cat')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\Cat')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\*')]),
 			$this->createDefinition('Tests\Cases\CustomTemplate'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\*')]),
 			$this->createDefinition(Nette\Bridges\ApplicationLatte\Template::class),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\I*')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
@@ -89,7 +95,7 @@ class PointcutRulesTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataMatchWithin
 	 */
-	public function testMatchWithin($expected, \Contributte\Aop\Pointcut\Filter $rules, \Contributte\Aop\Pointcut\ServiceDefinition $def)
+	public function testMatchWithin($expected, Filter $rules, ServiceDefinition $def)
 	{
 		Assert::same($expected, (bool) $def->match($rules));
 	}
@@ -100,72 +106,86 @@ class PointcutRulesTest extends Tester\TestCase
 	{
 		$data = [];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('injectFoo')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('public injectFoo')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('protected injectFoo')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('private injectFoo')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('*Calculation')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('protected *Calculation')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('inject*')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[inject]Bar')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
 			$this->createDefinition('Tests\Cases\CustomTemplate'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
 			$this->createDefinition('Tests\Cases\CustomTemplate'),
 		];
@@ -178,7 +198,7 @@ class PointcutRulesTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataMatchMethod
 	 */
-	public function testMatchMethod($expected, \Contributte\Aop\Pointcut\Filter $rules, \Contributte\Aop\Pointcut\ServiceDefinition $def)
+	public function testMatchMethod($expected, Filter $rules, ServiceDefinition $def)
 	{
 		Assert::same($expected, (bool) $def->match($rules));
 	}
@@ -203,12 +223,14 @@ class PointcutRulesTest extends Tester\TestCase
 	{
 		$data = [];
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\FilterMatcher('Tests\Cases\MyPointcutFilter')]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\FilterMatcher('Tests\Cases\MyPointcutFilter')]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
@@ -221,7 +243,7 @@ class PointcutRulesTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataMatchFilter
 	 */
-	public function testMatchFilter($expected, \Contributte\Aop\Pointcut\Filter $rules, \Contributte\Aop\Pointcut\ServiceDefinition $def)
+	public function testMatchFilter($expected, Filter $rules, ServiceDefinition $def)
 	{
 		Assert::same($expected, (bool) $def->match($rules));
 	}
@@ -234,12 +256,14 @@ class PointcutRulesTest extends Tester\TestCase
 
 		$reader = new AnnotationReader();
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
@@ -252,7 +276,7 @@ class PointcutRulesTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataMatchClassAnnotateWith
 	 */
-	public function testMatchClassAnnotateWith($expected, \Contributte\Aop\Pointcut\Filter $rules, \Contributte\Aop\Pointcut\ServiceDefinition $def)
+	public function testMatchClassAnnotateWith($expected, Filter $rules, ServiceDefinition $def)
 	{
 		Assert::same($expected, (bool) $def->match($rules));
 	}
@@ -265,12 +289,14 @@ class PointcutRulesTest extends Tester\TestCase
 
 		$reader = new AnnotationReader();
 
-		$data[] = [TRUE,
+		$data[] = [
+		true,
 			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
 			$this->createDefinition('Tests\Cases\Legie'),
 		];
 
-		$data[] = [FALSE,
+		$data[] = [
+		false,
 			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
 			$this->createDefinition('Tests\Cases\SmegHead'),
 		];
@@ -283,7 +309,7 @@ class PointcutRulesTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataMatchMethodAnnotateWith
 	 */
-	public function testMatchMethodAnnotateWith($expected, \Contributte\Aop\Pointcut\Filter $rules, \Contributte\Aop\Pointcut\ServiceDefinition $def)
+	public function testMatchMethodAnnotateWith($expected, Filter $rules, ServiceDefinition $def)
 	{
 		Assert::same($expected, (bool) $def->match($rules));
 	}
@@ -293,8 +319,8 @@ class PointcutRulesTest extends Tester\TestCase
 	public function testMatchesSetting()
 	{
 		$builder = new Nette\DI\ContainerBuilder();
-		$builder->parameters['foo']['dave'] = TRUE;
-		$builder->parameters['foo']['kryten'] = FALSE;
+		$builder->parameters['foo']['dave'] = true;
+		$builder->parameters['foo']['kryten'] = false;
 		$builder->parameters['friendship'] = 'Is magic';
 
 		$args = new SettingMatcher(Criteria::create()->where('foo.dave', Criteria::EQ, new Code\PhpLiteral('TRUE')), $builder);
@@ -310,7 +336,7 @@ class PointcutRulesTest extends Tester\TestCase
 
 
 	/**
-	 * @return \Contributte\Aop\Pointcut\Method
+	 * @return Method
 	 */
 	private function mockMethod()
 	{

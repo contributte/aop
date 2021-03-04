@@ -1,37 +1,22 @@
 <?php
 
-
 namespace Contributte\Aop\JoinPoint;
-
 
 use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 abstract class MethodInvocation
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var object
-	 */
+	/** @var object */
 	protected $targetObject;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	protected $targetMethod;
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	protected $arguments;
-
-
 
 	public function __construct($targetObject, $targetMethod, $arguments = [])
 	{

@@ -2,9 +2,7 @@
 
 namespace Tests\Cases;
 
-
-
-use Contributte\Aop\Pointcut\Matcher\Criteria;
+use Contributte\Aop\PhpGenerator\AdvisedClassType;
 use Nette\PhpGenerator\ClassType;
 use Tester;
 use Tester\Assert;
@@ -20,17 +18,19 @@ class AdvisedClassTypeTest extends Tester\TestCase
 	{
 		$testClass = ClassType::from(TestClass::class);
 
-		$method = \Contributte\Aop\PhpGenerator\AdvisedClassType::setMethodInstance($testClass, $testClass->getMethod('first'));
+		$method = AdvisedClassType::setMethodInstance($testClass, $testClass->getMethod('first'));
 		$string = $methodCode = $method->__toString();
 		Assert::count(2, $method->getParameters());
 	}
+
 }
 
 class TestClass
 {
+
 	public function first(int $param, string $second)
 	{
-
 	}
+
 }
 (new AdvisedClassTypeTest())->run();

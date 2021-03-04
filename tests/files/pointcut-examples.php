@@ -1,14 +1,11 @@
 <?php
 
-
 namespace Tests\Cases;
 
-use Doctrine\Common\Annotations\Annotation;
 use Contributte\Aop\Pointcut\Filter;
 use Contributte\Aop\Pointcut\Method;
+use Doctrine\Common\Annotations\Annotation;
 use Nette;
-
-
 
 interface Rimmer
 {
@@ -52,21 +49,18 @@ class Legie implements Rimmer, Lister, Kryten, Cat
 
 	protected function protectedCalculation()
 	{
-
 	}
 
 
 
 	private function privateCalculation()
 	{
-
 	}
 
 
 
 	public function injectBar()
 	{
-
 	}
 
 }
@@ -81,14 +75,12 @@ class SmegHead
 
 	public function injectFoo()
 	{
-
 	}
 
 
 
 	public function bar()
 	{
-
 	}
 
 }
@@ -120,6 +112,7 @@ class CustomTemplate implements Nette\Application\UI\ITemplate
 	public function getFile(): ?string
 	{
 	}
+
 }
 
 
@@ -127,7 +120,7 @@ class CustomTemplate implements Nette\Application\UI\ITemplate
 class MyPointcutFilter implements Filter
 {
 
-	public function matches(Method $method):bool
+	public function matches(Method $method): bool
 	{
 		return $method->getClassName() === 'Tests\Cases\Legie';
 	}
@@ -136,7 +129,7 @@ class MyPointcutFilter implements Filter
 
 	public function listAcceptedTypes()
 	{
-		return FALSE;
+		return false;
 	}
 
 }
@@ -171,17 +164,14 @@ class MockPresenter extends Nette\Application\UI\Presenter
 
 	public function renderDefault()
 	{
-
 	}
 
 	public function actionDefault()
 	{
-
 	}
 
 	public function handleSort()
 	{
-
 	}
 
 }
@@ -189,9 +179,10 @@ class MockPresenter extends Nette\Application\UI\Presenter
 class BaseClass
 {
 
-	public function __construct($x) {
-		;
+	public function __construct($x)
+	{
 	}
+
 }
 
 class InheritedClass extends BaseClass
@@ -201,4 +192,5 @@ class InheritedClass extends BaseClass
 	{
 		parent::__construct($x);
 	}
+
 }

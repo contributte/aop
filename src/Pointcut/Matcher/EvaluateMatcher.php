@@ -1,32 +1,23 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut\Matcher;
 
-
+use Contributte\Aop\Pointcut\Filter;
+use Contributte\Aop\Pointcut\Method;
+use Contributte\Aop\Pointcut\RuntimeFilter;
 use Nette;
+use Nette\DI\ContainerBuilder;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class EvaluateMatcher implements \Contributte\Aop\Pointcut\Filter, \Contributte\Aop\Pointcut\RuntimeFilter
+class EvaluateMatcher implements Filter, RuntimeFilter
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var Criteria
-	 */
+	/** @var Criteria */
 	private $evaluate;
 
-	/**
-	 * @var \Nette\DI\ContainerBuilder
-	 */
+	/** @var ContainerBuilder */
 	private $builder;
-
-
 
 	public function __construct(Criteria $criteria, Nette\DI\ContainerBuilder $builder)
 	{
@@ -36,9 +27,9 @@ class EvaluateMatcher implements \Contributte\Aop\Pointcut\Filter, \Contributte\
 
 
 
-	public function matches(\Contributte\Aop\Pointcut\Method $method): bool
+	public function matches(Method $method): bool
 	{
-		return TRUE;
+		return true;
 	}
 
 
@@ -55,7 +46,7 @@ class EvaluateMatcher implements \Contributte\Aop\Pointcut\Filter, \Contributte\
 	 */
 	public function listAcceptedTypes()
 	{
-		return FALSE;
+		return false;
 	}
 
 }

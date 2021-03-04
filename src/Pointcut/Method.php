@@ -1,19 +1,12 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut;
 
-use Doctrine\Common\Annotations\Reader;
-
 use Contributte\Aop\PhpGenerator\PointcutMethod;
+use Doctrine\Common\Annotations\Reader;
 use Nette;
-use Nette\PhpGenerator as Code;
-
-
 
 /**
- * @author Filip Procházka <filip@prochazka.su>
- *
  * @property-read array|string[] $typesWithin
  */
 class Method
@@ -21,21 +14,15 @@ class Method
 
 	use Nette\SmartObject;
 
-	const VISIBILITY_PUBLIC = 'public';
-	const VISIBILITY_PROTECTED = 'protected';
-	const VISIBILITY_PRIVATE = 'private';
+	public const VISIBILITY_PUBLIC = 'public';
+	public const VISIBILITY_PROTECTED = 'protected';
+	public const VISIBILITY_PRIVATE = 'private';
 
-	/**
-	 * @var Nette\Reflection\Method
-	 */
+	/** @var Nette\Reflection\Method */
 	private $method;
 
-	/**
-	 * @var ServiceDefinition
-	 */
+	/** @var ServiceDefinition */
 	private $serviceDefinition;
-
-
 
 	public function __construct(Nette\Reflection\Method $method, ServiceDefinition $serviceDefinition)
 	{

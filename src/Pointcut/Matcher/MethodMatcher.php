@@ -1,38 +1,27 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut\Matcher;
 
-
 use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\Pointcut\Filter;
+use Contributte\Aop\Pointcut\Method;
 use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class MethodMatcher implements \Contributte\Aop\Pointcut\Filter
+class MethodMatcher implements Filter
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $method;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $visibility;
-
-
 
 	public function __construct($method)
 	{
-		if (strpos($method, ' ') !== FALSE) {
-			list($this->visibility, $method) = explode(' ', $method, 2);
+		if (strpos($method, ' ') !== false) {
+			[$this->visibility, $method] = explode(' ', $method, 2);
 			$this->visibility = strtolower($this->visibility);
 			if (!defined('\Contributte\Aop\Pointcut\Method::VISIBILITY_' . strtoupper($this->visibility))) {
 				throw new InvalidArgumentException("Invalid visibility '{$this->visibility}'.");
@@ -59,10 +48,10 @@ class MethodMatcher implements \Contributte\Aop\Pointcut\Filter
 
 
 
-	public function matches(\Contributte\Aop\Pointcut\Method $method): bool
+	public function matches(Method $method): bool
 	{
-		if ($this->visibility !== NULL && $this->visibility !== $method->getVisibility()) {
-			return FALSE;
+		if ($this->visibility !== null && $this->visibility !== $method->getVisibility()) {
+			return false;
 		}
 
 		return preg_match('~^' . $this->method . '\z~i', $method->getName()) > 0;
@@ -75,7 +64,7 @@ class MethodMatcher implements \Contributte\Aop\Pointcut\Filter
 	 */
 	public function listAcceptedTypes()
 	{
-		return FALSE;
+		return false;
 	}
 
 }

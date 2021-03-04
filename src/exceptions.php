@@ -1,13 +1,10 @@
 <?php
 
-
 namespace Contributte\Aop;
 
+use LogicException;
+use RuntimeException;
 
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 interface Exception
 {
 
@@ -15,19 +12,13 @@ interface Exception
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class InvalidStateException extends \RuntimeException implements Exception
+class InvalidStateException extends RuntimeException implements Exception
 {
 
 }
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class CompilationException extends InvalidStateException
 {
 
@@ -35,9 +26,6 @@ class CompilationException extends InvalidStateException
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class InvalidArgumentException extends \InvalidArgumentException implements Exception
 {
 
@@ -45,9 +33,6 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class UnexpectedValueException extends \UnexpectedValueException implements Exception
 {
 
@@ -55,19 +40,13 @@ class UnexpectedValueException extends \UnexpectedValueException implements Exce
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class InvalidAspectExceptions extends \LogicException implements Exception
+class InvalidAspectExceptions extends LogicException implements Exception
 {
 
 }
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class NoRulesExceptions extends InvalidStateException implements Exception
 {
 
@@ -75,20 +54,14 @@ class NoRulesExceptions extends InvalidStateException implements Exception
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class ParserException extends \LogicException implements Exception
+class ParserException extends LogicException implements Exception
 {
 
 }
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class NotImplementedException extends \LogicException implements Exception
+class NotImplementedException extends LogicException implements Exception
 {
 
 }

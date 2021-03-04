@@ -1,32 +1,21 @@
 <?php
 
-
 namespace Contributte\Aop\DI;
 
-
+use Contributte\Aop\UnexpectedValueException;
 use Nette;
+use stdClass;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AspectsConfig
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $aspectsList;
 
-	/**
-	 * @var bool
-	 */
-	private $prefix = TRUE;
-
-
+	/** @var bool */
+	private $prefix = true;
 
 	public function __construct(array $aspectsList)
 	{
@@ -37,7 +26,7 @@ class AspectsConfig
 
 	public function disablePrefixing(): self
 	{
-		$this->prefix = FALSE;
+		$this->prefix = false;
 		return $this;
 	}
 
@@ -46,10 +35,11 @@ class AspectsConfig
 	public function load(Nette\DI\Compiler $compiler, Nette\DI\ContainerBuilder $containerBuilder): void
 	{
 		foreach ($this->aspectsList as $def) {
-			if ( (!is_array($def)) && !is_string($def) && (!$def instanceof \stdClass || empty($def->value)) && !$def instanceof Nette\DI\Statement) {
+			if ( (!is_array($def)) && !is_string($def) && (!$def instanceof stdClass || empty($def->value)) && !$def instanceof Nette\DI\Statement) {
 				$serialised = Nette\Utils\Json::encode($def);
-				throw new \Contributte\Aop\UnexpectedValueException("The service definition $serialised is expected to be an array or Neon entity.");
+				throw new UnexpectedValueException("The service definition $serialised is expected to be an array or Neon entity.");
 			}
+
 			$definition = new Nette\DI\Definitions\ServiceDefinition();
 			$definition->setFactory(is_array($def) ? $def['class'] : $def);
 			$definition->setTags([AspectsExtension::ASPECT_TAG => true]);

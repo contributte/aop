@@ -1,33 +1,22 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut\Matcher;
 
+use Contributte\Aop\Pointcut\Filter;
+use Contributte\Aop\Pointcut\Method;
 use Doctrine\Common\Annotations\Reader;
-
 use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class ClassAnnotateWithMatcher implements \Contributte\Aop\Pointcut\Filter
+class ClassAnnotateWithMatcher implements Filter
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $annotationClass;
 
-	/**
-	 * @var \Doctrine\Common\Annotations\Reader
-	 */
+	/** @var Reader */
 	private $reader;
-
-
 
 	public function __construct($annotationClass, Reader $reader)
 	{
@@ -37,17 +26,17 @@ class ClassAnnotateWithMatcher implements \Contributte\Aop\Pointcut\Filter
 
 
 
-	public function matches(\Contributte\Aop\Pointcut\Method $method): bool
+	public function matches(Method $method): bool
 	{
 		foreach ($method->getClassAnnotations($this->reader) as $annotation) {
 			if (!$annotation instanceof $this->annotationClass) {
 				continue;
 			}
 
-			return TRUE;
+			return true;
 		}
 
-		return FALSE;
+		return false;
 	}
 
 
@@ -57,7 +46,7 @@ class ClassAnnotateWithMatcher implements \Contributte\Aop\Pointcut\Filter
 	 */
 	public function listAcceptedTypes()
 	{
-		return FALSE;
+		return false;
 	}
 
 }

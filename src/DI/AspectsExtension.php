@@ -1,24 +1,15 @@
 <?php
 
-
 namespace Contributte\Aop\DI;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
-
-use Contributte\Aop\Pointcut;
+use Contributte\Aop\UnexpectedValueException;
 use Nette;
-use Nette\PhpGenerator as Code;
+use Nette\Configurator;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AspectsExtension extends Nette\DI\CompilerExtension
 {
-	const ASPECT_TAG = 'contributte.aspect';
 
+	public const ASPECT_TAG = 'contributte.aspect';
 
 	public function loadConfiguration()
 	{
@@ -35,7 +26,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 			if (!($config = $extension->getAspectsConfiguration()) || !$config instanceof AspectsConfig) {
 				$refl = Nette\Reflection\Method::from($extension, 'getAspectsConfiguration');
 				$given = is_object($config) ? 'instance of ' . get_class($config) : gettype($config);
-				throw new \Contributte\Aop\UnexpectedValueException("Method $refl is expected to return instance of Contributte\\Aop\\DI\\AspectsConfig, but $given given.");
+				throw new UnexpectedValueException("Method $refl is expected to return instance of Contributte\\Aop\\DI\\AspectsConfig, but $given given.");
 			}
 
 			$config->load($this->compiler, $builder);
@@ -57,7 +48,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param \Nette\Configurator $configurator
+	 * @param Configurator $configurator
 	 */
 	public static function register(Nette\Configurator $configurator)
 	{

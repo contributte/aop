@@ -1,36 +1,24 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut;
 
-
+use Contributte\Aop\NoRulesExceptions;
 use Nette;
 use Nette\PhpGenerator as Code;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class Rules implements Filter, RuntimeFilter
 {
 
 	use Nette\SmartObject;
 
-	const OP_AND = 'AND';
-	const OP_OR = 'OR';
+	public const OP_AND = 'AND';
+	public const OP_OR = 'OR';
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $operator;
 
-	/**
-	 * @var array|Filter[]
-	 */
+	/** @var array|Filter[] */
 	private $rules;
-
-
 
 	public function __construct(array $rules = [], $operator = self::OP_AND)
 	{
@@ -51,7 +39,7 @@ class Rules implements Filter, RuntimeFilter
 
 
 	/**
-	 * @return \Contributte\Aop\Pointcut\Filter[]
+	 * @return Filter[]
 	 */
 	public function getRules(): array
 	{
@@ -62,14 +50,14 @@ class Rules implements Filter, RuntimeFilter
 	public function matches(Method $method): bool
 	{
 		if (empty($this->rules)) {
-			throw new \Contributte\Aop\NoRulesExceptions();
+			throw new NoRulesExceptions();
 		}
 
 		$logical = [];
 		foreach ($this->rules as $rule) {
 			$logical[] = $rule->matches($method);
 			if (!$this->isMatching($logical)) {
-				return FALSE;
+				return false;
 			}
 		}
 
@@ -85,7 +73,7 @@ class Rules implements Filter, RuntimeFilter
 	{
 		$types = [];
 		foreach ($this->rules as $rule) {
-			$types = array_merge($types, (array)$rule->listAcceptedTypes());
+			$types = array_merge($types, (array) $rule->listAcceptedTypes());
 		}
 
 		return array_filter($types);
@@ -109,11 +97,11 @@ class Rules implements Filter, RuntimeFilter
 		if (count($conds) > 1) {
 			$conds = implode(' ' . $this->operator . ' ', $conds);
 
-		} elseif (count($conds) == 1) {
+		} elseif (count($conds) === 1) {
 			$conds = reset($conds);
 
 		} else {
-			return NULL;
+			return null;
 		}
 
 		return new Code\PhpLiteral('(' . $conds . ')');

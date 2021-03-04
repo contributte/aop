@@ -1,47 +1,38 @@
 <?php
 
-
 namespace Contributte\Aop\PhpGenerator;
 
-
+use Contributte\Aop\After;
+use Contributte\Aop\AfterReturning;
+use Contributte\Aop\AfterThrowing;
+use Contributte\Aop\Around;
+use Contributte\Aop\Before;
+use Contributte\Aop\DI\AdviceDefinition;
+use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\Pointcut\RuntimeFilter;
 use Nette;
 use Nette\PhpGenerator as Code;
+use ReflectionException;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class PointcutMethod
 {
-	/**
-	 * @var array
-	 */
+
+	/** @var array */
 	private $before = [];
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $around = [];
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $afterReturning = [];
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $afterThrowing = [];
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $after = [];
 
-	/**
-	 * @var Code\Method
-	 */
+	/** @var Code\Method */
 	private $method;
 
 	public function __construct(Nette\Reflection\Method $from)
@@ -57,15 +48,17 @@ class PointcutMethod
 		foreach ($from->getParameters() as $param) {
 			$params[$param->getName()] = $factory->fromParameterReflection($param);
 		}
+
 		$method->setParameters($params);
 		if ($from instanceof Nette\Reflection\Method) {
 			$isInterface = $from->getDeclaringClass()->isInterface();
 			$method->setStatic($from->isStatic());
-			$method->setVisibility($from->isPrivate() ? 'private' : ($from->isProtected() ? 'protected' : ($isInterface ? NULL : 'public')));
+			$method->setVisibility($from->isPrivate() ? 'private' : ($from->isProtected() ? 'protected' : ($isInterface ? null : 'public')));
 			$method->setFinal($from->isFinal());
 			$method->setAbstract($from->isAbstract() && !$isInterface);
-			$method->setBody($from->isAbstract() ? FALSE : '');
+			$method->setBody($from->isAbstract() ? false : '');
 		}
+
 		$method->setReturnReference($from->returnsReference());
 		$method->setVariadic($from->isVariadic());
 		$method->setComment(Code\Helpers::unformatDocComment($from->getDocComment()));
@@ -73,16 +66,17 @@ class PointcutMethod
 			$method->setReturnType(($from->getReturnType()->getName()));
 			$method->setReturnNullable($from->getReturnType()->allowsNull());
 		}
+
 		return $method;
 	}
 
 
-	public function addAdvice(\Contributte\Aop\DI\AdviceDefinition $adviceDef): void
+	public function addAdvice(AdviceDefinition $adviceDef): void
 	{
 		$adviceMethod = $adviceDef->getAdvice();
 
 		switch ($adviceDef->getAdviceType()) {
-			case \Contributte\Aop\Before::getClassName():
+			case Before::getClassName():
 				$this->before[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
 					'$this->__getAdvice(?)->?($__before = new \Contributte\Aop\JoinPoint\BeforeMethod($this, __FUNCTION__, $__arguments));' . "\n" .
 					'$__arguments = $__before->getArguments();',
@@ -92,7 +86,7 @@ class PointcutMethod
 
 				break;
 
-			case \Contributte\Aop\Around::getClassName():
+			case Around::getClassName():
 				$this->around[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
 					'$__around->addChainLink($this->__getAdvice(?), ?);',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
@@ -100,7 +94,7 @@ class PointcutMethod
 				));
 				break;
 
-			case \Contributte\Aop\AfterReturning::getClassName():
+			case AfterReturning::getClassName():
 				$this->afterReturning[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
 					'$this->__getAdvice(?)->?($__afterReturning = new \Contributte\Aop\JoinPoint\AfterReturning($this, __FUNCTION__, $__arguments, $__result));' . "\n" .
 					'$__result = $__afterReturning->getResult();',
@@ -109,7 +103,7 @@ class PointcutMethod
 				));
 				break;
 
-			case \Contributte\Aop\AfterThrowing::getClassName():
+			case AfterThrowing::getClassName():
 				$this->afterThrowing[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
 					'$this->__getAdvice(?)->?(new \Contributte\Aop\JoinPoint\AfterThrowing($this, __FUNCTION__, $__arguments, $__exception));',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
@@ -117,7 +111,7 @@ class PointcutMethod
 				));
 				break;
 
-			case \Contributte\Aop\After::getClassName():
+			case After::getClassName():
 				$this->after[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
 					'$this->__getAdvice(?)->?(new \Contributte\Aop\JoinPoint\AfterMethod($this, __FUNCTION__, $__arguments, $__result, $__exception));',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
@@ -126,7 +120,7 @@ class PointcutMethod
 				break;
 
 			default:
-				throw new \Contributte\Aop\InvalidArgumentException("Unknown advice type " . $adviceDef->getAdviceType());
+				throw new InvalidArgumentException('Unknown advice type ' . $adviceDef->getAdviceType());
 		}
 	}
 
@@ -137,10 +131,10 @@ class PointcutMethod
 	}
 
 
-	private function generateRuntimeCondition(\Contributte\Aop\DI\AdviceDefinition $adviceDef, string $code): string
+	private function generateRuntimeCondition(AdviceDefinition $adviceDef, string $code): string
 	{
 		$filter = $adviceDef->getFilter();
-		if (!$filter instanceof \Contributte\Aop\Pointcut\RuntimeFilter) {
+		if (!$filter instanceof RuntimeFilter) {
 			return $code;
 
 		} elseif (!$condition = $filter->createCondition()) {
@@ -162,7 +156,7 @@ class PointcutMethod
 
 		if (strtolower($this->getName()) === '__construct') {
 			$this->addParameter('_contributte_aopContainer')
-					->setTypeHint(Nette\DI\Container::class);
+				->setTypeHint(Nette\DI\Container::class);
 			$this->addBody('$this->_contributte_aopContainer = $_contributte_aopContainer;');
 		}
 
@@ -185,6 +179,7 @@ class PointcutMethod
 			foreach ($this->around as $around) {
 				$parentCall .= "\n" . $around;
 			}
+
 			$parentCall .= "\n" . Code\Helpers::format('$__result = $__around->proceed();');
 		}
 
@@ -228,7 +223,7 @@ class PointcutMethod
 			$this->addBody('if ($__exception) { throw $__exception; }');
 		}
 
-		if($this->getReturnType() !== 'void') {
+		if ($this->getReturnType() !== 'void') {
 			$this->addBody('return $__result;');
 		}
 	}
@@ -236,7 +231,7 @@ class PointcutMethod
 
 
 	/**
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public static function expandTypeHints(Nette\Reflection\Method $from, PointcutMethod $method): PointcutMethod
 	{
@@ -245,15 +240,16 @@ class PointcutMethod
 
 		foreach ($from->getParameters() as $paramRefl) {
 			try {
-				if(!in_array($parameters[$paramRefl->getName()]->getTypeHint(),['boolean', 'integer', 'float', 'string', 'object', 'int', 'bool', ])) {
+				if (!in_array($parameters[$paramRefl->getName()]->getTypeHint(), ['boolean', 'integer', 'float', 'string', 'object', 'int', 'bool' ])) {
 					if (PHP_VERSION_ID >= 80000) {
 						$type = $paramRefl->getType() ? $paramRefl->getType()->getName() : '';
 					} else {
-						$type =  $paramRefl->isArray() ? 'array' : ($paramRefl->getClass() ? '\\' . $paramRefl->getClass()->getName() : '');
+						$type = $paramRefl->isArray() ? 'array' : ($paramRefl->getClass() ? '\\' . $paramRefl->getClass()->getName() : '');
 					}
+
 					$parameters[$paramRefl->getName()]->setType($type);
 				}
-			} catch (\ReflectionException $e) {
+			} catch (ReflectionException $e) {
 				if (preg_match('#Class (.+) does not exist#', $e->getMessage(), $m)) {
 					$parameters[$paramRefl->getName()]->setType('\\' . $m[1]);
 				} else {
@@ -261,6 +257,7 @@ class PointcutMethod
 				}
 			}
 		}
+
 		$method->setParameters($parameters);
 
 		if (!$method->getVisibility()) {
@@ -274,4 +271,5 @@ class PointcutMethod
 	{
 		return call_user_func_array([$this->method, $name], $args);
 	}
+
 }

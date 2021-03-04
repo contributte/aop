@@ -1,36 +1,25 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut;
 
+use Contributte\Aop\AdviceAnnotation;
+use Contributte\Aop\InvalidAspectExceptions;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
-
-use Contributte\Aop\InvalidAspectExceptions;
 use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AspectAnalyzer
 {
+
 	use Nette\SmartObject;
 
-	/**
-	 * @var \Doctrine\Common\Annotations\Reader
-	 */
+	/** @var Reader */
 	private $annotationReader;
 
-	/**
-	 * @var Parser
-	 */
+	/** @var Parser */
 	private $pointcutParser;
 
-
-
-	public function __construct(Parser $parser, Reader $reader = NULL)
+	public function __construct(Parser $parser, ?Reader $reader = null)
 	{
 		$this->annotationReader = $reader ?: new AnnotationReader();
 		$this->pointcutParser = $parser;
@@ -40,7 +29,7 @@ class AspectAnalyzer
 
 	/**
 	 * @return array<string, array<string, Rules|mixed>>
-	 *@throws \Contributte\Aop\InvalidAspectExceptions
+	 * @throws InvalidAspectExceptions
 	 */
 	public function analyze(ServiceDefinition $service): array
 	{
@@ -69,12 +58,12 @@ class AspectAnalyzer
 
 	/**
 	 * @param array $annotations
-	 * @return array|\Contributte\Aop\AdviceAnnotation[]
+	 * @return array|AdviceAnnotation[]
 	 */
 	private function filterAopAnnotations(array $annotations): array
 	{
 		return array_filter($annotations, function ($annotation) {
-			return $annotation instanceof \Contributte\Aop\AdviceAnnotation;
+			return $annotation instanceof AdviceAnnotation;
 		});
 	}
 

@@ -1,36 +1,27 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut\Matcher;
 
-
+use Contributte\Aop\Pointcut\Filter;
+use Contributte\Aop\Pointcut\Method;
 use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class Inverse implements \Contributte\Aop\Pointcut\Filter
+class Inverse implements Filter
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var \Contributte\Aop\Pointcut\Filter
-	 */
+	/** @var Filter */
 	private $filter;
 
-
-
-	public function __construct(\Contributte\Aop\Pointcut\Filter $filter)
+	public function __construct(Filter $filter)
 	{
 		$this->filter = $filter;
 	}
 
 
 
-	public function matches(\Contributte\Aop\Pointcut\Method $method): bool
+	public function matches(Method $method): bool
 	{
 		return !$this->filter->matches($method);
 	}
