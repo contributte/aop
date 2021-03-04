@@ -15,7 +15,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$config = new AspectsConfig($this->getConfig(), $this);
+		$config = new AspectsConfig($this->getConfig());
 		$config->disablePrefixing()->load($this->compiler, $builder);
 
 		foreach ($this->compiler->getExtensions() as $extension) {
@@ -42,7 +42,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 	 */
 	public static function loadAspects($configFile, Nette\DI\CompilerExtension $extension)
 	{
-		return new AspectsConfig($extension->loadFromFile($configFile), $extension);
+		return new AspectsConfig($extension->loadFromFile($configFile));
 	}
 
 

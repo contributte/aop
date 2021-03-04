@@ -43,7 +43,9 @@
 		"tracy/tracy": "~2.6",
 		"nette/tester": "^2.3.4",
 		"doctrine/collections": "~1.6",
-		"ninjify/qa": "^0.12"
+		"ninjify/qa": "^0.12",
+		"phpstan/phpstan-nette": "^0.12",
+		"phpstan/phpstan-deprecation-rules": "^0.12"
 	},
 	"autoload": {
 		"psr-4": {

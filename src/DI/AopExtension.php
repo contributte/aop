@@ -25,7 +25,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		AnnotationRegistry::registerLoader('class_exists');
 		AnnotationReader::addGlobalIgnoredName('persistent');
 	}
 
