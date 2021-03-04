@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ruleset>
+    <!-- Contributte Coding Standard -->
+    <rule ref="./vendor/ninjify/coding-standard/contributte.xml">
+        <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes.DeclareStrictTypesMissing" /> <!-- not there yet this needs to be done slowly -->
+     </rule>
+
+    <!-- Specific rules -->
+    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+        <properties>
+            <property name="rootNamespaces" type="array" value="
+				src=>Contributte\FormsBootstrap,
+				tests=>Tests,
+			"/>
+        </properties>
+    </rule>
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+</ruleset>

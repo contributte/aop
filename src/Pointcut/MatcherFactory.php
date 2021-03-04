@@ -1,41 +1,28 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut;
 
+use Contributte\Aop\Pointcut\Matcher\WithinMatcher;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
-
 use Nette;
+use Nette\DI\ContainerBuilder;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class MatcherFactory
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var \Nette\DI\ContainerBuilder
-	 */
+	/** @var ContainerBuilder */
 	private $builder;
 
-	/**
-	 * @var \Doctrine\Common\Annotations\Reader
-	 */
+	/** @var Reader */
 	private $annotationReader;
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $cache = [];
 
-
-
-	public function __construct(Nette\DI\ContainerBuilder $builder, Reader $annotationReader = NULL)
+	public function __construct(Nette\DI\ContainerBuilder $builder, ?Reader $annotationReader = null)
 	{
 		$this->builder = $builder;
 		$this->annotationReader = $annotationReader ?: new AnnotationReader();
@@ -58,7 +45,7 @@ class MatcherFactory
 
 
 
-	public function createClass(string $class): \Contributte\Aop\Pointcut\Matcher\WithinMatcher
+	public function createClass(string $class): WithinMatcher
 	{
 		return new Matcher\WithinMatcher($class);
 	}

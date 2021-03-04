@@ -2,11 +2,12 @@
 
 namespace Tests\Cases;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Contributte\Aop\Pointcut\Matcher\Criteria;
+use Doctrine\Common\Collections\ArrayCollection;
 use Nette;
 use Nette\PhpGenerator as Code;
+use SplObjectStorage;
+use stdClass;
 use Tester;
 use Tester\Assert;
 
@@ -14,18 +15,15 @@ require_once __DIR__ . '/../bootstrap.php';
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class CriteriaTest extends Tester\TestCase
 {
 
 	public function testEqual()
 	{
-		Assert::true(Criteria::compare(TRUE, Criteria::EQ, TRUE));
-		Assert::false(Criteria::compare(TRUE, Criteria::EQ, FALSE));
-		Assert::false(Criteria::compare(TRUE, Criteria::NEQ, TRUE));
-		Assert::true(Criteria::compare(TRUE, Criteria::NEQ, FALSE));
+		Assert::true(Criteria::compare(true, Criteria::EQ, true));
+		Assert::false(Criteria::compare(true, Criteria::EQ, false));
+		Assert::false(Criteria::compare(true, Criteria::NEQ, true));
+		Assert::true(Criteria::compare(true, Criteria::NEQ, false));
 	}
 
 
@@ -68,8 +66,8 @@ class CriteriaTest extends Tester\TestCase
 
 	public function testIs()
 	{
-		$foo = new \stdClass;
-		$bar = new \stdClass;
+		$foo = new stdClass();
+		$bar = new stdClass();
 
 		Assert::true(Criteria::compare($foo, Criteria::IS, $foo));
 		Assert::false(Criteria::compare($foo, Criteria::IS, $bar));
@@ -81,11 +79,11 @@ class CriteriaTest extends Tester\TestCase
 
 	public function testIn()
 	{
-		$dave = new \stdClass;
+		$dave = new stdClass();
 		$lister = new ArrayCollection([$dave]);
-		$kryten = new \SplObjectStorage();
+		$kryten = new SplObjectStorage();
 		$kryten->attach($dave);
-		$cat = new \stdClass;
+		$cat = new stdClass();
 
 		Assert::true(Criteria::compare($dave, Criteria::IN, $lister));
 		Assert::false(Criteria::compare($dave, Criteria::NIN, $lister));
@@ -109,11 +107,11 @@ class CriteriaTest extends Tester\TestCase
 
 	public function testContains()
 	{
-		$dave = new \stdClass;
+		$dave = new stdClass();
 		$lister = new ArrayCollection([$dave]);
-		$kryten = new \SplObjectStorage();
+		$kryten = new SplObjectStorage();
 		$kryten->attach($dave);
-		$cat = new \stdClass;
+		$cat = new stdClass();
 
 		Assert::true(Criteria::compare($lister, Criteria::CONTAINS, $dave));
 		Assert::true(Criteria::compare($kryten, Criteria::CONTAINS, $dave));
@@ -201,7 +199,6 @@ class CriteriaTest extends Tester\TestCase
 			"(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this->_contributte_aopContainer->getByType('stdClass'), 'bar'), '==', true))",
 			(string) $criteria->serialize(new Nette\DI\ContainerBuilder())
 		);
-
 
 		$criteria = Criteria::create()->where('context.Tests\Cases\CriteriaTest.bar', Criteria::EQ, new Code\PhpLiteral('TRUE'));
 		Assert::match(

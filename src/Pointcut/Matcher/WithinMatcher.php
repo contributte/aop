@@ -1,36 +1,25 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut\Matcher;
 
-
+use Contributte\Aop\Pointcut\Filter;
+use Contributte\Aop\Pointcut\Method;
 use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
-class WithinMatcher implements \Contributte\Aop\Pointcut\Filter
+class WithinMatcher implements Filter
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $type;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $pattern;
-
-
 
 	public function __construct(string $type)
 	{
-		if (strpos($type, '*') !== FALSE) {
+		if (strpos($type, '*') !== false) {
 			$this->pattern = str_replace('\\*', '.*', preg_quote($type));
 
 		} else {
@@ -40,19 +29,19 @@ class WithinMatcher implements \Contributte\Aop\Pointcut\Filter
 
 
 
-	public function matches(\Contributte\Aop\Pointcut\Method $method): bool
+	public function matches(Method $method): bool
 	{
-		if ($this->type !== NULL) {
+		if ($this->type !== null) {
 			return isset($method->typesWithin[$this->type]);
 		}
 
 		foreach ($method->typesWithin as $within) {
 			if (preg_match('~^' . $this->pattern . '\z~i', $within)) {
-				return TRUE;
+				return true;
 			}
 		}
 
-		return FALSE;
+		return false;
 	}
 
 
@@ -66,7 +55,7 @@ class WithinMatcher implements \Contributte\Aop\Pointcut\Filter
 			return [$this->type];
 		}
 
-		return FALSE;
+		return false;
 	}
 
 }

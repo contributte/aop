@@ -1,16 +1,7 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut;
 
-
-use Nette;
-
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 interface Filter
 {
 

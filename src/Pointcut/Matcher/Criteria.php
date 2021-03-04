@@ -1,59 +1,52 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut\Matcher;
 
+use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\NoRulesExceptions;
+use Contributte\Aop\NotImplementedException;
+use Contributte\Aop\ParserException;
 use Doctrine\Common\Collections\Collection;
-
 use Nette;
-use Nette\PhpGenerator as Code;
 use Nette\DI\ContainerBuilder;
+use Nette\PhpGenerator as Code;
+use SplObjectStorage;
+use Traversable;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class Criteria
 {
 
 	use Nette\SmartObject;
 
-	const TYPE_AND = 'AND';
-	const TYPE_OR = 'OR';
+	public const TYPE_AND = 'AND';
+	public const TYPE_OR = 'OR';
 
-	const EQ = '=='; // value comparison
-	const NEQ = '<>';
-	const LT = '<';
-	const LTE = '<=';
-	const GT = '>';
-	const GTE = '>=';
-	const IS = '==='; // identity comparison
-	const IN = 'IN';
-	const NIN = 'NIN';
-	const CONTAINS = 'CONTAINS';
-	const MATCHES = 'MATCHES';
+	public const EQ = '=='; // value comparison
+	public const NEQ = '<>';
+	public const LT = '<';
+	public const LTE = '<=';
+	public const GT = '>';
+	public const GTE = '>=';
+	public const IS = '==='; // identity comparison
+	public const IN = 'IN';
+	public const NIN = 'NIN';
+	public const CONTAINS = 'CONTAINS';
+	public const MATCHES = 'MATCHES';
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $operator;
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $expressions = [];
-
-
 
 	/**
 	 * @param string $operator
-	 * @throws \Contributte\Aop\InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
 	public function __construct($operator = self::TYPE_AND)
 	{
-		if (!in_array($operator = strtoupper($operator), [self::TYPE_AND, self::TYPE_OR], TRUE)) {
-			throw new \Contributte\Aop\InvalidArgumentException("Given operator '$operator' cannot be evaluated.");
+		if (!in_array($operator = strtoupper($operator), [self::TYPE_AND, self::TYPE_OR], true)) {
+			throw new InvalidArgumentException("Given operator '$operator' cannot be evaluated.");
 		}
 
 		$this->operator = $operator;
@@ -65,9 +58,9 @@ class Criteria
 	 * @param string|self $left
 	 * @param string|self|null $right
 	 * @return Criteria
-	 * @throws \Contributte\Aop\InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 */
-	public function where($left, ?string $comparison = NULL, $right = NULL): self
+	public function where($left, ?string $comparison = null, $right = null): self
 	{
 		if ($left instanceof self) {
 			$this->expressions[] = $left;
@@ -75,7 +68,7 @@ class Criteria
 		}
 
 		if (!self::isValidComparison($comparison = strtoupper($comparison))) {
-			throw new \Contributte\Aop\InvalidArgumentException("Given comparison '$comparison' cannot be evaluated.");
+			throw new InvalidArgumentException("Given comparison '$comparison' cannot be evaluated.");
 		}
 
 		$this->expressions[] = [$left, $comparison, $right];
@@ -94,14 +87,14 @@ class Criteria
 	public function evaluate(ContainerBuilder $builder): bool
 	{
 		if (empty($this->expressions)) {
-			throw new \Contributte\Aop\NoRulesExceptions();
+			throw new NoRulesExceptions();
 		}
 
 		$logical = [];
 		foreach ($this->expressions as $expression) {
 			$logical[] = $this->doEvaluate($builder, $expression);
 			if (!$this->isMatching($logical)) {
-				return FALSE;
+				return false;
 			}
 		}
 
@@ -153,7 +146,7 @@ class Criteria
 	public function serialize(ContainerBuilder $builder): Code\Literal
 	{
 		if (empty($this->expressions)) {
-			throw new \Contributte\Aop\NoRulesExceptions();
+			throw new NoRulesExceptions();
 		}
 
 		$serialised = [];
@@ -192,7 +185,7 @@ class Criteria
 			$expression = self::resolveExpression($expression);
 
 		} elseif (substr($expression, 0, 1) === '%') {
-			$expression =  Nette\DI\Helpers::expand($expression, $builder->parameters);
+			$expression = Nette\DI\Helpers::expand($expression, $builder->parameters);
 
 		} elseif (substr($expression, 0, 1) === '$') {
 			$expression = new Code\PhpLiteral($expression);
@@ -216,7 +209,7 @@ class Criteria
 					$m['path'] = $p['path'];
 
 				} else {
-					throw new \Contributte\Aop\NotImplementedException();
+					throw new NotImplementedException();
 				}
 
 				$expression = Code\Helpers::format('PropertyAccess::createPropertyAccessor()->getValue(?, ?)', new Code\PhpLiteral($targetObject), $m['path']);
@@ -235,7 +228,7 @@ class Criteria
 	 */
 	public function __toString()
 	{
-		return get_class($this) . '(#' . spl_object_hash($this) . ')';
+		return static::class . '(#' . spl_object_hash($this) . ')';
 	}
 
 
@@ -243,25 +236,33 @@ class Criteria
 	public static function isValidComparison(string $comparison): bool
 	{
 		return in_array(strtoupper($comparison), [
-			self::EQ, self::NEQ, '!=',
-			self::LT, self::LTE,
-			self::GT, self::GTE,
-			self::IS, 'IS', self::IN, self::NIN,
-			self::CONTAINS, self::MATCHES
-		], TRUE);
+			self::EQ,
+		self::NEQ,
+		'!=',
+			self::LT,
+		self::LTE,
+			self::GT,
+		self::GTE,
+			self::IS,
+		'IS',
+		self::IN,
+		self::NIN,
+			self::CONTAINS,
+		self::MATCHES,
+		], true);
 	}
 
 
 
 	/**
 	 * @return mixed
-	 * @throws \Contributte\Aop\ParserException
+	 * @throws ParserException
 	 */
 	private static function resolveExpression(Code\Literal $expression)
 	{
 		set_error_handler(function ($severenity, $message) {
 			restore_error_handler();
-			throw new \Contributte\Aop\ParserException($message, $severenity);
+			throw new ParserException($message, $severenity);
 		});
 		$result = eval("return $expression;");
 		restore_error_handler();
@@ -291,7 +292,7 @@ class Criteria
 	{
 		switch (strtoupper($operator)) {
 			case self::EQ:
-				return $left == $right;
+				return $left === $right;
 
 			case self::NEQ;
 			case '!=';
@@ -317,43 +318,42 @@ class Criteria
 				return !self::compare($left, self::IN, $right);
 
 			case self::IN;
-				if ($right instanceof \SplObjectStorage || $right instanceof Collection) {
+				if ($right instanceof SplObjectStorage || $right instanceof Collection) {
 					/** @var Collection $right */
-					return $left !== NULL && $right->contains($left);
+					return $left !== null && $right->contains($left);
 
 				} else {
-					if ($right instanceof \Traversable) {
+					if ($right instanceof Traversable) {
 						$right = iterator_to_array($right);
 
 					} elseif (!is_array($right)) {
-						throw new \Contributte\Aop\InvalidArgumentException('Right value is expected to be array or instance of Traversable');
+						throw new InvalidArgumentException('Right value is expected to be array or instance of Traversable');
 					}
 
-					return in_array($left, $right, TRUE);
+					return in_array($left, $right, true);
 				}
-
 			case self::CONTAINS:
 				return self::compare($right, self::IN, $left);
 
 			case self::MATCHES:
-				if ($right instanceof \Traversable) {
+				if ($right instanceof Traversable) {
 					$right = iterator_to_array($right);
 
 				} elseif (!is_array($right)) {
-					throw new \Contributte\Aop\InvalidArgumentException('Right value is expected to be array or Traversable');
+					throw new InvalidArgumentException('Right value is expected to be array or Traversable');
 				}
 
-				if ($left instanceof \Traversable) {
+				if ($left instanceof Traversable) {
 					$left = iterator_to_array($left);
 
 				} elseif (!is_array($left)) {
-					throw new \Contributte\Aop\InvalidArgumentException('Left value is expected to be array or Traversable');
+					throw new InvalidArgumentException('Left value is expected to be array or Traversable');
 				}
 
-				return (bool)array_filter(array_intersect($left, $right));
+				return (bool) array_filter(array_intersect($left, $right));
 
 			default:
-				throw new \Contributte\Aop\NotImplementedException();
+				throw new NotImplementedException();
 		}
 	}
 

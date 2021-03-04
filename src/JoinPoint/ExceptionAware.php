@@ -1,19 +1,12 @@
 <?php
 
-
 namespace Contributte\Aop\JoinPoint;
 
+use Throwable;
 
-use Nette;
-
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 interface ExceptionAware
 {
 
-	function getException(): ?\Throwable;
+	function getException(): ?Throwable;
 
 }

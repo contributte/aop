@@ -1,26 +1,14 @@
 <?php
 
-
 namespace Contributte\Aop\JoinPoint;
 
-
 use Contributte\Aop\PhpGenerator\AdvisedClassType;
-use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AroundMethod extends MethodInvocation
 {
 
-	/**
-	 * @var array|callable[]
-	 */
+	/** @var array|callable[] */
 	private $callChain = [];
-
-
 
 	public function __construct($targetObject, $targetMethod, $arguments = [])
 	{

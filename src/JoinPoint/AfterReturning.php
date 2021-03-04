@@ -1,27 +1,14 @@
 <?php
 
-
 namespace Contributte\Aop\JoinPoint;
 
-
-use Nette;
-
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AfterReturning extends MethodInvocation implements ResultAware
 {
 
-	/**
-	 * @var mixed
-	 */
+	/** @var mixed */
 	private $result;
 
-
-
-	public function __construct($targetObject, $targetMethod, $arguments = [], $result = NULL)
+	public function __construct($targetObject, $targetMethod, $arguments = [], $result = null)
 	{
 		parent::__construct($targetObject, $targetMethod, $arguments);
 		$this->result = $result;

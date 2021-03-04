@@ -2,9 +2,9 @@
 
 namespace Tests\Cases;
 
-
 use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\Matcher\Criteria;
+use Contributte\Aop\Pointcut\Parser;
 use Nette;
 use Nette\PhpGenerator\PhpLiteral;
 use Tester;
@@ -15,25 +15,18 @@ require_once __DIR__ . '/../files/pointcut-examples.php';
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class PointcutParserTest extends Tester\TestCase
 {
 
-	/**
-	 * @var Pointcut\MatcherFactory
-	 */
+	/** @var Pointcut\MatcherFactory */
 	private $matcherFactory;
-
-
 
 	/**
 	 * @return Pointcut\MatcherFactory
 	 */
 	public function getMatcherFactory()
 	{
-		if ($this->matcherFactory === NULL) {
+		if ($this->matcherFactory === null) {
 			$this->matcherFactory = new Pointcut\MatcherFactory(new Nette\DI\ContainerBuilder());
 		}
 
@@ -44,7 +37,7 @@ class PointcutParserTest extends Tester\TestCase
 
 	protected function tearDown()
 	{
-		$this->matcherFactory = NULL;
+		$this->matcherFactory = null;
 	}
 
 
@@ -119,8 +112,7 @@ class PointcutParserTest extends Tester\TestCase
 				$mf->getMatcher('method', 'update'),
 				$mf->getMatcher('arguments', Criteria::create()
 					->where('title', Criteria::EQ, new PhpLiteral('"Contributte"'))
-					->where('override', Criteria::EQ, new PhpLiteral('TRUE'))
-				),
+					->where('override', Criteria::EQ, new PhpLiteral('TRUE'))),
 			]),
 			'method(Tests\Cases\PackageClass->update(title == "Contributte", override == TRUE))',
 		];
@@ -174,7 +166,7 @@ class PointcutParserTest extends Tester\TestCase
 			$mf->getMatcher('evaluate', Criteria::create()->where('this.someProperty', Criteria::IN, [
 				new PhpLiteral('TRUE'),
 				new PhpLiteral('"someString"'),
-				'current.securityContext.party.address'
+				'current.securityContext.party.address',
 			])),
 			'evaluate(this.someProperty in (TRUE, "someString", current.securityContext.party.address))',
 		];
@@ -205,7 +197,7 @@ class PointcutParserTest extends Tester\TestCase
 
 		$data[] = [
 			$mf->getMatcher('filter', 'Tests\Cases\MyPointcutFilter'),
-			'filter(Tests\Cases\MyPointcutFilter)', # implements \Contributte\Aop\Pointcut\Rule
+			'filter(Tests\Cases\MyPointcutFilter)', // implements \Contributte\Aop\Pointcut\Rule
 		];
 
 		$data[] = [
@@ -244,7 +236,7 @@ class PointcutParserTest extends Tester\TestCase
 					$mf->getMatcher('method', 'otherPointcutTestingTargetClass'),
 				]),
 			], Pointcut\Rules::OP_OR),
-			'(Tests\Cases\PointcutTestingAspect->pointcutTestingTargetClasses && within(Tests\Cases\LoggerInterface))' . # intentionally no space after )
+			'(Tests\Cases\PointcutTestingAspect->pointcutTestingTargetClasses && within(Tests\Cases\LoggerInterface))' . // intentionally no space after )
 				'|| Tests\Cases\PointcutTestingAspect->otherPointcutTestingTargetClass',
 		];
 
@@ -280,7 +272,7 @@ class PointcutParserTest extends Tester\TestCase
 	 */
 	public function testParse($expected, $input)
 	{
-		$parser = new \Contributte\Aop\Pointcut\Parser($this->getMatcherFactory());
+		$parser = new Parser($this->getMatcherFactory());
 		Assert::equal($expected, $parser->parse($input));
 	}
 

@@ -1,17 +1,13 @@
 <?php
 
-
 namespace Contributte\Aop\Pointcut;
 
-
+use Contributte\Aop\InvalidArgumentException;
 use Nette;
-
-
+use ReflectionMethod;
 
 /**
  * Wraps the Nette's ServiceDefinition, allowing safer manipulation and analysis.
- *
- * @author Filip Procházka <filip@prochazka.su>
  *
  * @property string $serviceId
  * @property array|Method[] $openMethods
@@ -22,39 +18,27 @@ class ServiceDefinition
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var \Nette\DI\ServiceDefinition
-	 */
+	/** @var \Nette\DI\ServiceDefinition */
 	private $serviceDefinition;
 
-	/**
-	 * @var Nette\Reflection\ClassType
-	 */
+	/** @var Nette\Reflection\ClassType */
 	private $originalType;
 
-	/**
-	 * @var array|Nette\PhpGenerator\Method[]
-	 */
+	/** @var array|Nette\PhpGenerator\Method[] */
 	private $openMethods;
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $typesWithing;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $serviceId;
-
-
 
 	public function __construct(Nette\DI\Definitions\Definition $def, string $serviceId)
 	{
 		$this->serviceDefinition = $def;
 
 		if (empty($def->getType())) {
-			throw new \Contributte\Aop\InvalidArgumentException("Given service definition has unresolved class, please specify service type explicitly.");
+			throw new InvalidArgumentException('Given service definition has unresolved class, please specify service type explicitly.');
 		}
 
 		$this->originalType = Nette\Reflection\ClassType::from($def->getType());
@@ -78,7 +62,7 @@ class ServiceDefinition
 
 	public function getTypesWithin(): array
 	{
-		if ($this->typesWithing !== NULL) {
+		if ($this->typesWithing !== null) {
 			return $this->typesWithing;
 		}
 
@@ -92,14 +76,14 @@ class ServiceDefinition
 	 */
 	public function getOpenMethods(): array
 	{
-		if ($this->openMethods !== NULL) {
+		if ($this->openMethods !== null) {
 			return $this->openMethods;
 		}
 
 		$this->openMethods = [];
 		$type = $this->originalType;
 		do {
-			foreach ($type->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED) as $method) {
+			foreach ($type->getMethods(ReflectionMethod::IS_PUBLIC | ReflectionMethod::IS_PROTECTED) as $method) {
 				if ($method->isFinal()) {
 					continue; // todo: maybe in next version
 				}
@@ -108,7 +92,6 @@ class ServiceDefinition
 					$this->openMethods[$method->getName()] = new Method($method, $this);
 				}
 			}
-
 		} while (!empty($type->getParentClass()) && $type = $type->getParentClass());
 
 		return $this->openMethods;

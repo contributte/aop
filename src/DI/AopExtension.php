@@ -1,43 +1,31 @@
 <?php
 
-
 namespace Contributte\Aop\DI;
-
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 
 use Contributte\Aop\PhpGenerator\AdvisedClassType;
 use Contributte\Aop\Pointcut;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Nette;
+use Nette\Configurator;
 use Nette\PhpGenerator as Code;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AopExtension extends Nette\DI\CompilerExtension
 {
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $classes = [];
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	private $serviceDefinitions = [];
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $compiledFile;
-
-
 
 	public function loadConfiguration()
 	{
-		AnnotationRegistry::registerLoader("class_exists");
+		AnnotationRegistry::registerLoader('class_exists');
 		AnnotationReader::addGlobalIgnoredName('persistent');
 	}
 
@@ -46,7 +34,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
-		$this->compiledFile = NULL;
+		$this->compiledFile = null;
 
 		$namespace = 'Container_' . substr(md5(serialize([
 			$builder->parameters,
@@ -62,7 +50,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 		foreach ($this->findAdvisedMethods() as $serviceId => $pointcuts) {
 			$service = $this->getWrappedDefinition($serviceId);
 			$advisedClass = AdvisedClassType::fromServiceDefinition($service, $cg);
-			$constructorInject = FALSE;
+			$constructorInject = false;
 
 			foreach ($pointcuts as $methodAdvices) {
 				/** @var Pointcut\Method $targetMethod */
@@ -77,6 +65,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 				foreach ($methodAdvices as $adviceDef) {
 					$newMethod->addAdvice($adviceDef);
 				}
+
 				$newMethod->beforePrint();
 			}
 
@@ -87,7 +76,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 			return;
 		}
 
-		require_once ($this->compiledFile = $this->writeGeneratedCode($file, $cg));
+		require_once $this->compiledFile = $this->writeGeneratedCode($file, $cg);
 	}
 
 
@@ -104,18 +93,19 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 
-	private function patchService($serviceId, Code\ClassType $advisedClass, Code\PhpNamespace $cg, $constructorInject = FALSE)
+	private function patchService($serviceId, Code\ClassType $advisedClass, Code\PhpNamespace $cg, $constructorInject = false)
 	{
 		static $publicSetup;
-		if ($publicSetup === NULL) {
+		if ($publicSetup === null) {
 			$refl = new Nette\Reflection\Property('Nette\DI\ServiceDefinition', 'setup');
 			$publicSetup = $refl->isPublic();
 		}
 
 		$def = $this->getContainerBuilder()->getDefinition($serviceId);
-		if($def instanceof Nette\DI\Definitions\FactoryDefinition) {
+		if ($def instanceof Nette\DI\Definitions\FactoryDefinition) {
 			$def = $def->getResultDefinition();
 		}
+
 		$factory = $def->getFactory();
 		if ($factory) {
 			$def->setFactory(new Nette\DI\Statement($cg->getName() . '\\' . $advisedClass->getName(), $factory->arguments));
@@ -145,7 +135,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		if (!is_dir($tempDir = Nette\DI\Helpers::expand('%tempDir%/cache/_Contributte.Aop', $builder->parameters))) {
-			mkdir($tempDir, 0777, TRUE);
+			mkdir($tempDir, 0777, true);
 		}
 
 		$key = md5(serialize($builder->parameters) . serialize(array_keys($namespace->getClasses())));
@@ -169,7 +159,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 		$analyzer = new Pointcut\AspectAnalyzer(new Pointcut\Parser($matcherFactory), $annotationReader);
 
 		$advisedMethods = [];
-		$this->classes = NULL;
+		$this->classes = null;
 
 		foreach ($builder->findByTag(AspectsExtension::ASPECT_TAG) as $aspectId => $meta) {
 			$advices = $analyzer->analyze($aspectService = $this->getWrappedDefinition($aspectId));
@@ -204,14 +194,15 @@ class AopExtension extends Nette\DI\CompilerExtension
 	 */
 	private function findByTypes($types)
 	{
-		if ($this->classes === NULL) {
+		if ($this->classes === null) {
 			$this->classes = [];
 			foreach ($this->getContainerBuilder()->getDefinitions() as $name => $def) {
-				if ($def->getType() !== NULL) {
+				if ($def->getType() !== null) {
 					$additional = [];
 					if ($def instanceof Nette\DI\Definitions\FactoryDefinition) {
 						$this->classes[strtolower($def->getResultDefinition()->getType())][] = (string) $name;
 					}
+
 					foreach (class_parents($def->getType()) + class_implements($def->getType()) + [$def->getType()] + $additional as $parent) {
 						$this->classes[strtolower($parent)][] = (string) $name;
 					}
@@ -220,7 +211,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 		}
 
 		$services = [];
-		foreach (array_filter((array)$types) as $type) {
+		foreach (array_filter((array) $types) as $type) {
 			$lower = ltrim(strtolower($type), '\\');
 			if (isset($this->classes[$lower])) {
 				$services = array_merge($services, $this->classes[$lower]);
@@ -239,10 +230,11 @@ class AopExtension extends Nette\DI\CompilerExtension
 	private function getWrappedDefinition($id)
 	{
 		if (!isset($this->serviceDefinitions[$id])) {
-			$def =$this->getContainerBuilder()->getDefinition($id);
+			$def = $this->getContainerBuilder()->getDefinition($id);
 			if ($def instanceof Nette\DI\Definitions\FactoryDefinition) {
 				$def = $def->getResultDefinition();
 			}
+
 			$this->serviceDefinitions[$id] = new Pointcut\ServiceDefinition($def, $id);
 		}
 
@@ -252,7 +244,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param \Nette\Configurator $configurator
+	 * @param Configurator $configurator
 	 */
 	public static function register(Nette\Configurator $configurator)
 	{

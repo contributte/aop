@@ -2,9 +2,9 @@
 
 namespace Tests\Cases;
 
-use Doctrine\Common\Annotations\AnnotationReader;
-
 use Contributte\Aop\Pointcut;
+use Contributte\Aop\Pointcut\ServiceDefinition;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use Tester;
 use Tester\Assert;
@@ -15,9 +15,6 @@ require_once __DIR__ . '/../../src/annotations.php';
 
 
 
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AspectAnalyzerTest extends Tester\TestCase
 {
 
@@ -34,7 +31,7 @@ class AspectAnalyzerTest extends Tester\TestCase
 					'Contributte\Aop\Before' => new Pointcut\Rules([
 						new Pointcut\Matcher\WithinMatcher('Tests\Cases\CommonService'),
 						new Pointcut\Matcher\MethodMatcher('magic'),
-					])
+					]),
 				],
 			],
 			$this->createDefinition('Tests\Cases\BeforeAspect'),
@@ -96,7 +93,7 @@ class AspectAnalyzerTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataAnalyze
 	 */
-	public function testAnalyze(array $pointcuts, \Contributte\Aop\Pointcut\ServiceDefinition $service)
+	public function testAnalyze(array $pointcuts, ServiceDefinition $service)
 	{
 		$builder = new Nette\DI\ContainerBuilder();
 		$annotationReader = new AnnotationReader();

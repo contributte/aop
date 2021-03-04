@@ -1,44 +1,27 @@
 <?php
 
-
 namespace Contributte\Aop\DI;
-
 
 use Contributte\Aop\Pointcut\Filter;
 use Contributte\Aop\Pointcut\Method;
 use Nette;
 
-
-
-/**
- * @author Filip Procházka <filip@prochazka.su>
- */
 class AdviceDefinition
 {
 
 	use Nette\SmartObject;
 
-	/**
-	 * @var Method
-	 */
+	/** @var Method */
 	private $targetMethod;
 
-	/**
-	 * @var Method
-	 */
+	/** @var Method */
 	private $advice;
 
-	/**
-	 * @var string
-	 */
+	/** @var string */
 	private $adviceType;
 
-	/**
-	 * @var \Contributte\Aop\Pointcut\Filter
-	 */
+	/** @var Filter */
 	private $filter;
-
-
 
 	public function __construct(string $adviceType, Method $targetMethod, Method $advice, Filter $filter)
 	{
