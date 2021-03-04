@@ -18,7 +18,7 @@ This extension is here to provide [AOP functionality](http://en.wikipedia.org/wi
 
 
 ```bash
-$ composer require contributte/aop
+composer require contributte/aop
 ```
 
 Enable the extension using your neon config.

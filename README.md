@@ -22,8 +22,8 @@ Website ðŸš€ <a href="https://contributte.org">contributte.org</a> | Contact ðŸ‘
 
 To install latest version of `contributte/aop` use [Composer](https://getcomposer.org).
 
-```
-$ composer require contributte/aop
+```bash
+composer require contributte/aop
 ```
 
 ## Documentation
