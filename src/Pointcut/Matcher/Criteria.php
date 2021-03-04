@@ -79,6 +79,7 @@ class Criteria
 
 	public static function create(string $operator = self::TYPE_AND): Criteria
 	{
+		//@phpstan-ignore-next-line
 		return new static($operator);
 	}
 
