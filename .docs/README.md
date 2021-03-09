@@ -23,12 +23,12 @@ composer require contributte/aop
 
 Enable the extension using your neon config.
 
-```yml
+```yaml
 extensions:
-	aop: Contributte\Aop\DI\AopExtension
-	annotations: Nettrine\Annotations\DI\AnnotationsExtension
-	aspects: Contributte\Aop\DI\AspectsExtension
-	nettrine.cache: Nettrine\Cache\DI\CacheExtension
+    aop: Contributte\Aop\DI\AopExtension
+    annotations: Nettrine\Annotations\DI\AnnotationsExtension
+    aspects: Contributte\Aop\DI\AspectsExtension
+    nettrine.cache: Nettrine\Cache\DI\CacheExtension
 ```
 Nettrine cache is there because of annotations, you can avoid it if you want.
 
@@ -39,9 +39,9 @@ You can find the [documentation of annotations extension here](https://github.co
 
 This extension creates new configuration section `aspects` and it should behave exactly like services, but all the services are marked as aspects.
 
-```yml
+```yaml
 aspects:
-	- MyApp\LoggingAspect(@dep, %param%)
+    - MyApp\LoggingAspect(@dep, %param%)
 ```
 
 > Never give the aspects any names, keep them anonymouse.
