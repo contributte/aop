@@ -207,7 +207,7 @@ class BeforeAspect
 	}
 
 	/**
-	 * @Aop\Before("method(CommonService->magic)")
+	 * @Aop\Annotations\Before("method(CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\BeforeMethod $before)
 	{
@@ -226,7 +226,7 @@ class AroundAspect
 {
 
 	/**
-	 * @Aop\Around("method(CommonService->magic)")
+	 * @Contributte\Aop\Annotations\Around("method(CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{

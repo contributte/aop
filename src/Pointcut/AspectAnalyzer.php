@@ -2,8 +2,8 @@
 
 namespace Contributte\Aop\Pointcut;
 
-use Contributte\Aop\AdviceAnnotation;
-use Contributte\Aop\InvalidAspectExceptions;
+use Contributte\Aop\Annotations\AdviceAnnotation;
+use Contributte\Aop\Exceptions\InvalidAspectExceptions;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Nette;

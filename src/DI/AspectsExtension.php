@@ -2,7 +2,7 @@
 
 namespace Contributte\Aop\DI;
 
-use Contributte\Aop\UnexpectedValueException;
+use Contributte\Aop\Exceptions\UnexpectedValueException;
 use Nette;
 use Nette\Configurator;
 

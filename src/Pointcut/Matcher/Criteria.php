@@ -2,10 +2,10 @@
 
 namespace Contributte\Aop\Pointcut\Matcher;
 
-use Contributte\Aop\InvalidArgumentException;
-use Contributte\Aop\NoRulesExceptions;
-use Contributte\Aop\NotImplementedException;
-use Contributte\Aop\ParserException;
+use Contributte\Aop\Exceptions\InvalidArgumentException;
+use Contributte\Aop\Exceptions\NoRulesExceptions;
+use Contributte\Aop\Exceptions\NotImplementedException;
+use Contributte\Aop\Exceptions\ParserException;
 use Doctrine\Common\Collections\Collection;
 use Nette;
 use Nette\DI\ContainerBuilder;

@@ -2,11 +2,11 @@
 
 namespace Tests\Cases;
 
-use Contributte\Aop\After;
-use Contributte\Aop\AfterReturning;
-use Contributte\Aop\AfterThrowing;
-use Contributte\Aop\Around;
-use Contributte\Aop\Before;
+use Contributte\Aop\Annotations\After;
+use Contributte\Aop\Annotations\AfterReturning;
+use Contributte\Aop\Annotations\AfterThrowing;
+use Contributte\Aop\Annotations\Around;
+use Contributte\Aop\Annotations\Before;
 use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\ServiceDefinition;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -16,7 +16,6 @@ use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/../files/aspect-examples.php';
-require_once __DIR__ . '/../../src/annotations.php';
 
 
 

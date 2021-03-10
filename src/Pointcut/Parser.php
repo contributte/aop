@@ -2,8 +2,8 @@
 
 namespace Contributte\Aop\Pointcut;
 
-use Contributte\Aop\InvalidArgumentException;
-use Contributte\Aop\ParserException;
+use Contributte\Aop\Exceptions\InvalidArgumentException;
+use Contributte\Aop\Exceptions\ParserException;
 use Nette;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Tokenizer\Stream;

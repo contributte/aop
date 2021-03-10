@@ -2,7 +2,7 @@
 
 namespace Contributte\Aop\Pointcut;
 
-use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Nette;
 use ReflectionMethod;
 

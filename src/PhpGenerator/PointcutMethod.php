@@ -2,13 +2,13 @@
 
 namespace Contributte\Aop\PhpGenerator;
 
-use Contributte\Aop\After;
-use Contributte\Aop\AfterReturning;
-use Contributte\Aop\AfterThrowing;
-use Contributte\Aop\Around;
-use Contributte\Aop\Before;
+use Contributte\Aop\Annotations\After;
+use Contributte\Aop\Annotations\AfterReturning;
+use Contributte\Aop\Annotations\AfterThrowing;
+use Contributte\Aop\Annotations\Around;
+use Contributte\Aop\Annotations\Before;
 use Contributte\Aop\DI\AdviceDefinition;
-use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Pointcut\RuntimeFilter;
 use Nette;
 use Nette\PhpGenerator as Code;

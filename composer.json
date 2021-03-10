@@ -50,11 +50,7 @@
 	"autoload": {
 		"psr-4": {
 			"Contributte\\Aop\\": "src"
-		},
-		"classmap": [
-			"src/annotations.php",
-			"src/exceptions.php"
-		]
+		}
 	},
 	"extra": {
 		"branch-alias": {

@@ -2,7 +2,7 @@
 
 namespace Contributte\Aop\Pointcut;
 
-use Contributte\Aop\NoRulesExceptions;
+use Contributte\Aop\Exceptions\NoRulesExceptions;
 use Nette;
 use Nette\PhpGenerator as Code;
 
