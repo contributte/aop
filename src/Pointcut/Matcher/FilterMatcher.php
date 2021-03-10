@@ -2,7 +2,7 @@
 
 namespace Contributte\Aop\Pointcut\Matcher;
 
-use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Pointcut\Filter;
 use Contributte\Aop\Pointcut\Method;
 use Nette;

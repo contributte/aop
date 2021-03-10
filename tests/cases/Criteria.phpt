@@ -2,7 +2,7 @@
 
 namespace Tests\Cases;
 
-use Contributte\Aop\InvalidArgumentException;
+use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
 use Nette;

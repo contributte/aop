@@ -54,7 +54,7 @@ class BeforeAspect
 	public $modifyArgs = false;
 
 	/**
-	 * @Aop\Before("method(Tests\Cases\CommonService->magic)")
+	 * @Aop\Annotations\Before("method(Tests\Cases\CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\BeforeMethod $before)
 	{
@@ -82,7 +82,7 @@ class ConditionalBeforeAspect
 	public $modifyArgs = false;
 
 	/**
-	 * @Aop\Before("method(Tests\Cases\CommonService->magic($argument == 1))")
+	 * @Aop\Annotations\Before("method(Tests\Cases\CommonService->magic($argument == 1))")
 	 */
 	public function log(Aop\JoinPoint\BeforeMethod $before)
 	{
@@ -119,7 +119,7 @@ class AroundAspect
 	public $modifyReturn = false;
 
 	/**
-	 * @Aop\Around("method(Tests\Cases\CommonService->magic)")
+	 * @Aop\Annotations\Around("method(Tests\Cases\CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{
@@ -157,7 +157,7 @@ class ConditionalAroundAspect
 	public $modifyReturn = false;
 
 	/**
-	 * @Aop\Around("method(Tests\Cases\CommonService->magic($argument == 1))")
+	 * @Aop\Annotations\Around("method(Tests\Cases\CommonService->magic($argument == 1))")
 	 */
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{
@@ -204,7 +204,7 @@ class AroundBlockingAspect
 	public $modifyThrow = false;
 
 	/**
-	 * @Aop\Around("method(Tests\Cases\CommonService->magic)")
+	 * @Aop\Annotations\Around("method(Tests\Cases\CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{
@@ -251,7 +251,7 @@ class AfterReturningAspect
 	public $modifyReturn = false;
 
 	/**
-	 * @Aop\AfterReturning("method(Tests\Cases\CommonService->magic)")
+	 * @Aop\Annotations\AfterReturning("method(Tests\Cases\CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\AfterReturning $after)
 	{
@@ -277,7 +277,7 @@ class ConditionalAfterReturningAspect
 	public $modifyReturn = false;
 
 	/**
-	 * @Aop\AfterReturning("method(Tests\Cases\CommonService->magic) && evaluate(this.return == 2)")
+	 * @Aop\Annotations\AfterReturning("method(Tests\Cases\CommonService->magic) && evaluate(this.return == 2)")
 	 */
 	public function log(Aop\JoinPoint\AfterReturning $after)
 	{
@@ -308,7 +308,7 @@ class AfterThrowingAspect
 	public $calls = [];
 
 	/**
-	 * @Aop\AfterThrowing("method(Tests\Cases\CommonService->magic)")
+	 * @Aop\Annotations\AfterThrowing("method(Tests\Cases\CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\AfterThrowing $after)
 	{
@@ -335,7 +335,7 @@ class AfterAspect
 	public $calls = [];
 
 	/**
-	 * @Aop\After("method(Tests\Cases\CommonService->magic)")
+	 * @Aop\Annotations\After("method(Tests\Cases\CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\AfterMethod $after)
 	{
@@ -366,7 +366,7 @@ class AspectWithArguments
 
 
 	/**
-	 * @Aop\After("method(Tests\Cases\CommonService->magic)")
+	 * @Aop\Annotations\After("method(Tests\Cases\CommonService->magic)")
 	 */
 	public function log(Aop\JoinPoint\AfterMethod $after)
 	{
@@ -385,7 +385,7 @@ class ConstructorBeforeAspect
 	public $calls = [];
 
 	/**
-	 * @Aop\Before("method(Tests\Cases\CommonService->__construct)")
+	 * @Aop\Annotations\Before("method(Tests\Cases\CommonService->__construct)")
 	 */
 	public function log(Aop\JoinPoint\BeforeMethod $before)
 	{
