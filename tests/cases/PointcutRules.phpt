@@ -1,4 +1,4 @@
-<?php
+<?php declare (strict_types = 1);
 
 /**
  * Test: Contributte\Aop\PointcutRules.
@@ -35,44 +35,44 @@ class PointcutRulesTest extends Tester\TestCase
 
 		$data[] = [
 		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\SmegHead')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			new Pointcut\Rules([new Matcher\WithinMatcher(SmegHead::class)]),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\*')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('*')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		false,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\SmegHead')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			new Pointcut\Rules([new Matcher\WithinMatcher(SmegHead::class)]),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\Cat')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			new Pointcut\Rules([new Matcher\WithinMatcher(Cat::class)]),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		false,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\Cat')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			new Pointcut\Rules([new Matcher\WithinMatcher(Cat::class)]),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\*')]),
-			$this->createDefinition('Tests\Cases\CustomTemplate'),
+			$this->createDefinition(CustomTemplate::class),
 		];
 
 		$data[] = [
@@ -84,7 +84,7 @@ class PointcutRulesTest extends Tester\TestCase
 		$data[] = [
 		false,
 			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\I*')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		return $data;
@@ -109,85 +109,85 @@ class PointcutRulesTest extends Tester\TestCase
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('injectFoo')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('public injectFoo')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('protected injectFoo')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('private injectFoo')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('*Calculation')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('protected *Calculation')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('inject*')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[inject]Bar')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
-			$this->createDefinition('Tests\Cases\CustomTemplate'),
+			$this->createDefinition(CustomTemplate::class),
 		];
 
 		$data[] = [
 		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		true,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		false,
 			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
-			$this->createDefinition('Tests\Cases\CustomTemplate'),
+			$this->createDefinition(CustomTemplate::class),
 		];
 
 		return $data;
@@ -208,7 +208,7 @@ class PointcutRulesTest extends Tester\TestCase
 	public function testMatchMethod_or()
 	{
 		$rules = new Pointcut\Rules([new Matcher\MethodMatcher('public [render|action|handle]*')]);
-		$def = $this->createDefinition('Tests\Cases\MockPresenter');
+		$def = $this->createDefinition(MockPresenter::class);
 
 		Assert::same([
 			$def->openMethods['renderDefault'],
@@ -225,14 +225,14 @@ class PointcutRulesTest extends Tester\TestCase
 
 		$data[] = [
 		true,
-			new Pointcut\Rules([new Matcher\FilterMatcher('Tests\Cases\MyPointcutFilter')]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			new Pointcut\Rules([new Matcher\FilterMatcher(MyPointcutFilter::class)]),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		false,
-			new Pointcut\Rules([new Matcher\FilterMatcher('Tests\Cases\MyPointcutFilter')]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			new Pointcut\Rules([new Matcher\FilterMatcher(MyPointcutFilter::class)]),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		return $data;
@@ -258,14 +258,14 @@ class PointcutRulesTest extends Tester\TestCase
 
 		$data[] = [
 		true,
-			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher(Test::class, $reader)]),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		$data[] = [
 		false,
-			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher(Test::class, $reader)]),
+			$this->createDefinition(Legie::class),
 		];
 
 		return $data;
@@ -291,14 +291,14 @@ class PointcutRulesTest extends Tester\TestCase
 
 		$data[] = [
 		true,
-			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
-			$this->createDefinition('Tests\Cases\Legie'),
+			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher(Test::class, $reader)]),
+			$this->createDefinition(Legie::class),
 		];
 
 		$data[] = [
 		false,
-			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher('Tests\Cases\Test', $reader)]),
-			$this->createDefinition('Tests\Cases\SmegHead'),
+			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher(Test::class, $reader)]),
+			$this->createDefinition(SmegHead::class),
 		];
 
 		return $data;
@@ -341,10 +341,10 @@ class PointcutRulesTest extends Tester\TestCase
 	private function mockMethod()
 	{
 		if (method_exists(Nette\PhpGenerator\ClassType::class, 'newInstanceWithoutConstructor')) {
-			return Nette\PhpGenerator\ClassType::from('Contributte\Aop\Pointcut\Method')->newInstanceWithoutConstructor();
+			return Nette\PhpGenerator\ClassType::from(Method::class)->newInstanceWithoutConstructor();
 
 		} else {
-			return unserialize(sprintf('O:%d:"%s":0:{}', strlen('Contributte\Aop\Pointcut\Method'), 'Contributte\Aop\Pointcut\Method'));
+			return unserialize(sprintf('O:%d:"%s":0:{}', strlen(Method::class), Method::class));
 		}
 	}
 

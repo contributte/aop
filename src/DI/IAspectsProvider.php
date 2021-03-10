@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\DI;
 
@@ -21,6 +21,6 @@ namespace Contributte\Aop\DI;
 interface IAspectsProvider
 {
 
-	function getAspectsConfiguration(): AspectsConfig;
+	public function getAspectsConfiguration(): AspectsConfig;
 
 }

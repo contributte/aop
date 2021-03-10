@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\PhpGenerator;
 
@@ -55,7 +55,7 @@ class AdvisedClassType
 	public static function fromServiceDefinition(ServiceDefinition $service, Code\PhpNamespace $namespace): Code\ClassType
 	{
 		$originalType = $service->getTypeReflection();
-		$class = $namespace->addClass(str_replace(['\\', '.'], '_', "{$originalType->getName()}Class_{$service->serviceId}"));
+		$class = $namespace->addClass(str_replace(['\\', '.'], '_', $originalType->getName() . 'Class_' . $service->serviceId));
 
 		$class->setExtends('\\' . $originalType->getName());
 		$class->setFinal(true);

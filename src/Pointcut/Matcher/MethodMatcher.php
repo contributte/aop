@@ -24,7 +24,7 @@ class MethodMatcher implements Filter
 			[$this->visibility, $method] = explode(' ', $method, 2);
 			$this->visibility = strtolower($this->visibility);
 			if (!defined('\Contributte\Aop\Pointcut\Method::VISIBILITY_' . strtoupper($this->visibility))) {
-				throw new InvalidArgumentException("Invalid visibility '{$this->visibility}'.");
+				throw new InvalidArgumentException('Invalid visibility \' ' . $this->visibility . '\'.');
 			}
 		}
 

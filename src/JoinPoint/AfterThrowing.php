@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\JoinPoint;
 
@@ -12,8 +12,8 @@ class AfterThrowing extends MethodInvocation implements ExceptionAware
 	private $exception;
 
 	/**
-	 * @param $targetObject
-	 * @param $targetMethod
+	 * @param object $targetObject
+	 * @param mixed $targetMethod
 	 * @param array $arguments
 	 * @param Exception|Throwable|NULL $exception
 	 */

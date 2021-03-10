@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\DI;
 
@@ -37,7 +37,7 @@ class AspectsConfig
 		foreach ($this->aspectsList as $def) {
 			if ( (!is_array($def)) && !is_string($def) && (!$def instanceof stdClass || empty($def->value)) && !$def instanceof Nette\DI\Statement) {
 				$serialised = Nette\Utils\Json::encode($def);
-				throw new UnexpectedValueException("The service definition $serialised is expected to be an array or Neon entity.");
+				throw new UnexpectedValueException('The service definition ' . $serialised . ' is expected to be an array or Neon entity.');
 			}
 
 			$definition = new Nette\DI\Definitions\ServiceDefinition();

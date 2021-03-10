@@ -37,7 +37,7 @@ class MatcherFactory
 
 
 	/**
-	 * @param mixed $arg
+	 * @param mixed|string $arg
 	 * @return Filter
 	 */
 	public function getMatcher(string $type, $arg)

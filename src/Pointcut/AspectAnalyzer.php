@@ -48,7 +48,7 @@ class AspectAnalyzer
 		}
 
 		if (empty($pointcuts)) {
-			throw new InvalidAspectExceptions("The aspect {$service->typeReflection} has no pointcuts defined.");
+			throw new InvalidAspectExceptions('The aspect ' . $service->typeReflection . ' has no pointcuts defined.');
 		}
 
 		return $pointcuts;
