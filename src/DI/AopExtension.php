@@ -1,11 +1,10 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\DI;
 
 use Contributte\Aop\PhpGenerator\AdvisedClassType;
 use Contributte\Aop\Pointcut;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Nette;
 use Nette\Configurator;
 use Nette\PhpGenerator as Code;
@@ -51,6 +50,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 			$advisedClass = AdvisedClassType::fromServiceDefinition($service, $cg);
 			$constructorInject = false;
 
+			/** @var AdviceDefinition[] $methodAdvices */
 			foreach ($pointcuts as $methodAdvices) {
 				/** @var Pointcut\Method $targetMethod */
 				$targetMethod = reset($methodAdvices)->getTargetMethod();
@@ -60,7 +60,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 				AdvisedClassType::generatePublicProxyMethod($advisedClass, $targetMethod->getCode()->getMethod());
 				$constructorInject = $constructorInject || strtolower($newMethod->getName()) === '__construct';
 
-				/** @var AdviceDefinition[] $methodAdvices */
 				foreach ($methodAdvices as $adviceDef) {
 					$newMethod->addAdvice($adviceDef);
 				}
@@ -138,7 +137,10 @@ class AopExtension extends Nette\DI\CompilerExtension
 		}
 
 		$key = md5(serialize($builder->parameters) . serialize(array_keys($namespace->getClasses())));
-		file_put_contents($cached = $tempDir . '/' . $key . '.php', (string) $file);
+
+		$cached = $tempDir . '/' . $key . '.php';
+
+		file_put_contents($cached, (string) $file);
 
 		return $cached;
 	}
@@ -223,7 +225,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param $id
+	 * @param int $id
 	 * @return Pointcut\ServiceDefinition
 	 */
 	private function getWrappedDefinition($id)

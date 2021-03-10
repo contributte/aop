@@ -8,7 +8,7 @@ interface Filter
 	/**
 	 * Analyzes method if it can be accepted.
 	 */
-	function matches(Method $method): bool;
+	public function matches(Method $method): bool;
 
 
 
@@ -16,6 +16,6 @@ interface Filter
 	 * Tries to figure out types, that could be used for searching in ContainerBuilder.
 	 * Pre-filtering of services should increase speed of filtering.
 	 */
-	function listAcceptedTypes(): array;
+	public function listAcceptedTypes(): array;
 
 }

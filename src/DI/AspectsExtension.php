@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\DI;
 
@@ -26,7 +26,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 			if (!($config = $extension->getAspectsConfiguration()) || !$config instanceof AspectsConfig) {
 				$refl = Nette\Reflection\Method::from($extension, 'getAspectsConfiguration');
 				$given = is_object($config) ? 'instance of ' . get_class($config) : gettype($config);
-				throw new UnexpectedValueException("Method $refl is expected to return instance of Contributte\\Aop\\DI\\AspectsConfig, but $given given.");
+				throw new UnexpectedValueException('Method ' . $refl . ' is expected to return instance of Contributte\\Aop\\DI\\AspectsConfig, but ' . $given . ' given.');
 			}
 
 			$config->load($this->compiler, $builder);

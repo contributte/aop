@@ -15,8 +15,8 @@ class AfterMethod extends MethodInvocation implements ResultAware, ExceptionAwar
 	private $exception;
 
 	/**
-	 * @param $targetObject
-	 * @param $targetMethod
+	 * @param object $targetObject
+	 * @param mixed $targetMethod
 	 * @param array $arguments
 	 * @param null $result
 	 * @param Exception|Throwable|NULL $exception

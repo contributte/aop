@@ -1,7 +1,8 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Cases;
 
+use Contributte\Aop\InvalidArgumentException;
 use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
 use Nette;
@@ -96,11 +97,11 @@ class CriteriaTest extends Tester\TestCase
 
 		Assert::throws(function () use ($dave) {
 			Criteria::compare($dave, Criteria::IN, $dave);
-		}, 'Contributte\Aop\InvalidArgumentException', 'Right value is expected to be array or instance of Traversable');
+		}, InvalidArgumentException::class, 'Right value is expected to be array or instance of Traversable');
 
 		Assert::throws(function () use ($dave) {
 			Criteria::compare($dave, Criteria::NIN, $dave);
-		}, 'Contributte\Aop\InvalidArgumentException', 'Right value is expected to be array or instance of Traversable');
+		}, InvalidArgumentException::class, 'Right value is expected to be array or instance of Traversable');
 	}
 
 
@@ -120,7 +121,7 @@ class CriteriaTest extends Tester\TestCase
 
 		Assert::throws(function () use ($dave) {
 			Criteria::compare($dave, Criteria::CONTAINS, $dave);
-		}, 'Contributte\Aop\InvalidArgumentException', 'Right value is expected to be array or instance of Traversable');
+		}, InvalidArgumentException::class, 'Right value is expected to be array or instance of Traversable');
 	}
 
 
@@ -137,11 +138,11 @@ class CriteriaTest extends Tester\TestCase
 
 		Assert::throws(function () use ($dave) {
 			Criteria::compare($dave, Criteria::MATCHES, 'h');
-		}, 'Contributte\Aop\InvalidArgumentException', 'Right value is expected to be array or Traversable');
+		}, InvalidArgumentException::class, 'Right value is expected to be array or Traversable');
 
 		Assert::throws(function () use ($dave) {
 			Criteria::compare('h', Criteria::MATCHES, $dave);
-		}, 'Contributte\Aop\InvalidArgumentException', 'Left value is expected to be array or Traversable');
+		}, InvalidArgumentException::class, 'Left value is expected to be array or Traversable');
 	}
 
 

@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\PhpGenerator;
 
@@ -146,7 +146,7 @@ class PointcutMethod
 		}
 
 		foreach ($adviceDef->getTargetMethod()->getParameterNames() as $i => $name) {
-			$condition = str_replace('$' . $name, '$__arguments[' . $i . ']', $condition);
+			$condition = str_replace('$' . $name, '$__arguments[' . $i . ']', (string) $condition);
 		}
 
 		return Code\Helpers::format("if ? {\n?\n}", new Code\PhpLiteral($condition), new Code\PhpLiteral(Nette\Utils\Strings::indent($code)));

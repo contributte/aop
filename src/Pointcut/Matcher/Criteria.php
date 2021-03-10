@@ -46,7 +46,7 @@ class Criteria
 	public function __construct($operator = self::TYPE_AND)
 	{
 		if (!in_array($operator = strtoupper($operator), [self::TYPE_AND, self::TYPE_OR], true)) {
-			throw new InvalidArgumentException("Given operator '$operator' cannot be evaluated.");
+			throw new InvalidArgumentException('Given operator \'' . $operator . '\' cannot be evaluated.');
 		}
 
 		$this->operator = $operator;
@@ -68,7 +68,7 @@ class Criteria
 		}
 
 		if (!self::isValidComparison($comparison = strtoupper($comparison))) {
-			throw new InvalidArgumentException("Given comparison '$comparison' cannot be evaluated.");
+			throw new InvalidArgumentException('Given comparison \'' . $comparison . '\' cannot be evaluated.');
 		}
 
 		$this->expressions[] = [$left, $comparison, $right];
@@ -265,7 +265,7 @@ class Criteria
 			restore_error_handler();
 			throw new ParserException($message, $severenity);
 		});
-		$result = eval("return $expression;");
+		$result = eval('return ' . $expression . ';');
 		restore_error_handler();
 
 		return $result;
@@ -295,32 +295,31 @@ class Criteria
 			case self::EQ:
 				return $left === $right;
 
-			case self::NEQ;
-			case '!=';
+			case self::NEQ:
+			case '!=':
 				return !self::compare($left, self::EQ, $right);
 
 			case self::GT:
 				return $left > $right;
 
-			case self::GTE;
+			case self::GTE:
 				return $left >= $right;
 
-			case self::LT;
+			case self::LT:
 				return $left < $right;
 
-			case self::LTE;
+			case self::LTE:
 				return $left <= $right;
 
-			case self::IS;
-			case 'IS';
+			case self::IS:
+			case 'IS':
 				return $left === $right;
 
-			case self::NIN;
+			case self::NIN:
 				return !self::compare($left, self::IN, $right);
 
-			case self::IN;
+			case self::IN:
 				if ($right instanceof SplObjectStorage || $right instanceof Collection) {
-					/** @var Collection $right */
 					return $left !== null && $right->contains($left);
 
 				} else {

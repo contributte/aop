@@ -1,7 +1,12 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Tests\Cases;
 
+use Contributte\Aop\After;
+use Contributte\Aop\AfterReturning;
+use Contributte\Aop\AfterThrowing;
+use Contributte\Aop\Around;
+use Contributte\Aop\Before;
 use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\ServiceDefinition;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -28,61 +33,61 @@ class AspectAnalyzerTest extends Tester\TestCase
 		$data[] = [
 			[
 				'log' => [
-					'Contributte\Aop\Before' => new Pointcut\Rules([
-						new Pointcut\Matcher\WithinMatcher('Tests\Cases\CommonService'),
+					Before::class => new Pointcut\Rules([
+						new Pointcut\Matcher\WithinMatcher(CommonService::class),
 						new Pointcut\Matcher\MethodMatcher('magic'),
 					]),
 				],
 			],
-			$this->createDefinition('Tests\Cases\BeforeAspect'),
+			$this->createDefinition(BeforeAspect::class),
 		];
 
 		$data[] = [
 			[
 				'log' => [
-					'Contributte\Aop\Around' => new Pointcut\Rules([
-						new Pointcut\Matcher\WithinMatcher('Tests\Cases\CommonService'),
+					Around::class => new Pointcut\Rules([
+						new Pointcut\Matcher\WithinMatcher(CommonService::class),
 						new Pointcut\Matcher\MethodMatcher('magic'),
 					]),
 				],
 			],
-			$this->createDefinition('Tests\Cases\AroundAspect'),
+			$this->createDefinition(AroundAspect::class),
 		];
 
 		$data[] = [
 			[
 				'log' => [
-					'Contributte\Aop\AfterReturning' => new Pointcut\Rules([
-						new Pointcut\Matcher\WithinMatcher('Tests\Cases\CommonService'),
+					AfterReturning::class => new Pointcut\Rules([
+						new Pointcut\Matcher\WithinMatcher(CommonService::class),
 						new Pointcut\Matcher\MethodMatcher('magic'),
 					]),
 				],
 			],
-			$this->createDefinition('Tests\Cases\AfterReturningAspect'),
+			$this->createDefinition(AfterReturningAspect::class),
 		];
 
 		$data[] = [
 			[
 				'log' => [
-					'Contributte\Aop\AfterThrowing' => new Pointcut\Rules([
-						new Pointcut\Matcher\WithinMatcher('Tests\Cases\CommonService'),
+					AfterThrowing::class => new Pointcut\Rules([
+						new Pointcut\Matcher\WithinMatcher(CommonService::class),
 						new Pointcut\Matcher\MethodMatcher('magic'),
 					]),
 				],
 			],
-			$this->createDefinition('Tests\Cases\AfterThrowingAspect'),
+			$this->createDefinition(AfterThrowingAspect::class),
 		];
 
 		$data[] = [
 			[
 				'log' => [
-					'Contributte\Aop\After' => new Pointcut\Rules([
-						new Pointcut\Matcher\WithinMatcher('Tests\Cases\CommonService'),
+					After::class => new Pointcut\Rules([
+						new Pointcut\Matcher\WithinMatcher(CommonService::class),
 						new Pointcut\Matcher\MethodMatcher('magic'),
 					]),
 				],
 			],
-			$this->createDefinition('Tests\Cases\AfterAspect'),
+			$this->createDefinition(AfterAspect::class),
 		];
 
 		return $data;

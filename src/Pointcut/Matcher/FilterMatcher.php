@@ -18,7 +18,7 @@ class FilterMatcher implements Filter
 	public function __construct($filterClass)
 	{
 		if (!in_array(Filter::class, class_implements($filterClass), true)) {
-			throw new InvalidArgumentException("Given class '$filterClass' must implement Contributte\\Aop\\Pointcut\\Filter.");
+			throw new InvalidArgumentException('Given class \'' . $filterClass . '\' must implement Contributte\\Aop\\Pointcut\\Filter.');
 		}
 
 		$this->filter = new $filterClass();

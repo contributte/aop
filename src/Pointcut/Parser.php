@@ -69,7 +69,6 @@ class Parser
 
 
 	/**
-	 * @param $tokens
 	 * @return Rules|mixed
 	 * @throws ParserException
 	 */
@@ -313,7 +312,7 @@ class Parser
 					}
 
 					if (empty($right)) {
-						throw new ParserException("Argument for $comparator cannot be an empty array.");
+						throw new ParserException('Argument for ' . $comparator . ' cannot be an empty array.');
 					}
 
 					$conditions[] = [$left, $comparator, $right];
@@ -398,7 +397,7 @@ class Parser
 				$type = $tokens->currentToken();
 				throw new ParserException('Unexpected token ' . $type->type . ' at offset ' . $type->offset);
 			}
-		} while ($token = $tokens->nextToken());
+		} while ($tokens->nextToken());
 
 		throw new ParserException('Expected token ' . implode(', ', (array) $types));
 	}

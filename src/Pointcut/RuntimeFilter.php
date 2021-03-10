@@ -7,6 +7,6 @@ use Nette\PhpGenerator\Literal;
 interface RuntimeFilter
 {
 
-	function createCondition(): ?Literal;
+	public function createCondition(): ?Literal;
 
 }
