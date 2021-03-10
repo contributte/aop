@@ -1,4 +1,0 @@
-[PHP]
-
-extension=tokenizer.so
-extension=json.so

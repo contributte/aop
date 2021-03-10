@@ -1,4 +1,4 @@
-<?php declare (strict_types = 1);
+<?php declare(strict_types = 1);
 
 /**
  * Test: Contributte\Aop\PointcutRules.
@@ -10,16 +10,21 @@ namespace Tests\Cases;
 
 use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\Filter;
-use Contributte\Aop\Pointcut\Matcher;
-use Contributte\Aop\Pointcut\Matcher\Criteria;
+use Contributte\Aop\Pointcut\Matcher\ClassAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\FilterMatcher;
+use Contributte\Aop\Pointcut\Matcher\MethodAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\MethodMatcher;
 use Contributte\Aop\Pointcut\Matcher\SettingMatcher;
+use Contributte\Aop\Pointcut\Matcher\WithinMatcher;
 use Contributte\Aop\Pointcut\Method;
-use Contributte\Aop\Pointcut\ServiceDefinition;
+use Contributte\Aop\Pointcut\Rules;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Nette;
-use Nette\PhpGenerator as Code;
-use Tester;
-use Tester\Assert;
+use Nette\Bridges\ApplicationLatte\Template;
+use Nette\DI\ContainerBuilder;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\PhpGenerator\ClassType;
+use Nette\PhpGenerator\PhpLiteral;
+use PHPUnit\Framework\TestCase;
 use Tests\Files\Pointcut\Cat;
 use Tests\Files\Pointcut\CustomTemplate;
 use Tests\Files\Pointcut\Legie;
@@ -28,346 +33,143 @@ use Tests\Files\Pointcut\MyPointcutFilter;
 use Tests\Files\Pointcut\SmegHead;
 use Tests\Files\Pointcut\Test;
 
-require_once __DIR__ . '/../bootstrap.php';
-
-
-
-class PointcutRulesTest extends Tester\TestCase
+class PointcutRulesTest extends TestCase
 {
 
-	public function dataMatchWithin()
+	public function dataMatchWithin(): array
 	{
 		$data = [];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher(SmegHead::class)]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Files\Pointcut\*')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher('*')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\WithinMatcher(SmegHead::class)]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher(Cat::class)]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\WithinMatcher(Cat::class)]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\*')]),
-			$this->createDefinition(CustomTemplate::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\*')]),
-			$this->createDefinition(Nette\Bridges\ApplicationLatte\Template::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Nette\Application\UI\I*')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
+		$data[] = [true, new Rules([new WithinMatcher(SmegHead::class)]), $this->createDefinition(SmegHead::class)];
+		$data[] = [true, new Rules([new WithinMatcher('Tests\Files\Pointcut\*')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [true, new Rules([new WithinMatcher('*')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [false, new Rules([new WithinMatcher(SmegHead::class)]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new WithinMatcher(Cat::class)]), $this->createDefinition(Legie::class)];
+		$data[] = [false, new Rules([new WithinMatcher(Cat::class)]), $this->createDefinition(SmegHead::class)];
+		$data[] = [true, new Rules([new WithinMatcher('Nette\Application\UI\*')]), $this->createDefinition(CustomTemplate::class)];
+		$data[] = [true, new Rules([new WithinMatcher('Nette\Application\UI\*')]), $this->createDefinition(Template::class)];
+		$data[] = [false, new Rules([new WithinMatcher('Nette\Application\UI\I*')]), $this->createDefinition(SmegHead::class)];
 		return $data;
 	}
-
-
 
 	/**
 	 * @dataProvider dataMatchWithin
 	 */
-	public function testMatchWithin($expected, Filter $rules, ServiceDefinition $def)
+	public function testMatchWithin($expected, Pointcut\Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
-		Assert::same($expected, (bool) $def->match($rules));
+		$this->assertSame($expected, (bool) $def->match($rules));
 	}
 
-
-
-	public function dataMatchMethod()
+	public function dataMatchMethod(): array
 	{
 		$data = [];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('injectFoo')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('public injectFoo')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\MethodMatcher('protected injectFoo')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\MethodMatcher('private injectFoo')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('*Calculation')]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('protected *Calculation')]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('inject*')]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('[inject]Bar')]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\MethodMatcher('[?inject]Bar')]),
-			$this->createDefinition(CustomTemplate::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\MethodMatcher('[!inject]Bar')]),
-			$this->createDefinition(CustomTemplate::class),
-		];
-
+		$data[] = [true, new Rules([new MethodMatcher('injectFoo')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [true, new Rules([new MethodMatcher('public injectFoo')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [false, new Rules([new MethodMatcher('protected injectFoo')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [false, new Rules([new MethodMatcher('private injectFoo')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [true, new Rules([new MethodMatcher('*Calculation')]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new MethodMatcher('protected *Calculation')]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new MethodMatcher('inject*')]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new MethodMatcher('[inject]Bar')]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new MethodMatcher('[?inject]Bar')]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new MethodMatcher('[?inject]Bar')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [false, new Rules([new MethodMatcher('[?inject]Bar')]), $this->createDefinition(CustomTemplate::class)];
+		$data[] = [false, new Rules([new MethodMatcher('[!inject]Bar')]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new MethodMatcher('[!inject]Bar')]), $this->createDefinition(SmegHead::class)];
+		$data[] = [false, new Rules([new MethodMatcher('[!inject]Bar')]), $this->createDefinition(CustomTemplate::class)];
 		return $data;
 	}
-
-
 
 	/**
 	 * @dataProvider dataMatchMethod
 	 */
-	public function testMatchMethod($expected, Filter $rules, ServiceDefinition $def)
+	public function testMatchMethod($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
-		Assert::same($expected, (bool) $def->match($rules));
+		$this->assertSame($expected, (bool) $def->match($rules));
 	}
 
-
-
-	public function testMatchMethod_or()
+	public function testMatchMethod_or(): void
 	{
-		$rules = new Pointcut\Rules([new Matcher\MethodMatcher('public [render|action|handle]*')]);
+		$rules = new Rules([new MethodMatcher('public [render|action|handle]*')]);
 		$def = $this->createDefinition(MockPresenter::class);
-
-		Assert::same([
-			$def->openMethods['renderDefault'],
-			$def->openMethods['actionDefault'],
-			$def->openMethods['handleSort'],
-		], $def->match($rules));
+		$this->assertSame([$def->openMethods['renderDefault'], $def->openMethods['actionDefault'], $def->openMethods['handleSort']], $def->match($rules));
 	}
-
-
-
-	public function dataMatchFilter()
+	public function dataMatchFilter(): array
 	{
 		$data = [];
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\FilterMatcher(MyPointcutFilter::class)]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\FilterMatcher(MyPointcutFilter::class)]),
-			$this->createDefinition(SmegHead::class),
-		];
-
+		$data[] = [true, new Rules([new FilterMatcher(MyPointcutFilter::class)]), $this->createDefinition(Legie::class)];
+		$data[] = [false, new Rules([new FilterMatcher(MyPointcutFilter::class)]), $this->createDefinition(SmegHead::class)];
 		return $data;
 	}
-
-
-
 	/**
 	 * @dataProvider dataMatchFilter
 	 */
-	public function testMatchFilter($expected, Filter $rules, ServiceDefinition $def)
+	public function testMatchFilter($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
-		Assert::same($expected, (bool) $def->match($rules));
+		$this->assertSame($expected, (bool) $def->match($rules));
 	}
-
-
-
-	public function dataMatchClassAnnotateWith()
+	public function dataMatchClassAnnotateWith(): array
 	{
 		$data = [];
-
 		$reader = new AnnotationReader();
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher(Test::class, $reader)]),
-			$this->createDefinition(SmegHead::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\ClassAnnotateWithMatcher(Test::class, $reader)]),
-			$this->createDefinition(Legie::class),
-		];
-
+		$data[] = [true, new Rules([new ClassAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(SmegHead::class)];
+		$data[] = [false, new Rules([new ClassAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(Legie::class)];
 		return $data;
 	}
-
-
-
 	/**
 	 * @dataProvider dataMatchClassAnnotateWith
 	 */
-	public function testMatchClassAnnotateWith($expected, Filter $rules, ServiceDefinition $def)
+	public function testMatchClassAnnotateWith($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
-		Assert::same($expected, (bool) $def->match($rules));
+		$this->assertSame($expected, (bool) $def->match($rules));
 	}
 
-
-
-	public function dataMatchMethodAnnotateWith()
+	public function dataMatchMethodAnnotateWith(): array
 	{
 		$data = [];
-
 		$reader = new AnnotationReader();
-
-		$data[] = [
-		true,
-			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher(Test::class, $reader)]),
-			$this->createDefinition(Legie::class),
-		];
-
-		$data[] = [
-		false,
-			new Pointcut\Rules([new Matcher\MethodAnnotateWithMatcher(Test::class, $reader)]),
-			$this->createDefinition(SmegHead::class),
-		];
-
+		$data[] = [true, new Rules([new MethodAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(Legie::class)];
+		$data[] = [false, new Rules([new MethodAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(SmegHead::class)];
 		return $data;
 	}
-
-
-
 	/**
 	 * @dataProvider dataMatchMethodAnnotateWith
 	 */
-	public function testMatchMethodAnnotateWith($expected, Filter $rules, ServiceDefinition $def)
+	public function testMatchMethodAnnotateWith($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
-		Assert::same($expected, (bool) $def->match($rules));
+		$this->assertSame($expected, (bool) $def->match($rules));
 	}
 
-
-
-	public function testMatchesSetting()
+	public function testMatchesSetting(): void
 	{
-		$builder = new Nette\DI\ContainerBuilder();
+		$builder = new ContainerBuilder();
 		$builder->parameters['foo']['dave'] = true;
 		$builder->parameters['foo']['kryten'] = false;
 		$builder->parameters['friendship'] = 'Is magic';
-
-		$args = new SettingMatcher(Criteria::create()->where('foo.dave', Criteria::EQ, new Code\PhpLiteral('TRUE')), $builder);
-		Assert::true($args->matches($this->mockMethod()));
-
-		$args = new SettingMatcher(Criteria::create()->where('foo.kryten', Criteria::EQ, new Code\PhpLiteral('FALSE')), $builder);
-		Assert::true($args->matches($this->mockMethod()));
-
-		$args = new SettingMatcher(Criteria::create()->where('friendship', Criteria::EQ, new Code\PhpLiteral("'Is magic'")), $builder);
-		Assert::true($args->matches($this->mockMethod()));
+		$args = new SettingMatcher(Pointcut\Matcher\Criteria::create()->where('foo.dave', Pointcut\Matcher\Criteria::EQ, new PhpLiteral('TRUE')), $builder);
+		$this->assertTrue($args->matches($this->mockMethod()));
+		$args = new SettingMatcher(Pointcut\Matcher\Criteria::create()->where('foo.kryten', Pointcut\Matcher\Criteria::EQ, new PhpLiteral('FALSE')), $builder);
+		$this->assertTrue($args->matches($this->mockMethod()));
+		$args = new SettingMatcher(Pointcut\Matcher\Criteria::create()->where('friendship', Pointcut\Matcher\Criteria::EQ, new PhpLiteral("'Is magic'")), $builder);
+		$this->assertTrue($args->matches($this->mockMethod()));
 	}
 
-
-
-	/**
-	 * @return Method
-	 */
-	private function mockMethod()
+	private function mockMethod(): Method
 	{
-		if (method_exists(Nette\PhpGenerator\ClassType::class, 'newInstanceWithoutConstructor')) {
-			return Nette\PhpGenerator\ClassType::from(Method::class)->newInstanceWithoutConstructor();
-
-		} else {
-			return unserialize(sprintf('O:%d:"%s":0:{}', strlen(Method::class), Method::class));
+		if (method_exists(ClassType::class, 'newInstanceWithoutConstructor')) {
+			return ClassType::from(Method::class)->newInstanceWithoutConstructor();
 		}
+
+		return unserialize(sprintf('O:%d:"%s":0:{}', strlen(Method::class), Method::class));
 	}
-
-
-
 	/**
 	 * @param string $class
 	 * @return Pointcut\ServiceDefinition
 	 */
 	private function createDefinition($class)
 	{
-		$def = new Nette\DI\ServiceDefinition();
+		$def = new ServiceDefinition();
 		$def->setClass($class);
-
 		return new Pointcut\ServiceDefinition($def, 'abc');
 	}
 
 }
-
-(new PointcutRulesTest())->run();

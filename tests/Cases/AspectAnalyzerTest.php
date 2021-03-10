@@ -11,8 +11,7 @@ use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\ServiceDefinition;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
-use Tester;
-use Tester\Assert;
+use PHPUnit\Framework\TestCase;
 use Tests\Files\Aspects\AfterAspect;
 use Tests\Files\Aspects\AfterReturningAspect;
 use Tests\Files\Aspects\AfterThrowingAspect;
@@ -20,11 +19,7 @@ use Tests\Files\Aspects\AroundAspect;
 use Tests\Files\Aspects\BeforeAspect;
 use Tests\Files\Aspects\CommonService;
 
-require_once __DIR__ . '/../bootstrap.php';
-
-
-
-class AspectAnalyzerTest extends Tester\TestCase
+class AspectAnalyzerTest extends TestCase
 {
 
 	/***
@@ -109,7 +104,7 @@ class AspectAnalyzerTest extends Tester\TestCase
 		$matcherFactory = new Pointcut\MatcherFactory($builder, $annotationReader);
 		$analyzer = new Pointcut\AspectAnalyzer(new Pointcut\Parser($matcherFactory), $annotationReader);
 
-		Assert::equal($pointcuts, $analyzer->analyze($service));
+		$this->assertEquals($pointcuts, $analyzer->analyze($service));
 	}
 
 
@@ -120,12 +115,10 @@ class AspectAnalyzerTest extends Tester\TestCase
 	 */
 	private function createDefinition($class)
 	{
-		$def = new Nette\DI\ServiceDefinition();
+		$def = new Nette\DI\Definitions\ServiceDefinition();
 		$def->setClass($class);
 
 		return new Pointcut\ServiceDefinition($def, 'abc');
 	}
 
 }
-
-(new AspectAnalyzerTest())->run();

@@ -2,82 +2,57 @@
 
 namespace Tests\Cases;
 
-use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Doctrine\Common\Collections\ArrayCollection;
-use Nette;
-use Nette\PhpGenerator as Code;
+use Nette\DI\ContainerBuilder;
+use Nette\PhpGenerator\PhpLiteral;
+use PHPUnit\Framework\TestCase;
 use SplObjectStorage;
 use stdClass;
-use Tester;
-use Tester\Assert;
 
-require_once __DIR__ . '/../bootstrap.php';
-
-
-
-class CriteriaTest extends Tester\TestCase
+class CriteriaTest extends TestCase
 {
 
 	public function testEqual()
 	{
-		Assert::true(Criteria::compare(true, Criteria::EQ, true));
-		Assert::false(Criteria::compare(true, Criteria::EQ, false));
-		Assert::false(Criteria::compare(true, Criteria::NEQ, true));
-		Assert::true(Criteria::compare(true, Criteria::NEQ, false));
+		$this->assertTrue(Criteria::compare(true, Criteria::EQ, true));
+		$this->assertFalse(Criteria::compare(true, Criteria::EQ, false));
+		$this->assertFalse(Criteria::compare(true, Criteria::NEQ, true));
+		$this->assertTrue(Criteria::compare(true, Criteria::NEQ, false));
 	}
-
-
-
 	public function testGreater()
 	{
-		Assert::true(Criteria::compare(2, Criteria::GT, 1));
-		Assert::false(Criteria::compare(1, Criteria::GT, 1));
-		Assert::false(Criteria::compare(1, Criteria::GT, 2));
+		$this->assertTrue(Criteria::compare(2, Criteria::GT, 1));
+		$this->assertFalse(Criteria::compare(1, Criteria::GT, 1));
+		$this->assertFalse(Criteria::compare(1, Criteria::GT, 2));
 	}
-
-
-
 	public function testGreaterOrEqual()
 	{
-		Assert::true(Criteria::compare(2, Criteria::GTE, 1));
-		Assert::true(Criteria::compare(1, Criteria::GTE, 1));
-		Assert::false(Criteria::compare(1, Criteria::GTE, 2));
+		$this->assertTrue(Criteria::compare(2, Criteria::GTE, 1));
+		$this->assertTrue(Criteria::compare(1, Criteria::GTE, 1));
+		$this->assertFalse(Criteria::compare(1, Criteria::GTE, 2));
 	}
-
-
-
 	public function testLower()
 	{
-		Assert::true(Criteria::compare(1, Criteria::LT, 2));
-		Assert::false(Criteria::compare(2, Criteria::LT, 2));
-		Assert::false(Criteria::compare(2, Criteria::LT, 1));
+		$this->assertTrue(Criteria::compare(1, Criteria::LT, 2));
+		$this->assertFalse(Criteria::compare(2, Criteria::LT, 2));
+		$this->assertFalse(Criteria::compare(2, Criteria::LT, 1));
 	}
-
-
-
 	public function testLowerOrEqual()
 	{
-		Assert::true(Criteria::compare(1, Criteria::LTE, 2));
-		Assert::true(Criteria::compare(2, Criteria::LTE, 2));
-		Assert::false(Criteria::compare(2, Criteria::LTE, 1));
+		$this->assertTrue(Criteria::compare(1, Criteria::LTE, 2));
+		$this->assertTrue(Criteria::compare(2, Criteria::LTE, 2));
+		$this->assertFalse(Criteria::compare(2, Criteria::LTE, 1));
 	}
-
-
-
 	public function testIs()
 	{
 		$foo = new stdClass();
 		$bar = new stdClass();
-
-		Assert::true(Criteria::compare($foo, Criteria::IS, $foo));
-		Assert::false(Criteria::compare($foo, Criteria::IS, $bar));
-		Assert::true(Criteria::compare($bar, Criteria::IS, $bar));
-		Assert::false(Criteria::compare($bar, Criteria::IS, $foo));
+		$this->assertTrue(Criteria::compare($foo, Criteria::IS, $foo));
+		$this->assertFalse(Criteria::compare($foo, Criteria::IS, $bar));
+		$this->assertTrue(Criteria::compare($bar, Criteria::IS, $bar));
+		$this->assertFalse(Criteria::compare($bar, Criteria::IS, $foo));
 	}
-
-
-
 	public function testIn()
 	{
 		$dave = new stdClass();
@@ -85,26 +60,21 @@ class CriteriaTest extends Tester\TestCase
 		$kryten = new SplObjectStorage();
 		$kryten->attach($dave);
 		$cat = new stdClass();
-
-		Assert::true(Criteria::compare($dave, Criteria::IN, $lister));
-		Assert::false(Criteria::compare($dave, Criteria::NIN, $lister));
-		Assert::true(Criteria::compare($dave, Criteria::IN, $kryten));
-		Assert::false(Criteria::compare($dave, Criteria::NIN, $kryten));
-		Assert::false(Criteria::compare($cat, Criteria::IN, $lister));
-		Assert::true(Criteria::compare($cat, Criteria::NIN, $lister));
-		Assert::false(Criteria::compare($cat, Criteria::IN, $kryten));
-		Assert::true(Criteria::compare($cat, Criteria::NIN, $kryten));
-
-		Assert::throws(function () use ($dave) {
-			Criteria::compare($dave, Criteria::IN, $dave);
-		}, InvalidArgumentException::class, 'Right value is expected to be array or instance of Traversable');
-
-		Assert::throws(function () use ($dave) {
-			Criteria::compare($dave, Criteria::NIN, $dave);
-		}, InvalidArgumentException::class, 'Right value is expected to be array or instance of Traversable');
+		$this->assertTrue(Criteria::compare($dave, Criteria::IN, $lister));
+		$this->assertFalse(Criteria::compare($dave, Criteria::NIN, $lister));
+		$this->assertTrue(Criteria::compare($dave, Criteria::IN, $kryten));
+		$this->assertFalse(Criteria::compare($dave, Criteria::NIN, $kryten));
+		$this->assertFalse(Criteria::compare($cat, Criteria::IN, $lister));
+		$this->assertTrue(Criteria::compare($cat, Criteria::NIN, $lister));
+		$this->assertFalse(Criteria::compare($cat, Criteria::IN, $kryten));
+		$this->assertTrue(Criteria::compare($cat, Criteria::NIN, $kryten));
 	}
 
-
+	public function testIn_WithWrongDataType_ShouldThrowException(): void
+	{
+		$this->expectExceptionMessage('Right value is expected to be array or instance of Traversable');
+		Criteria::compare(new stdClass(), Criteria::IN, new stdClass());
+	}
 
 	public function testContains()
 	{
@@ -113,101 +83,67 @@ class CriteriaTest extends Tester\TestCase
 		$kryten = new SplObjectStorage();
 		$kryten->attach($dave);
 		$cat = new stdClass();
-
-		Assert::true(Criteria::compare($lister, Criteria::CONTAINS, $dave));
-		Assert::true(Criteria::compare($kryten, Criteria::CONTAINS, $dave));
-		Assert::false(Criteria::compare($lister, Criteria::CONTAINS, $cat));
-		Assert::false(Criteria::compare($kryten, Criteria::CONTAINS, $cat));
-
-		Assert::throws(function () use ($dave) {
-			Criteria::compare($dave, Criteria::CONTAINS, $dave);
-		}, InvalidArgumentException::class, 'Right value is expected to be array or instance of Traversable');
+		$this->assertTrue(Criteria::compare($lister, Criteria::CONTAINS, $dave));
+		$this->assertTrue(Criteria::compare($kryten, Criteria::CONTAINS, $dave));
+		$this->assertFalse(Criteria::compare($lister, Criteria::CONTAINS, $cat));
+		$this->assertFalse(Criteria::compare($kryten, Criteria::CONTAINS, $cat));
 	}
 
-
-
+	public function testContains_WithWrongDataType_ShouldThrowException(): void
+	{
+		$this->expectExceptionMessage('Right value is expected to be array or instance of Traversable');
+		Criteria::compare(new stdClass(), Criteria::CONTAINS, new stdClass());
+	}
 	public function testMatches()
 	{
 		$dave = ['a', 'b', 'c'];
 		$cat = ['c', 'd', 'e'];
 		$lister = ['e', 'f', 'g'];
-
-		Assert::true(Criteria::compare($dave, Criteria::MATCHES, $cat));
-		Assert::true(Criteria::compare($cat, Criteria::MATCHES, $lister));
-		Assert::false(Criteria::compare($lister, Criteria::MATCHES, $dave));
-
-		Assert::throws(function () use ($dave) {
-			Criteria::compare($dave, Criteria::MATCHES, 'h');
-		}, InvalidArgumentException::class, 'Right value is expected to be array or Traversable');
-
-		Assert::throws(function () use ($dave) {
-			Criteria::compare('h', Criteria::MATCHES, $dave);
-		}, InvalidArgumentException::class, 'Left value is expected to be array or Traversable');
+		$this->assertTrue(Criteria::compare($dave, Criteria::MATCHES, $cat));
+		$this->assertTrue(Criteria::compare($cat, Criteria::MATCHES, $lister));
+		$this->assertFalse(Criteria::compare($lister, Criteria::MATCHES, $dave));
 	}
 
+	public function testMatches_WithWrongRightDataType_ShouldThrowException(): void
+	{
+		$this->expectExceptionMessage('Right value is expected to be array or Traversable');
+		Criteria::compare(['a', 'b', 'c'], Criteria::MATCHES, 'h');
+	}
 
+	public function testMatches_WithWrongLeftDataType_ShouldThrowException(): void
+	{
+		$this->expectExceptionMessage('Left value is expected to be array or Traversable');
+		Criteria::compare('h', Criteria::MATCHES, ['a', 'b', 'c']);
+	}
 
 	public function testSerialize_propertyAccess()
 	{
-		$criteria = Criteria::create()->where('this.foo.bar', Criteria::EQ, new Code\PhpLiteral('TRUE'));
-		Assert::same(
-			"(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this, 'foo.bar'), '==', true))",
-			(string) $criteria->serialize(new Nette\DI\ContainerBuilder())
-		);
+		$criteria = Criteria::create()->where('this.foo.bar', Criteria::EQ, new PhpLiteral('TRUE'));
+		$this->assertSame("(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this, 'foo.bar'), '==', true))", (string) $criteria->serialize(new ContainerBuilder()));
 	}
-
-
-
 	public function testSerialize_arguments()
 	{
-		$criteria = Criteria::create()->where('$arg', Criteria::EQ, new Code\PhpLiteral('TRUE'));
-		Assert::same(
-			"(Criteria::compare(\$arg, '==', true))",
-			(string) $criteria->serialize(new Nette\DI\ContainerBuilder())
-		);
+		$criteria = Criteria::create()->where('$arg', Criteria::EQ, new PhpLiteral('TRUE'));
+		$this->assertSame("(Criteria::compare(\$arg, '==', true))", (string) $criteria->serialize(new ContainerBuilder()));
 	}
-
-
-
 	public function testSerialize_parameter()
 	{
-		$builder = new Nette\DI\ContainerBuilder();
+		$builder = new ContainerBuilder();
 		$builder->parameters['foo']['bar'] = 'complicated value!';
-		$criteria = Criteria::create()->where('%foo.bar%', Criteria::EQ, new Code\PhpLiteral('TRUE'));
-		Assert::same(
-			"(Criteria::compare('complicated value!', '==', true))",
-			(string) $criteria->serialize($builder)
-		);
+		$criteria = Criteria::create()->where('%foo.bar%', Criteria::EQ, new PhpLiteral('TRUE'));
+		$this->assertSame("(Criteria::compare('complicated value!', '==', true))", (string) $criteria->serialize($builder));
 	}
-
-
-
 	public function testSerialize_service_byName()
 	{
-		$criteria = Criteria::create()->where('context.foo.bar', Criteria::EQ, new Code\PhpLiteral('TRUE'));
-		Assert::same(
-			"(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this->_contributte_aopContainer->getService('foo'), 'bar'), '==', true))",
-			(string) $criteria->serialize(new Nette\DI\ContainerBuilder())
-		);
+		$criteria = Criteria::create()->where('context.foo.bar', Criteria::EQ, new PhpLiteral('TRUE'));
+		$this->assertSame("(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this->_contributte_aopContainer->getService('foo'), 'bar'), '==', true))", (string) $criteria->serialize(new ContainerBuilder()));
 	}
-
-
-
 	public function testSerialize_service_byType()
 	{
-		$criteria = Criteria::create()->where('context.stdClass.bar', Criteria::EQ, new Code\PhpLiteral('TRUE'));
-		Assert::match(
-			"(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this->_contributte_aopContainer->getByType('stdClass'), 'bar'), '==', true))",
-			(string) $criteria->serialize(new Nette\DI\ContainerBuilder())
-		);
-
-		$criteria = Criteria::create()->where('context.Tests\Cases\CriteriaTest.bar', Criteria::EQ, new Code\PhpLiteral('TRUE'));
-		Assert::match(
-			"(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this->_contributte_aopContainer->getByType('Tests\Cases\CriteriaTest'), 'bar'), '==', true))",
-			(string) $criteria->serialize(new Nette\DI\ContainerBuilder())
-		);
+		$criteria = Criteria::create()->where('context.stdClass.bar', Criteria::EQ, new PhpLiteral('TRUE'));
+		$this->assertStringMatchesFormat("(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this->_contributte_aopContainer->getByType('stdClass'), 'bar'), '==', true))", (string) $criteria->serialize(new ContainerBuilder()));
+		$criteria = Criteria::create()->where('context.Tests\Cases\CriteriaTest.bar', Criteria::EQ, new PhpLiteral('TRUE'));
+		$this->assertStringMatchesFormat("(Criteria::compare(PropertyAccess::createPropertyAccessor()->getValue(\$this->_contributte_aopContainer->getByType('Tests\\Cases\\CriteriaTest'), 'bar'), '==', true))", (string) $criteria->serialize(new ContainerBuilder()));
 	}
 
 }
-
-(new CriteriaTest())->run();

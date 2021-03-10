@@ -1,41 +1,26 @@
 <?php declare(strict_types = 1);
 
-/**
- * Test: Contributte\Aop\PointcutRules.
- *
- * @testCase Tests\Cases\PointcutRulesTest
- */
-
 namespace Tests\Cases;
 
-use Contributte\Aop\Pointcut;
-use Nette;
-use Tester;
-use Tester\Assert;
+use Contributte\Aop\Pointcut\Method;
+use Contributte\Aop\Pointcut\ServiceDefinition;
+use PHPUnit\Framework\TestCase;
 use Tests\Files\Pointcut\InheritedClass;
 
-require_once __DIR__ . '/../bootstrap.php';
-
-
-
-class ServiceDefinitionTest extends Tester\TestCase
+class ServiceDefinitionTest extends TestCase
 {
 
-	public function testInheritedConstructor()
+	public function testInheritedConstructor(): void
 	{
 		$definition = $this->createDefinition(InheritedClass::class);
-		Assert::equal($definition->getOpenMethods(), ['__construct' => new Pointcut\Method(Nette\Reflection\Method::from(InheritedClass::class, '__construct'), $definition)]);
+		$this->assertEquals($definition->getOpenMethods(), ['__construct' => new Method(\Nette\Reflection\Method::from(InheritedClass::class, '__construct'), $definition)]);
 	}
 
-
-	private function createDefinition(string $type): Pointcut\ServiceDefinition
+	private function createDefinition(string $type): ServiceDefinition
 	{
-		$def = new Nette\DI\ServiceDefinition();
+		$def = new \Nette\DI\Definitions\ServiceDefinition();
 		$def->setType($type);
-
-		return new Pointcut\ServiceDefinition($def, 'abc');
+		return new ServiceDefinition($def, 'abc');
 	}
 
 }
-
-(new ServiceDefinitionTest())->run();
