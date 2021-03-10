@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Contributte\Aop\PhpGenerator;
 
@@ -61,7 +61,11 @@ class PointcutMethod
 
 		$method->method->setReturnReference($from->returnsReference());
 		$method->method->setVariadic($from->isVariadic());
-		$method->method->setComment(Code\Helpers::unformatDocComment($from->getDocComment()));
+		$docComment = $from->getDocComment();
+		if ($docComment !== false) {
+			$method->method->setComment(Code\Helpers::unformatDocComment($docComment));
+		}
+
 		if ($from->hasReturnType()) {
 			$method->method->setReturnType(($from->getReturnType()->getName()));
 			$method->method->setReturnNullable($from->getReturnType()->allowsNull());

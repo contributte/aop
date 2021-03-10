@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Contributte\Aop\DI;
 
@@ -166,9 +166,9 @@ class AopExtension extends Nette\DI\CompilerExtension
 			foreach ($advices as $advice => $filters) {
 				/** @var Pointcut\Filter[] $filters */
 				foreach ($filters as $adviceType => $filter) {
-					if ($types = $filter->listAcceptedTypes()) {
+					$types = $filter->listAcceptedTypes();
+					if ($types !== []) {
 						$services = $this->findByTypes($types);
-
 					} else { // this cannot be done in any other way sadly...
 						$services = array_keys($builder->getDefinitions());
 					}

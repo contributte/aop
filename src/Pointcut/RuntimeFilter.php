@@ -1,12 +1,12 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\Pointcut;
 
-use Nette;
+use Nette\PhpGenerator\Literal;
 
 interface RuntimeFilter
 {
 
-	function createCondition(): ?Nette\PhpGenerator\Literal;
+	function createCondition(): ?Literal;
 
 }

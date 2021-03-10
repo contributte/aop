@@ -1,7 +1,13 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\Pointcut;
 
+use Contributte\Aop\Pointcut\Matcher\ClassAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\EvaluateMatcher;
+use Contributte\Aop\Pointcut\Matcher\FilterMatcher;
+use Contributte\Aop\Pointcut\Matcher\MethodAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\MethodMatcher;
+use Contributte\Aop\Pointcut\Matcher\SettingMatcher;
 use Contributte\Aop\Pointcut\Matcher\WithinMatcher;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
@@ -47,42 +53,42 @@ class MatcherFactory
 
 	public function createClass(string $class): WithinMatcher
 	{
-		return new Matcher\WithinMatcher($class);
+		return new WithinMatcher($class);
 	}
 
 
 
-	public function createMethod($method)
+	public function createMethod($method): MethodMatcher
 	{
-		return new Matcher\MethodMatcher($method);
+		return new MethodMatcher($method);
 	}
 
 
 
-	public function createArguments($criteria)
+	public function createArguments($criteria): EvaluateMatcher
 	{
-		return new Matcher\EvaluateMatcher($criteria, $this->builder);
+		return new EvaluateMatcher($criteria, $this->builder);
 	}
 
 
 
-	public function createWithin($within)
+	public function createWithin($within): WithinMatcher
 	{
-		return new Matcher\WithinMatcher($within);
+		return new WithinMatcher($within);
 	}
 
 
 
-	public function createFilter($filterClass)
+	public function createFilter($filterClass): FilterMatcher
 	{
-		return new Matcher\FilterMatcher($filterClass);
+		return new FilterMatcher($filterClass);
 	}
 
 
 
-	public function createSetting($setting)
+	public function createSetting($setting): SettingMatcher
 	{
-		return new Matcher\SettingMatcher($setting, $this->builder);
+		return new SettingMatcher($setting, $this->builder);
 	}
 
 
@@ -94,16 +100,16 @@ class MatcherFactory
 
 
 
-	public function createClassAnnotatedWith($annotation)
+	public function createClassAnnotatedWith($annotation): ClassAnnotateWithMatcher
 	{
-		return new Matcher\ClassAnnotateWithMatcher($annotation, $this->annotationReader);
+		return new ClassAnnotateWithMatcher($annotation, $this->annotationReader);
 	}
 
 
 
-	public function createMethodAnnotatedWith($annotation)
+	public function createMethodAnnotatedWith($annotation): MethodAnnotateWithMatcher
 	{
-		return new Matcher\MethodAnnotateWithMatcher($annotation, $this->annotationReader);
+		return new MethodAnnotateWithMatcher($annotation, $this->annotationReader);
 	}
 
 }

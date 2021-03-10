@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\Pointcut\Matcher;
 
@@ -59,12 +59,9 @@ class MethodMatcher implements Filter
 
 
 
-	/**
-	 * @return array|bool
-	 */
-	public function listAcceptedTypes()
+	public function listAcceptedTypes(): array
 	{
-		return false;
+		return [];
 	}
 
 }
