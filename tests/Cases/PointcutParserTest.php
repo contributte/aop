@@ -7,8 +7,7 @@ use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Contributte\Aop\Pointcut\Parser;
 use Nette;
 use Nette\PhpGenerator\PhpLiteral;
-use Tester;
-use Tester\Assert;
+use PHPUnit\Framework\TestCase;
 use Tests\Files\Pointcut\CommonClass;
 use Tests\Files\Pointcut\FeedAggregator;
 use Tests\Files\Pointcut\LoggerInterface;
@@ -16,20 +15,13 @@ use Tests\Files\Pointcut\MyPointcutFilter;
 use Tests\Files\Pointcut\PackageClass;
 use Tests\Files\Pointcut\PointcutTestingAspect;
 
-require_once __DIR__ . '/../bootstrap.php';
-
-
-
-class PointcutParserTest extends Tester\TestCase
+class PointcutParserTest extends TestCase
 {
 
 	/** @var Pointcut\MatcherFactory */
 	private $matcherFactory;
 
-	/**
-	 * @return Pointcut\MatcherFactory
-	 */
-	public function getMatcherFactory()
+	public function getMatcherFactory(): Pointcut\MatcherFactory
 	{
 		if ($this->matcherFactory === null) {
 			$this->matcherFactory = new Pointcut\MatcherFactory(new Nette\DI\ContainerBuilder());
@@ -40,14 +32,14 @@ class PointcutParserTest extends Tester\TestCase
 
 
 
-	protected function tearDown()
+	protected function tearDown(): void
 	{
 		$this->matcherFactory = null;
 	}
 
 
 
-	public function dataParse()
+	public function dataParse(): array
 	{
 		$mf = $this->getMatcherFactory();
 
@@ -275,12 +267,10 @@ class PointcutParserTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataParse
 	 */
-	public function testParse($expected, $input)
+	public function testParse($expected, $input): void
 	{
 		$parser = new Parser($this->getMatcherFactory());
-		Assert::equal($expected, $parser->parse($input));
+		$this->assertEquals($expected, $parser->parse($input));
 	}
 
 }
-
-(new PointcutParserTest())->run();

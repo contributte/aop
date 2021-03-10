@@ -21,11 +21,9 @@ use Contributte\Aop\JoinPoint\ResultAware;
 use Nette;
 use Nettrine\Annotations\DI\AnnotationsExtension;
 use Nettrine\Cache\DI\CacheExtension;
+use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use RuntimeException;
-use SystemContainer;
-use Tester;
-use Tester\Assert;
 use Tests\Files\Aspects\AfterAspect;
 use Tests\Files\Aspects\AfterReturningAspect;
 use Tests\Files\Aspects\AfterThrowingAspect;
@@ -44,22 +42,20 @@ use Tests\Files\Aspects\SecondAfterReturningAspect;
 use Tests\Files\Aspects\SecondAfterThrowingAspect;
 use Tests\Files\Aspects\SecondAroundAspect;
 use Tests\Files\Aspects\SecondBeforeAspect;
+use Throwable;
 
-require_once __DIR__ . '/../bootstrap.php';
-
-
-
-class ExtensionTest extends Tester\TestCase
+class ExtensionTest extends TestCase
 {
 
 	/**
 	 * @param string $configFile
-	 * @return SystemContainer|Nette\DI\Container
+	 * @return Nette\DI\Container
 	 */
 	public function createContainer($configFile)
 	{
 		$config = new Nette\Configurator();
-		$config->setTempDirectory(TEMP_DIR);
+		$tmpDir = __DIR__ . '/../tmp/' . $configFile;
+		$config->setTempDirectory($tmpDir);
 		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 		$config->addConfig(__DIR__ . '/../config/' . $configFile . '.neon');
 
@@ -75,57 +71,57 @@ class ExtensionTest extends Tester\TestCase
 
 
 
-	public function testAspectConfiguration()
+	public function testAspectConfiguration(): void
 	{
 		$dic = $this->createContainer('aspect-configs');
 		foreach ($services = array_keys($dic->findByTag(AspectsExtension::ASPECT_TAG)) as $serviceId) {
 			$service = $dic->getService($serviceId);
-			Assert::true($service instanceof AspectWithArguments);
-			Assert::same([$dic->getByType(Nette\Http\Request::class)], $service->args);
+			$this->assertInstanceOf(AspectWithArguments::class, $service);
+			$this->assertSame([$dic->getByType(Nette\Http\Request::class)], $service->args);
 		}
 
-		Assert::same(4, count($services));
+		$this->assertCount(4, $services);
 	}
 
 
 
-	public function testIfAspectAppliedOnCreatedObject()
+	public function testIfAspectAppliedOnCreatedObject(): void
 	{
 		$dic = $this->createContainer('factory');
 
 		$service = $dic->getByType(CommonService::class);
 		$createdObject = $dic->getByType(ICommonServiceFactory::class)->create();
-		Assert::notEqual(CommonService::class, get_class($service));
-		Assert::notEqual(CommonService::class, get_class($createdObject));
+		$this->assertNotEquals(CommonService::class, get_class($service));
+		$this->assertNotEquals(CommonService::class, get_class($createdObject));
 	}
 
 
 
-	public function testFunctionalBefore()
+	public function testFunctionalBefore(): void
 	{
 		$dic = $this->createContainer('before');
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(4, $service->magic(2));
-		Assert::same([2], $service->calls[0]);
+		$this->assertSame(4, $service->magic(2));
+		$this->assertSame([2], $service->calls[0]);
 		$advice = self::assertAspectInvocation($service, BeforeAspect::class, 0, new BeforeMethod($service, 'magic', [2]));
 		/** @var BeforeAspect $advice */
 
 		$service->return = 3;
-		Assert::same(6, $service->magic(2));
-		Assert::same([2], $service->calls[1]);
+		$this->assertSame(6, $service->magic(2));
+		$this->assertSame([2], $service->calls[1]);
 		self::assertAspectInvocation($service, BeforeAspect::class, 1, new BeforeMethod($service, 'magic', [2]));
 
 		$advice->modifyArgs = [3];
-		Assert::same(9, $service->magic(2));
-		Assert::same([3], $service->calls[2]);
+		$this->assertSame(9, $service->magic(2));
+		$this->assertSame([3], $service->calls[2]);
 		self::assertAspectInvocation($service, BeforeAspect::class, 2, new BeforeMethod($service, 'magic', [3]));
 	}
 
 
 
-	public function testFunctionalConstructor()
+	public function testFunctionalConstructor(): void
 	{
 		$dic = $this->createContainer('constructor');
 		$service = $dic->getByType(CommonService::class);
@@ -134,19 +130,19 @@ class ExtensionTest extends Tester\TestCase
 
 
 
-	public function testFunctionalBefore_conditional()
+	public function testFunctionalBefore_conditional(): void
 	{
 		$dic = $this->createContainer('before.conditional');
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(0, $service->magic(0));
-		Assert::same(2, $service->magic(1));
-		Assert::same(4, $service->magic(2));
+		$this->assertSame(0, $service->magic(0));
+		$this->assertSame(2, $service->magic(1));
+		$this->assertSame(4, $service->magic(2));
 
-		Assert::same([0], $service->calls[0]);
-		Assert::same([1], $service->calls[1]);
-		Assert::same([2], $service->calls[2]);
+		$this->assertSame([0], $service->calls[0]);
+		$this->assertSame([1], $service->calls[1]);
+		$this->assertSame([2], $service->calls[2]);
 
 		self::assertAspectInvocation($service, ConditionalBeforeAspect::class, 0, new BeforeMethod($service, 'magic', [1]));
 		self::assertAspectInvocation($service, ConditionalBeforeAspect::class, 1, null);
@@ -155,43 +151,43 @@ class ExtensionTest extends Tester\TestCase
 
 
 
-	public function testFunctionalAround()
+	public function testFunctionalAround(): void
 	{
 		$dic = $this->createContainer('around');
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(4, $service->magic(2));
-		Assert::same([2], $service->calls[0]);
+		$this->assertSame(4, $service->magic(2));
+		$this->assertSame([2], $service->calls[0]);
 		$advice = self::assertAspectInvocation($service, AroundAspect::class, 0, new AroundMethod($service, 'magic', [2]));
 		/** @var AroundAspect $advice */
 
 		$service->return = 3;
-		Assert::same(6, $service->magic(2));
-		Assert::same([2], $service->calls[1]);
+		$this->assertSame(6, $service->magic(2));
+		$this->assertSame([2], $service->calls[1]);
 		self::assertAspectInvocation($service, AroundAspect::class, 1, new AroundMethod($service, 'magic', [2]));
 
 		$advice->modifyArgs = [3];
-		Assert::same(9, $service->magic(2));
-		Assert::same([3], $service->calls[2]);
+		$this->assertSame(9, $service->magic(2));
+		$this->assertSame([3], $service->calls[2]);
 		self::assertAspectInvocation($service, AroundAspect::class, 2, new AroundMethod($service, 'magic', [3]));
 	}
 
 
 
-	public function testFunctionalAround_conditional()
+	public function testFunctionalAround_conditional(): void
 	{
 		$dic = $this->createContainer('around.conditional');
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(0, $service->magic(0));
-		Assert::same(2, $service->magic(1));
-		Assert::same(4, $service->magic(2));
+		$this->assertSame(0, $service->magic(0));
+		$this->assertSame(2, $service->magic(1));
+		$this->assertSame(4, $service->magic(2));
 
-		Assert::same([0], $service->calls[0]);
-		Assert::same([1], $service->calls[1]);
-		Assert::same([2], $service->calls[2]);
+		$this->assertSame([0], $service->calls[0]);
+		$this->assertSame([1], $service->calls[1]);
+		$this->assertSame([2], $service->calls[2]);
 
 		self::assertAspectInvocation($service, ConditionalAroundAspect::class, 0, new AroundMethod($service, 'magic', [1]));
 		self::assertAspectInvocation($service, ConditionalAroundAspect::class, 1, null);
@@ -206,60 +202,65 @@ class ExtensionTest extends Tester\TestCase
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::null($service->magic(2));
-		Assert::true(empty($service->calls));
+		$this->assertNull($service->magic(2));
+		$this->assertEmpty($service->calls);
 		$advice = self::assertAspectInvocation($service, AroundBlockingAspect::class, 0, new AroundMethod($service, 'magic', [2]));
 		/** @var AroundBlockingAspect $advice */
 
 		$service->return = 3;
-		Assert::null($service->magic(2));
-		Assert::true(empty($service->calls));
+		$this->assertNull($service->magic(2));
+		$this->assertEmpty($service->calls);
 		self::assertAspectInvocation($service, AroundBlockingAspect::class, 1, new AroundMethod($service, 'magic', [2]));
 
 		$service->throw = true;
-		Assert::null($service->magic(2));
-		Assert::true(empty($service->calls));
+		$this->assertNull($service->magic(2));
+		$this->assertEmpty($service->calls);
 		self::assertAspectInvocation($service, AroundBlockingAspect::class, 2, new AroundMethod($service, 'magic', [2]));
 
 		$advice->modifyArgs = [3];
-		Assert::null($service->magic(2));
-		Assert::true(empty($service->calls));
+		$this->assertNull($service->magic(2));
+		$this->assertEmpty($service->calls);
 		self::assertAspectInvocation($service, AroundBlockingAspect::class, 3, new AroundMethod($service, 'magic', [3]));
 
 		$advice->modifyReturn = 9;
-		Assert::same(9, $service->magic(2));
-		Assert::true(empty($service->calls));
+		$this->assertSame(9, $service->magic(2));
+		$this->assertEmpty($service->calls);
 		self::assertAspectInvocation($service, AroundBlockingAspect::class, 4, new AroundMethod($service, 'magic', [3]));
 
 		$advice->modifyThrow = true;
-		Assert::throws(function () use ($service) {
+
+		try {
 			$service->magic(2);
-		}, 'RuntimeException', 'Everybody is dead Dave.');
-		Assert::true(empty($service->calls));
+		} catch (Throwable $e) {
+			$this->assertEquals('Everybody is dead Dave.', $e->getMessage());
+		}
+
+		$this->assertEmpty($service->calls);
 		self::assertAspectInvocation($service, AroundBlockingAspect::class, 5, new AroundMethod($service, 'magic', [3]));
 	}
 
 
 
-	public function testFunctionalAfterReturning()
+	public function testFunctionalAfterReturning(): void
 	{
 		$dic = $this->createContainer('afterReturning');
-		$service = $dic->getByType(CommonService::class);
-		/** @var CommonService $service */
 
-		Assert::same(4, $service->magic(2));
-		Assert::same([2], $service->calls[0]);
+		/** @var CommonService $service */
+		$service = $dic->getByType(CommonService::class);
+
+		$this->assertSame(4, $service->magic(2));
+		$this->assertSame([2], $service->calls[0]);
 		$advice = self::assertAspectInvocation($service, AfterReturningAspect::class, 0, new AfterReturning($service, 'magic', [2], 4));
 		/** @var AfterReturningAspect $advice */
 
 		$service->return = 3;
-		Assert::same(6, $service->magic(2));
-		Assert::same([2], $service->calls[1]);
+		$this->assertSame(6, $service->magic(2));
+		$this->assertSame([2], $service->calls[1]);
 		self::assertAspectInvocation($service, AfterReturningAspect::class, 1, new AfterReturning($service, 'magic', [2], 6));
 
 		$advice->modifyReturn = 9;
-		Assert::same(9, $service->magic(2));
-		Assert::same([2], $service->calls[2]);
+		$this->assertSame(9, $service->magic(2));
+		$this->assertSame([2], $service->calls[2]);
 		self::assertAspectInvocation($service, AfterReturningAspect::class, 2, new AfterReturning($service, 'magic', [2], 9));
 	}
 
@@ -271,17 +272,17 @@ class ExtensionTest extends Tester\TestCase
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(0, $service->magic(0));
+		$this->assertSame(0, $service->magic(0));
 
 		$service->return = 3;
-		Assert::same(3, $service->magic(1));
+		$this->assertSame(3, $service->magic(1));
 
 		$service->return = 2;
-		Assert::same(4, $service->magic(2));
+		$this->assertSame(4, $service->magic(2));
 
-		Assert::same([0], $service->calls[0]);
-		Assert::same([1], $service->calls[1]);
-		Assert::same([2], $service->calls[2]);
+		$this->assertSame([0], $service->calls[0]);
+		$this->assertSame([1], $service->calls[1]);
+		$this->assertSame([2], $service->calls[2]);
 
 		self::assertAspectInvocation($service, ConditionalAfterReturningAspect::class, 0, new AfterReturning($service, 'magic', [0], 0));
 		self::assertAspectInvocation($service, ConditionalAfterReturningAspect::class, 1, new AfterReturning($service, 'magic', [2], 4));
@@ -290,39 +291,44 @@ class ExtensionTest extends Tester\TestCase
 
 
 
-	public function testFunctionalAfterThrowing()
+	public function testFunctionalAfterThrowing(): void
 	{
 		$dic = $this->createContainer('afterThrowing');
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
 		$service->throw = true;
-		Assert::throws(function () use ($service) {
+		try {
 			$service->magic(2);
-		}, 'RuntimeException', "Something's fucky");
+		} catch (Throwable $e) {
+			$this->assertEquals("Something's fucky", $e->getMessage());
+		}
 
-		Assert::same([2], $service->calls[0]);
+		$this->assertSame([2], $service->calls[0]);
 		self::assertAspectInvocation($service, AfterThrowingAspect::class, 0, new AfterThrowing($service, 'magic', [2], new RuntimeException("Something's fucky")));
 	}
 
 
 
-	public function testFunctionalAfter()
+	public function testFunctionalAfter(): void
 	{
 		$dic = $this->createContainer('after');
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(4, $service->magic(2));
-		Assert::same([2], $service->calls[0]);
+		$this->assertSame(4, $service->magic(2));
+		$this->assertSame([2], $service->calls[0]);
 		self::assertAspectInvocation($service, AfterAspect::class, 0, new AfterMethod($service, 'magic', [2], 4));
 
 		$service->throw = true;
-		Assert::throws(function () use ($service) {
-			$service->magic(2);
-		}, 'RuntimeException', "Something's fucky");
 
-		Assert::same([2], $service->calls[1]);
+		try {
+			$service->magic(2);
+		} catch (Throwable $e) {
+			$this->assertEquals("Something's fucky", $e->getMessage());
+		}
+
+		$this->assertSame([2], $service->calls[1]);
 		self::assertAspectInvocation($service, AfterAspect::class, 1, new AfterMethod($service, 'magic', [2], null, new RuntimeException("Something's fucky")));
 	}
 
@@ -334,18 +340,21 @@ class ExtensionTest extends Tester\TestCase
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(4, $service->magic(2));
-		Assert::same([2], $service->calls[0]);
+		$this->assertSame(4, $service->magic(2));
+		$this->assertSame([2], $service->calls[0]);
 		self::assertAspectInvocation($service, BeforeAspect::class, 0, new BeforeMethod($service, 'magic', [2]));
 		self::assertAspectInvocation($service, AroundAspect::class, 0, new AroundMethod($service, 'magic', [2]));
 		self::assertAspectInvocation($service, AfterReturningAspect::class, 0, new AfterReturning($service, 'magic', [2], 4));
 		self::assertAspectInvocation($service, AfterAspect::class, 0, new AfterMethod($service, 'magic', [2], 4));
 
 		$service->throw = true;
-		Assert::throws(function () use ($service) {
+		try {
 			$service->magic(3);
-		}, 'RuntimeException', "Something's fucky");
-		Assert::same([3], $service->calls[1]);
+		} catch (Throwable $e) {
+			$this->assertEquals("Something's fucky", $e->getMessage());
+		}
+
+		$this->assertSame([3], $service->calls[1]);
 		self::assertAspectInvocation($service, BeforeAspect::class, 1, new BeforeMethod($service, 'magic', [3]));
 		self::assertAspectInvocation($service, AroundAspect::class, 1, new AroundMethod($service, 'magic', [3]));
 		self::assertAspectInvocation($service, AfterThrowingAspect::class, 0, new AfterThrowing($service, 'magic', [3], new RuntimeException("Something's fucky")));
@@ -354,14 +363,14 @@ class ExtensionTest extends Tester\TestCase
 
 
 
-	public function testFunctionalAll_doubled()
+	public function testFunctionalAll_doubled(): void
 	{
 		$dic = $this->createContainer('all.doubled');
 		$service = $dic->getByType(CommonService::class);
 		/** @var CommonService $service */
 
-		Assert::same(4, $service->magic(2));
-		Assert::same([2], $service->calls[0]);
+		$this->assertSame(4, $service->magic(2));
+		$this->assertSame([2], $service->calls[0]);
 		self::assertAspectInvocation($service, BeforeAspect::class, 0, new BeforeMethod($service, 'magic', [2]));
 		self::assertAspectInvocation($service, SecondBeforeAspect::class, 0, new BeforeMethod($service, 'magic', [2]));
 		self::assertAspectInvocation($service, AroundAspect::class, 0, new AroundMethod($service, 'magic', [2]));
@@ -372,10 +381,14 @@ class ExtensionTest extends Tester\TestCase
 		self::assertAspectInvocation($service, SecondAfterAspect::class, 0, new AfterMethod($service, 'magic', [2], 4));
 
 		$service->throw = true;
-		Assert::throws(function () use ($service) {
+		try {
 			$service->magic(3);
-		}, 'RuntimeException', "Something's fucky");
-		Assert::same([3], $service->calls[1]);
+		} catch (Throwable $e) {
+			$this->assertEquals("Something's fucky", $e->getMessage());
+		}
+
+		$this->assertSame([3], $service->calls[1]);
+
 		self::assertAspectInvocation($service, BeforeAspect::class, 1, new BeforeMethod($service, 'magic', [3]));
 		self::assertAspectInvocation($service, SecondBeforeAspect::class, 1, new BeforeMethod($service, 'magic', [3]));
 		self::assertAspectInvocation($service, AroundAspect::class, 1, new AroundMethod($service, 'magic', [3]));
@@ -400,35 +413,36 @@ class ExtensionTest extends Tester\TestCase
 		$advices = array_filter(self::getAspects($service), function ($advice) use ($adviceClass) {
 			return get_class($advice) === $adviceClass;
 		});
-		Assert::true(!empty($advices));
+
+		self::assertNotEmpty($advices);
 		$advice = reset($advices);
-		Assert::true($advice instanceof $adviceClass);
+		self::assertInstanceOf($adviceClass, $advice);
 
 		if ($joinPoint === null) {
-			Assert::true(empty($advice->calls[$adviceCallIndex]));
+			self::assertArrayNotHasKey($adviceCallIndex, $advice->calls);
 
 			return $advice;
 		}
 
-		Assert::true(!empty($advice->calls[$adviceCallIndex]));
+		self::assertNotEmpty($advice->calls[$adviceCallIndex]);
 		$call = $advice->calls[$adviceCallIndex];
 		/** @var MethodInvocation $call */
 
 		$joinPointClass = get_class($joinPoint);
-		Assert::true($call instanceof $joinPointClass);
-		Assert::equal($joinPoint->getArguments(), $call->getArguments());
-		Assert::same($joinPoint->getTargetObject(), $call->getTargetObject());
-		Assert::same($joinPoint->getTargetReflection()->getName(), $call->getTargetReflection()->getName());
+		self::assertInstanceOf($joinPointClass, $call);
+		self::assertEquals($joinPoint->getArguments(), $call->getArguments());
+		self::assertSame($joinPoint->getTargetObject(), $call->getTargetObject());
+		self::assertSame($joinPoint->getTargetReflection()->getName(), $call->getTargetReflection()->getName());
 
 		if ($joinPoint instanceof ResultAware) {
 			/** @var AfterReturning $call */
-			Assert::same($joinPoint->getResult(), $call->getResult());
+			self::assertSame($joinPoint->getResult(), $call->getResult());
 		}
 
 		if ($joinPoint instanceof ExceptionAware) {
 			/** @var AfterThrowing $call */
-			Assert::equal($joinPoint->getException() ? get_class($joinPoint->getException()) : null, $call->getException() ? get_class($call->getException()) : null);
-			Assert::equal($joinPoint->getException() ? $joinPoint->getException()->getMessage() : '', $call->getException() ? $call->getException()->getMessage() : '');
+			self::assertEquals($joinPoint->getException() ? get_class($joinPoint->getException()) : null, $call->getException() ? get_class($call->getException()) : null);
+			self::assertEquals($joinPoint->getException() ? $joinPoint->getException()->getMessage() : '', $call->getException() ? $call->getException()->getMessage() : '');
 		}
 
 		return $advice;
@@ -440,7 +454,7 @@ class ExtensionTest extends Tester\TestCase
 	 * @param string $service
 	 * @return array
 	 */
-	private static function getAspects($service)
+	private static function getAspects($service): array
 	{
 		try {
 			$propRefl = (Nette\Reflection\ClassType::from($service))
@@ -455,5 +469,3 @@ class ExtensionTest extends Tester\TestCase
 	}
 
 }
-
-(new ExtensionTest())->run();
