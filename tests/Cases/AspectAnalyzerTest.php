@@ -13,9 +13,14 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use Tester;
 use Tester\Assert;
+use Tests\Files\Aspects\AfterAspect;
+use Tests\Files\Aspects\AfterReturningAspect;
+use Tests\Files\Aspects\AfterThrowingAspect;
+use Tests\Files\Aspects\AroundAspect;
+use Tests\Files\Aspects\BeforeAspect;
+use Tests\Files\Aspects\CommonService;
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../files/aspect-examples.php';
 
 
 

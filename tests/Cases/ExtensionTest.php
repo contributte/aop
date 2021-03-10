@@ -26,9 +26,26 @@ use RuntimeException;
 use SystemContainer;
 use Tester;
 use Tester\Assert;
+use Tests\Files\Aspects\AfterAspect;
+use Tests\Files\Aspects\AfterReturningAspect;
+use Tests\Files\Aspects\AfterThrowingAspect;
+use Tests\Files\Aspects\AroundAspect;
+use Tests\Files\Aspects\AroundBlockingAspect;
+use Tests\Files\Aspects\AspectWithArguments;
+use Tests\Files\Aspects\BeforeAspect;
+use Tests\Files\Aspects\CommonService;
+use Tests\Files\Aspects\ConditionalAfterReturningAspect;
+use Tests\Files\Aspects\ConditionalAroundAspect;
+use Tests\Files\Aspects\ConditionalBeforeAspect;
+use Tests\Files\Aspects\ConstructorBeforeAspect;
+use Tests\Files\Aspects\ICommonServiceFactory;
+use Tests\Files\Aspects\SecondAfterAspect;
+use Tests\Files\Aspects\SecondAfterReturningAspect;
+use Tests\Files\Aspects\SecondAfterThrowingAspect;
+use Tests\Files\Aspects\SecondAroundAspect;
+use Tests\Files\Aspects\SecondBeforeAspect;
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../files/aspect-examples.php';
 
 
 

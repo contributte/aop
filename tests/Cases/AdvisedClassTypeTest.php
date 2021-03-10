@@ -6,6 +6,7 @@ use Contributte\Aop\PhpGenerator\AdvisedClassType;
 use Nette\PhpGenerator\ClassType;
 use Tester;
 use Tester\Assert;
+use Tests\Files\TestClass;
 
 require_once __DIR__ . '/../bootstrap.php';
 
@@ -23,12 +24,4 @@ class AdvisedClassTypeTest extends Tester\TestCase
 
 }
 
-class TestClass
-{
-
-	public function first(int $param, string $second)
-	{
-	}
-
-}
 (new AdvisedClassTypeTest())->run();

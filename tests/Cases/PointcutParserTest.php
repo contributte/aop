@@ -9,9 +9,14 @@ use Nette;
 use Nette\PhpGenerator\PhpLiteral;
 use Tester;
 use Tester\Assert;
+use Tests\Files\Pointcut\CommonClass;
+use Tests\Files\Pointcut\FeedAggregator;
+use Tests\Files\Pointcut\LoggerInterface;
+use Tests\Files\Pointcut\MyPointcutFilter;
+use Tests\Files\Pointcut\PackageClass;
+use Tests\Files\Pointcut\PointcutTestingAspect;
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../files/pointcut-examples.php';
 
 
 
@@ -50,39 +55,39 @@ class PointcutParserTest extends Tester\TestCase
 
 		$data[] = [
 			new Pointcut\Rules([
-				$mf->getMatcher('class', 'Tests\Cases\CommonClass'),
+				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'deletePost'),
 			]),
-			'method(Tests\Cases\CommonClass->deletePost())',
+			'method(Tests\Files\Pointcut\CommonClass->deletePost())',
 		];
 
 		$data[] = [
 			new Pointcut\Rules([
-				$mf->getMatcher('class', 'Tests\Cases\CommonClass'),
+				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'public methodName'),
 			]),
-			'method(public Tests\Cases\CommonClass->methodName())',
+			'method(public Tests\Files\Pointcut\CommonClass->methodName())',
 		];
 
 		$data[] = [
 			new Pointcut\Rules([
-				$mf->getMatcher('class', 'Tests\Cases\CommonClass'),
+				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'protected methodName'),
 			]),
-			'method(protected Tests\Cases\CommonClass->methodName())',
+			'method(protected Tests\Files\Pointcut\CommonClass->methodName())',
 		];
 
 		$data[] = [
-			$mf->getMatcher('class', 'Tests\Cases\CommonClass'),
-			'method(Tests\Cases\CommonClass->*())',
+			$mf->getMatcher('class', CommonClass::class),
+			'method(Tests\Files\Pointcut\CommonClass->*())',
 		];
 
 		$data[] = [
 			new Pointcut\Rules([
-				$mf->getMatcher('class', 'Tests\Cases\CommonClass'),
+				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'public *'),
 			]),
-			'method(public Tests\Cases\CommonClass->*())',
+			'method(public Tests\Files\Pointcut\CommonClass->*())',
 		];
 
 		$data[] = [
@@ -100,26 +105,26 @@ class PointcutParserTest extends Tester\TestCase
 
 		$data[] = [
 			new Pointcut\Rules([
-				$mf->getMatcher('class', 'Tests\Cases\CommonClass'),
+				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', '[!inject]*'),
 			]),
-			'method(Tests\Cases\CommonClass->[!inject]*())',
+			'method(Tests\Files\Pointcut\CommonClass->[!inject]*())',
 		];
 
 		$data[] = [
 			new Pointcut\Rules([
-				$mf->getMatcher('class', 'Tests\Cases\PackageClass'),
+				$mf->getMatcher('class', PackageClass::class),
 				$mf->getMatcher('method', 'update'),
 				$mf->getMatcher('arguments', Criteria::create()
 					->where('title', Criteria::EQ, new PhpLiteral('"Contributte"'))
 					->where('override', Criteria::EQ, new PhpLiteral('TRUE'))),
 			]),
-			'method(Tests\Cases\PackageClass->update(title == "Contributte", override == TRUE))',
+			'method(Tests\Files\Pointcut\PackageClass->update(title == "Contributte", override == TRUE))',
 		];
 
 		$data[] = [
-			$mf->getMatcher('class', 'Tests\Cases\CommonClass'),
-			'class(\Tests\Cases\CommonClass)',
+			$mf->getMatcher('class', CommonClass::class),
+			'class(\Tests\Files\Pointcut\CommonClass)',
 		];
 
 		$data[] = [
@@ -128,8 +133,8 @@ class PointcutParserTest extends Tester\TestCase
 		];
 
 		$data[] = [
-			$mf->getMatcher('within', 'Tests\Cases\LoggerInterface'),
-			'within(Tests\Cases\LoggerInterface)',
+			$mf->getMatcher('within', LoggerInterface::class),
+			'within(Tests\Files\Pointcut\LoggerInterface)',
 		];
 
 		$data[] = [
@@ -196,48 +201,48 @@ class PointcutParserTest extends Tester\TestCase
 		];
 
 		$data[] = [
-			$mf->getMatcher('filter', 'Tests\Cases\MyPointcutFilter'),
-			'filter(Tests\Cases\MyPointcutFilter)', // implements \Contributte\Aop\Pointcut\Rule
+			$mf->getMatcher('filter', MyPointcutFilter::class),
+			'filter(Tests\Files\Pointcut\MyPointcutFilter)', // implements \Contributte\Aop\Pointcut\Rule
 		];
 
 		$data[] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', 'Example\TestPackage\PointcutTestingTargetClass*'),
-				new Pointcut\Matcher\Inverse($mf->getMatcher('class', 'Tests\Cases\PackageClass')),
+				new Pointcut\Matcher\Inverse($mf->getMatcher('class', PackageClass::class)),
 			]),
-			'method(Example\TestPackage\PointcutTestingTargetClass*->*()) && !method(Tests\Cases\PackageClass->*())',
+			'method(Example\TestPackage\PointcutTestingTargetClass*->*()) && !method(Tests\Files\Pointcut\PackageClass->*())',
 		];
 
 		$data[] = [
 			new Pointcut\Rules([
 				new Pointcut\Rules([
-					$mf->getMatcher('class', 'Tests\Cases\PointcutTestingAspect'),
+					$mf->getMatcher('class', PointcutTestingAspect::class),
 					$mf->getMatcher('method', 'pointcutTestingTargetClasses'),
 				]),
 				new Pointcut\Rules([
-					$mf->getMatcher('class', 'Tests\Cases\PointcutTestingAspect'),
+					$mf->getMatcher('class', PointcutTestingAspect::class),
 					$mf->getMatcher('method', 'otherPointcutTestingTargetClass'),
 				]),
 			], Pointcut\Rules::OP_OR),
-			'Tests\Cases\PointcutTestingAspect->pointcutTestingTargetClasses || Tests\Cases\PointcutTestingAspect->otherPointcutTestingTargetClass',
+			'Tests\Files\Pointcut\PointcutTestingAspect->pointcutTestingTargetClasses || Tests\Files\Pointcut\PointcutTestingAspect->otherPointcutTestingTargetClass',
 		];
 
 		$data[] = [
 			new Pointcut\Rules([
 				new Pointcut\Rules([
 					new Pointcut\Rules([
-						$mf->getMatcher('class', 'Tests\Cases\PointcutTestingAspect'),
+						$mf->getMatcher('class', PointcutTestingAspect::class),
 						$mf->getMatcher('method', 'pointcutTestingTargetClasses'),
 					]),
-					$mf->getMatcher('within', 'Tests\Cases\LoggerInterface'),
+					$mf->getMatcher('within', LoggerInterface::class),
 				]),
 				new Pointcut\Rules([
-					$mf->getMatcher('class', 'Tests\Cases\PointcutTestingAspect'),
+					$mf->getMatcher('class', PointcutTestingAspect::class),
 					$mf->getMatcher('method', 'otherPointcutTestingTargetClass'),
 				]),
 			], Pointcut\Rules::OP_OR),
-			'(Tests\Cases\PointcutTestingAspect->pointcutTestingTargetClasses && within(Tests\Cases\LoggerInterface))' . // intentionally no space after )
-				'|| Tests\Cases\PointcutTestingAspect->otherPointcutTestingTargetClass',
+			'(Tests\Files\Pointcut\PointcutTestingAspect->pointcutTestingTargetClasses && within(Tests\Files\Pointcut\LoggerInterface))' . // intentionally no space after )
+				'|| Tests\Files\Pointcut\PointcutTestingAspect->otherPointcutTestingTargetClass',
 		];
 
 		$data[] = [
@@ -251,15 +256,15 @@ class PointcutParserTest extends Tester\TestCase
 		$data[] = [
 			new Pointcut\Rules([
 				new Pointcut\Rules([
-					$mf->getMatcher('class', 'Tests\Cases\FeedAggregator'),
+					$mf->getMatcher('class', FeedAggregator::class),
 					$mf->getMatcher('method', 'public [import|update]*'),
 				]),
 				new Pointcut\Rules([
-					$mf->getMatcher('class', 'Tests\Cases\PointcutTestingAspect'),
+					$mf->getMatcher('class', PointcutTestingAspect::class),
 					$mf->getMatcher('method', 'someOtherPointcut'),
 				]),
 			], Pointcut\Rules::OP_OR),
-			'method(public Tests\Cases\FeedAggregator->[import|update]*()) || Tests\Cases\PointcutTestingAspect->someOtherPointcut',
+			'method(public Tests\Files\Pointcut\FeedAggregator->[import|update]*()) || Tests\Files\Pointcut\PointcutTestingAspect->someOtherPointcut',
 		];
 
 		return $data;

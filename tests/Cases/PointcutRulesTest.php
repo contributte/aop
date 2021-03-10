@@ -20,9 +20,15 @@ use Nette;
 use Nette\PhpGenerator as Code;
 use Tester;
 use Tester\Assert;
+use Tests\Files\Pointcut\Cat;
+use Tests\Files\Pointcut\CustomTemplate;
+use Tests\Files\Pointcut\Legie;
+use Tests\Files\Pointcut\MockPresenter;
+use Tests\Files\Pointcut\MyPointcutFilter;
+use Tests\Files\Pointcut\SmegHead;
+use Tests\Files\Pointcut\Test;
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../files/pointcut-examples.php';
 
 
 
@@ -41,7 +47,7 @@ class PointcutRulesTest extends Tester\TestCase
 
 		$data[] = [
 		true,
-			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Cases\*')]),
+			new Pointcut\Rules([new Matcher\WithinMatcher('Tests\Files\Pointcut\*')]),
 			$this->createDefinition(SmegHead::class),
 		];
 

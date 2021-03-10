@@ -1,5 +1,5 @@
 aspects:
-	- Tests\Cases\AfterReturningAspect
+	- Tests\Files\Aspects\AfterReturningAspect
 
 services:
-	- Tests\Cases\CommonService
+	- Tests\Files\Aspects\CommonService
