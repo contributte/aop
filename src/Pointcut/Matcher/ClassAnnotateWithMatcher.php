@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\Pointcut\Matcher;
 
@@ -42,11 +42,11 @@ class ClassAnnotateWithMatcher implements Filter
 
 
 	/**
-	 * @return array|bool
+	 * @return array
 	 */
-	public function listAcceptedTypes()
+	public function listAcceptedTypes(): array
 	{
-		return false;
+		return [];
 	}
 
 }

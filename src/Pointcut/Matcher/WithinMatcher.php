@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\Pointcut\Matcher;
 
@@ -46,16 +46,13 @@ class WithinMatcher implements Filter
 
 
 
-	/**
-	 * @return array|bool
-	 */
-	public function listAcceptedTypes()
+	public function listAcceptedTypes(): array
 	{
 		if ($this->type) {
 			return [$this->type];
 		}
 
-		return false;
+		return [];
 	}
 
 }

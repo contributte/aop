@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Contributte\Aop\Pointcut;
 
@@ -67,13 +67,16 @@ class Rules implements Filter, RuntimeFilter
 
 
 	/**
-	 * @return array
+	 * @return Filter[]
 	 */
-	public function listAcceptedTypes()
+	public function listAcceptedTypes(): array
 	{
 		$types = [];
 		foreach ($this->rules as $rule) {
-			$types = array_merge($types, (array) $rule->listAcceptedTypes());
+			$ruleTypes = $rule->listAcceptedTypes();
+			if ($ruleTypes !== null) {
+				$types = array_merge($types, $ruleTypes);
+			}
 		}
 
 		return array_filter($types);

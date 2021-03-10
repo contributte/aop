@@ -122,14 +122,14 @@ class MyPointcutFilter implements Filter
 
 	public function matches(Method $method): bool
 	{
-		return $method->getClassName() === 'Tests\Cases\Legie';
+		return $method->getClassName() === Legie::class;
 	}
 
 
 
-	public function listAcceptedTypes()
+	public function listAcceptedTypes(): array
 	{
-		return false;
+		return [];
 	}
 
 }

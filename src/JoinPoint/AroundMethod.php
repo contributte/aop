@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Contributte\Aop\JoinPoint;
 
@@ -17,14 +17,14 @@ class AroundMethod extends MethodInvocation
 
 
 
-	public function setArgument($index, $value)
+	public function setArgument($index, $value): void
 	{
 		$this->arguments[$index] = $value;
 	}
 
 
 
-	public function addChainLink($object, $method)
+	public function addChainLink($object, $method): array
 	{
 		return $this->callChain[] = [$object, $method];
 	}
