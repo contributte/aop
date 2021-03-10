@@ -12,9 +12,9 @@ use Contributte\Aop\Pointcut;
 use Nette;
 use Tester;
 use Tester\Assert;
+use Tests\Files\Pointcut\InheritedClass;
 
 require_once __DIR__ . '/../bootstrap.php';
-require_once __DIR__ . '/../files/pointcut-examples.php';
 
 
 

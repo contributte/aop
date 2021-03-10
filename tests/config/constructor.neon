@@ -1,5 +1,5 @@
 aspects:
-	- Tests\Cases\ConstructorBeforeAspect
+	- Tests\Files\Aspects\ConstructorBeforeAspect
 
 services:
-	- Tests\Cases\CommonService
+	- Tests\Files\Aspects\CommonService

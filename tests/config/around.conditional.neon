@@ -1,5 +1,5 @@
 aspects:
-	- Tests\Cases\ConditionalAroundAspect
+	- Tests\Files\Aspects\ConditionalAroundAspect
 
 services:
-	- Tests\Cases\CommonService
+	- Tests\Files\Aspects\CommonService

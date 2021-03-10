@@ -83,7 +83,7 @@ jobs:
         run: 'echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"'
 
       - name: "Tests"
-        run: "vendor/bin/tester -s -p php --colors 1 -C tests/cases"
+        run: "vendor/bin/tester -s -p php --colors 1 -C tests/Cases"
   static-analysis:
     name: "Static analysis"
     runs-on: "${{ matrix.operating-system }}"
@@ -196,7 +196,7 @@ jobs:
         run: "${{ env.composer-install }}"
 
       - name: "Tests"
-        run: "vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./coverage.xml --coverage-src ./src tests/cases"
+        run: "vendor/bin/tester -s -p phpdbg --colors 1 -C --coverage ./coverage.xml --coverage-src ./src tests/Cases"
 
       - name: "Coveralls.io"
         env:

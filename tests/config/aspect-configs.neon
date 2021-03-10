@@ -1,10 +1,10 @@
 aspects:
 	a:
-		class: Tests\Cases\AspectWithArguments
+		class: Tests\Files\Aspects\AspectWithArguments
 
 	b:
-		class: Tests\Cases\AspectWithArguments(@httpRequest)
+		class: Tests\Files\Aspects\AspectWithArguments(@httpRequest)
 
-	- Tests\Cases\AspectWithArguments
+	- Tests\Files\Aspects\AspectWithArguments
 
-	- Tests\Cases\AspectWithArguments(@httpRequest)
+	- Tests\Files\Aspects\AspectWithArguments(@httpRequest)

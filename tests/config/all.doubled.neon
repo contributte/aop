@@ -1,14 +1,14 @@
 aspects:
-	- Tests\Cases\AroundAspect
-	- Tests\Cases\SecondAroundAspect
-	- Tests\Cases\BeforeAspect
-	- Tests\Cases\SecondBeforeAspect
-	- Tests\Cases\AfterAspect
-	- Tests\Cases\SecondAfterAspect
-	- Tests\Cases\AfterReturningAspect
-	- Tests\Cases\SecondAfterReturningAspect
-	- Tests\Cases\AfterThrowingAspect
-	- Tests\Cases\SecondAfterThrowingAspect
+	- Tests\Files\Aspects\AroundAspect
+	- Tests\Files\Aspects\SecondAroundAspect
+	- Tests\Files\Aspects\BeforeAspect
+	- Tests\Files\Aspects\SecondBeforeAspect
+	- Tests\Files\Aspects\AfterAspect
+	- Tests\Files\Aspects\SecondAfterAspect
+	- Tests\Files\Aspects\AfterReturningAspect
+	- Tests\Files\Aspects\SecondAfterReturningAspect
+	- Tests\Files\Aspects\AfterThrowingAspect
+	- Tests\Files\Aspects\SecondAfterThrowingAspect
 
 services:
-	- Tests\Cases\CommonService
+	- Tests\Files\Aspects\CommonService

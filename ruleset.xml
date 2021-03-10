@@ -26,9 +26,6 @@
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
         <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>
-    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
     <rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable">
         <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>

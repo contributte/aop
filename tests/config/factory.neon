@@ -1,10 +1,10 @@
 aspects:
-	- Tests\Cases\AroundAspect
-	- Tests\Cases\BeforeAspect
-	- Tests\Cases\AfterAspect
-	- Tests\Cases\AfterReturningAspect
-	- Tests\Cases\AfterThrowingAspect
+	- Tests\Files\Aspects\AroundAspect
+	- Tests\Files\Aspects\BeforeAspect
+	- Tests\Files\Aspects\AfterAspect
+	- Tests\Files\Aspects\AfterReturningAspect
+	- Tests\Files\Aspects\AfterThrowingAspect
 
 services:
-	- Tests\Cases\CommonService
-	- Tests\Cases\ICommonServiceFactory
+	- Tests\Files\Aspects\CommonService
+	- Tests\Files\Aspects\ICommonServiceFactory
