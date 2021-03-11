@@ -9,16 +9,17 @@ abstract class MethodInvocation
 
 	use Nette\SmartObject;
 
-	/** @var object */
-	protected $targetObject;
+	protected object $targetObject;
 
-	/** @var string */
-	protected $targetMethod;
+	protected string $targetMethod;
 
-	/** @var array */
+	/** @var mixed[] $arguments */
 	protected $arguments;
 
-	public function __construct($targetObject, $targetMethod, $arguments = [])
+	/**
+	 * @param mixed[] $arguments
+	 */
+	public function __construct(object $targetObject, string $targetMethod, array $arguments = [])
 	{
 		$this->targetObject = $targetObject;
 		$this->targetMethod = $targetMethod;

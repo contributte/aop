@@ -2,22 +2,17 @@
 
 namespace Contributte\Aop\JoinPoint;
 
-use Exception;
 use Throwable;
 
 class AfterThrowing extends MethodInvocation implements ExceptionAware
 {
 
-	/** @var Exception|Throwable */
-	private $exception;
+	private ?Throwable $exception;
 
 	/**
-	 * @param object $targetObject
-	 * @param mixed $targetMethod
-	 * @param array $arguments
-	 * @param Exception|Throwable|NULL $exception
+	 * @param mixed[] $arguments
 	 */
-	public function __construct($targetObject, $targetMethod, array $arguments = [], ?Throwable $exception = null)
+	public function __construct(object $targetObject, string $targetMethod, array $arguments = [], ?Throwable $exception = null)
 	{
 		parent::__construct($targetObject, $targetMethod, $arguments);
 		$this->exception = $exception;

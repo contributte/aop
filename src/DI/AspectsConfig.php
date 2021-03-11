@@ -11,9 +11,12 @@ class AspectsConfig
 
 	use Nette\SmartObject;
 
-	/** @var array */
-	private $aspectsList;
+	/** @var mixed[] */
+	private array $aspectsList;
 
+	/**
+	 * @param mixed[] $aspectsList
+	 */
 	public function __construct(array $aspectsList)
 	{
 		$this->aspectsList = $aspectsList;

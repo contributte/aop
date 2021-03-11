@@ -17,10 +17,13 @@ class Rules implements Filter, RuntimeFilter
 	/** @var string */
 	private $operator;
 
-	/** @var array|Filter[] */
+	/** @var Filter[] */
 	private $rules;
 
-	public function __construct(array $rules = [], $operator = self::OP_AND)
+	/**
+	 * @param Filter[] $rules
+	 */
+	public function __construct(array $rules = [], string $operator = self::OP_AND)
 	{
 		foreach ($rules as $rule) {
 			$this->addRule($rule);
@@ -113,10 +116,9 @@ class Rules implements Filter, RuntimeFilter
 
 
 	/**
-	 * @param array|string|Filter $filter
-	 * @param string $operator
+	 * @param Filter[]|string|Filter|Rules $filter
 	 */
-	public static function unwrap($filter, $operator = self::OP_AND): Filter
+	public static function unwrap($filter, string $operator = self::OP_AND): Filter
 	{
 		if (is_array($filter)) {
 			if (count($filter) > 1) {
@@ -134,7 +136,9 @@ class Rules implements Filter, RuntimeFilter
 	}
 
 
-
+	/**
+	 * @param bool[] $result
+	 */
 	private function isMatching(array $result): bool
 	{
 		if ($this->operator === self::OP_AND) {

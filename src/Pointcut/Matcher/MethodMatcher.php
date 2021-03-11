@@ -18,7 +18,7 @@ class MethodMatcher implements Filter
 	/** @var string */
 	private $visibility;
 
-	public function __construct($method)
+	public function __construct(string $method)
 	{
 		if (strpos($method, ' ') !== false) {
 			[$this->visibility, $method] = explode(' ', $method, 2);

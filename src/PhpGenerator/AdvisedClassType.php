@@ -47,10 +47,6 @@ class AdvisedClassType
 
 
 
-	/**
-	 * @param ServiceDefinition $service
-	 * @param Code\PhpNamespace $namespace
-	 */
 	public static function fromServiceDefinition(ServiceDefinition $service, Code\PhpNamespace $namespace): Code\ClassType
 	{
 		$originalType = $service->getTypeReflection();

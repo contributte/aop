@@ -3,7 +3,6 @@
 namespace Contributte\Aop\DI;
 
 use Nette;
-use Nette\Configurator;
 
 class AspectsExtension extends Nette\DI\CompilerExtension
 {
@@ -28,20 +27,13 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 
 
 
-	/**
-	 * @param string $configFile
-	 * @param Nette\DI\CompilerExtension $extension
-	 */
-	public static function loadAspects($configFile, Nette\DI\CompilerExtension $extension): AspectsConfig
+	public static function loadAspects(string $configFile, Nette\DI\CompilerExtension $extension): AspectsConfig
 	{
 		return new AspectsConfig($extension->loadFromFile($configFile));
 	}
 
 
 
-	/**
-	 * @param Configurator $configurator
-	 */
 	public static function register(Nette\Configurator $configurator): void
 	{
 		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {

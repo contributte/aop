@@ -277,6 +277,7 @@ class PointcutMethod
 
 
 	/**
+	 * @param mixed[] $args
 	 * @return mixed
 	 */
 	public function __call(string $name, array $args)

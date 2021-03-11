@@ -47,10 +47,7 @@ use Throwable;
 class ExtensionTest extends TestCase
 {
 
-	/**
-	 * @param string $configFile
-	 */
-	public function createContainer($configFile): Nette\DI\Container
+	public function createContainer(string $configFile): Nette\DI\Container
 	{
 		$config = new Nette\Configurator();
 		$tmpDir = __DIR__ . '/../tmp/' . uniqid();
@@ -400,13 +397,7 @@ class ExtensionTest extends TestCase
 
 
 
-	/**
-	 * @param object $service
-	 * @param string $adviceClass
-	 * @param int $adviceCallIndex
-	 * @param MethodInvocation $joinPoint
-	 */
-	private static function assertAspectInvocation($service, $adviceClass, $adviceCallIndex, ?MethodInvocation $joinPoint = null): object
+	private static function assertAspectInvocation(object $service, string $adviceClass, int $adviceCallIndex, ?MethodInvocation $joinPoint = null): object
 	{
 		$advices = array_filter(self::getAspects($service), function ($advice) use ($adviceClass) {
 			return get_class($advice) === $adviceClass;

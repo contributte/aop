@@ -8,7 +8,11 @@ class AfterReturning extends MethodInvocation implements ResultAware
 	/** @var mixed */
 	private $result;
 
-	public function __construct($targetObject, $targetMethod, $arguments = [], $result = null)
+	/**
+	 * @param mixed[] $arguments
+	 * @param mixed|object $result
+	 */
+	public function __construct(object $targetObject, string $targetMethod, array $arguments = [], $result = null)
 	{
 		parent::__construct($targetObject, $targetMethod, $arguments);
 		$this->result = $result;

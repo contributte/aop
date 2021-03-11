@@ -3,6 +3,7 @@
 namespace Tests\Cases;
 
 use Contributte\Aop\Pointcut;
+use Contributte\Aop\Pointcut\Filter;
 use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Contributte\Aop\Pointcut\Parser;
 use Nette;
@@ -39,7 +40,7 @@ class PointcutParserTest extends TestCase
 
 
 	/**
-	 * @return array<string|int, array<Rules|string>>
+	 * @return array<string|int, array<Pointcut\Rules|string>>
 	 */
 	public function dataParse(): array
 	{
@@ -259,7 +260,7 @@ class PointcutParserTest extends TestCase
 	/**
 	 * @dataProvider dataParse
 	 */
-	public function testParse($expected, $input): void
+	public function testParse(Filter $expected, string $input): void
 	{
 		$parser = new Parser($this->getMatcherFactory());
 		$this->assertEquals($expected, $parser->parse($input));

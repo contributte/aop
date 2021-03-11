@@ -12,13 +12,11 @@ class ClassAnnotateWithMatcher implements Filter
 
 	use Nette\SmartObject;
 
-	/** @var string */
-	private $annotationClass;
+	private string $annotationClass;
 
-	/** @var Reader */
-	private $reader;
+	private Reader $reader;
 
-	public function __construct($annotationClass, Reader $reader)
+	public function __construct(string $annotationClass, Reader $reader)
 	{
 		$this->annotationClass = $annotationClass;
 		$this->reader = $reader;

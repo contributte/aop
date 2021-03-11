@@ -3,6 +3,7 @@
 namespace Contributte\Aop\Pointcut;
 
 use Contributte\Aop\PhpGenerator\PointcutMethod;
+use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Reader;
 use Nette;
 
@@ -64,8 +65,7 @@ class Method
 
 
 	/**
-	 * @param Reader $reader
-	 * @return object[]
+	 * @return Annotation[]
 	 */
 	public function getAnnotations(Reader $reader): array
 	{
@@ -75,7 +75,7 @@ class Method
 
 
 	/**
-	 * @return array|object[]
+	 * @return Annotation[]
 	 */
 	public function getClassAnnotations(Reader $reader): array
 	{
