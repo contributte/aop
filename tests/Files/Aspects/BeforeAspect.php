@@ -18,7 +18,7 @@ class BeforeAspect
 	/**
 	 * @Aop\Annotations\Before("method(Tests\Files\Aspects\CommonService->magic)")
 	 */
-	public function log(Aop\JoinPoint\BeforeMethod $before)
+	public function log(Aop\JoinPoint\BeforeMethod $before): void
 	{
 		$this->calls[] = $before;
 

@@ -49,9 +49,8 @@ class ExtensionTest extends TestCase
 
 	/**
 	 * @param string $configFile
-	 * @return Nette\DI\Container
 	 */
-	public function createContainer($configFile)
+	public function createContainer($configFile): Nette\DI\Container
 	{
 		$config = new Nette\Configurator();
 		$tmpDir = __DIR__ . '/../tmp/' . uniqid();
@@ -196,7 +195,7 @@ class ExtensionTest extends TestCase
 
 
 
-	public function testFunctionalAround_blocking()
+	public function testFunctionalAround_blocking(): void
 	{
 		$dic = $this->createContainer('around.blocking');
 		$service = $dic->getByType(CommonService::class);
@@ -266,7 +265,7 @@ class ExtensionTest extends TestCase
 
 
 
-	public function testFunctionalAfterReturning_conditional()
+	public function testFunctionalAfterReturning_conditional(): void
 	{
 		$dic = $this->createContainer('afterReturning.conditional');
 		$service = $dic->getByType(CommonService::class);
@@ -334,7 +333,7 @@ class ExtensionTest extends TestCase
 
 
 
-	public function testFunctionalAll()
+	public function testFunctionalAll(): void
 	{
 		$dic = $this->createContainer('all');
 		$service = $dic->getByType(CommonService::class);
@@ -406,9 +405,8 @@ class ExtensionTest extends TestCase
 	 * @param string $adviceClass
 	 * @param int $adviceCallIndex
 	 * @param MethodInvocation $joinPoint
-	 * @return object
 	 */
-	private static function assertAspectInvocation($service, $adviceClass, $adviceCallIndex, ?MethodInvocation $joinPoint = null)
+	private static function assertAspectInvocation($service, $adviceClass, $adviceCallIndex, ?MethodInvocation $joinPoint = null): object
 	{
 		$advices = array_filter(self::getAspects($service), function ($advice) use ($adviceClass) {
 			return get_class($advice) === $adviceClass;
@@ -451,8 +449,8 @@ class ExtensionTest extends TestCase
 
 
 	/**
-	 * @param string $service
-	 * @return array
+	 * @param string|object $service
+	 * @return object[]
 	 */
 	private static function getAspects($service): array
 	{

@@ -132,7 +132,9 @@ class Criteria
 	}
 
 
-
+	/**
+	 * @return mixed
+	 */
 	private function doEvaluateValueResolve(ContainerBuilder $builder, $expression)
 	{
 		if ($expression instanceof Code\PhpLiteral) {
@@ -179,7 +181,9 @@ class Criteria
 	}
 
 
-
+	/**
+	 * @return mixed
+	 */
 	private function doSerializeValueResolve(ContainerBuilder $builder, $expression)
 	{
 		if ($expression instanceof Code\PhpLiteral) {
@@ -219,10 +223,7 @@ class Criteria
 
 
 
-	/**
-	 * @return string
-	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return static::class . '(#' . spl_object_hash($this) . ')';
 	}
@@ -256,7 +257,7 @@ class Criteria
 	 */
 	private static function resolveExpression(Code\Literal $expression)
 	{
-		set_error_handler(function ($severenity, $message) {
+		set_error_handler(function ($severenity, $message): void {
 			restore_error_handler();
 			throw new ParserException($message, $severenity);
 		});
@@ -284,7 +285,7 @@ class Criteria
 
 
 
-	public static function compare($left, string $operator, $right)
+	public static function compare($left, string $operator, $right): bool
 	{
 		switch (strtoupper($operator)) {
 			case self::EQ:

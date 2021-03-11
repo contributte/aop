@@ -19,7 +19,7 @@ class AfterReturning extends MethodInvocation implements ResultAware
 	/**
 	 * @param mixed $result
 	 */
-	public function setResult($result)
+	public function setResult($result): void
 	{
 		$this->result = $result;
 	}

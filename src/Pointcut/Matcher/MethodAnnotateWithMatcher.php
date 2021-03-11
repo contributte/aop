@@ -39,7 +39,9 @@ class MethodAnnotateWithMatcher implements Filter
 		return false;
 	}
 
-
+	/**
+	 * @return array<int, string|Filter>
+	 */
 	public function listAcceptedTypes(): array
 	{
 		return [];

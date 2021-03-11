@@ -53,7 +53,9 @@ class Method
 	}
 
 
-
+	/**
+	 * @return object[]
+	 */
 	public function getTypesWithin(): array
 	{
 		return $this->serviceDefinition->getTypesWithin();
@@ -100,6 +102,9 @@ class Method
 	}
 
 
+	/**
+	 * @return string[]
+	 */
 	public function getParameterNames(): array
 	{
 		return array_keys($this->method->getParameters());

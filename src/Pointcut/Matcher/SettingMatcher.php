@@ -31,7 +31,9 @@ class SettingMatcher implements Filter
 		return $this->settings->evaluate($this->builder);
 	}
 
-
+	/**
+	 * @return array<int, string|Filter>
+	 */
 	public function listAcceptedTypes(): array
 	{
 		return [];

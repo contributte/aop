@@ -36,6 +36,9 @@ use Tests\Files\Pointcut\Test;
 class PointcutRulesTest extends TestCase
 {
 
+	/**
+	 * @return array<int|string, array<int, bool|Rules>>
+	 */
 	public function dataMatchWithin(): array
 	{
 		$data = [];
@@ -59,6 +62,10 @@ class PointcutRulesTest extends TestCase
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
 
+
+	/**
+	 * @return array<int|string, array<int, bool|Rules>>
+	 */
 	public function dataMatchMethod(): array
 	{
 		$data = [];
@@ -93,6 +100,11 @@ class PointcutRulesTest extends TestCase
 		$def = $this->createDefinition(MockPresenter::class);
 		$this->assertSame([$def->openMethods['renderDefault'], $def->openMethods['actionDefault'], $def->openMethods['handleSort']], $def->match($rules));
 	}
+
+
+	/**
+	 * @return array<int|string, array<int, bool|Rules>>
+	 */
 	public function dataMatchFilter(): array
 	{
 		$data = [];
@@ -107,6 +119,10 @@ class PointcutRulesTest extends TestCase
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
+
+	/**
+	 * @return array<int|string, array<int, bool|Rules>>
+	 */
 	public function dataMatchClassAnnotateWith(): array
 	{
 		$data = [];
@@ -123,6 +139,9 @@ class PointcutRulesTest extends TestCase
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
 
+	/**
+	 * @return array<int|string, array<int, bool|Rules>>
+	 */
 	public function dataMatchMethodAnnotateWith(): array
 	{
 		$data = [];
@@ -161,14 +180,14 @@ class PointcutRulesTest extends TestCase
 
 		return unserialize(sprintf('O:%d:"%s":0:{}', strlen(Method::class), Method::class));
 	}
+
 	/**
 	 * @param string $class
-	 * @return Pointcut\ServiceDefinition
 	 */
-	private function createDefinition($class)
+	private function createDefinition($class): Pointcut\ServiceDefinition
 	{
 		$def = new ServiceDefinition();
-		$def->setClass($class);
+		$def->setType($class);
 		return new Pointcut\ServiceDefinition($def, 'abc');
 	}
 

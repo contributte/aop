@@ -7,17 +7,17 @@ use Nette;
 class MockPresenter extends Nette\Application\UI\Presenter
 {
 
-	public function renderDefault()
+	public function renderDefault(): void
 	{
 	}
 
 
-	public function actionDefault()
+	public function actionDefault(): void
 	{
 	}
 
 
-	public function handleSort()
+	public function handleSort(): void
 	{
 	}
 

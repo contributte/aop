@@ -2,7 +2,6 @@
 
 namespace Contributte\Aop\DI;
 
-use Contributte\Aop\Exceptions\UnexpectedValueException;
 use Nette;
 use Nette\Configurator;
 
@@ -11,7 +10,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 
 	public const ASPECT_TAG = 'contributte.aspect';
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -23,12 +22,6 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 				continue;
 			}
 
-			if (!($config = $extension->getAspectsConfiguration()) || !$config instanceof AspectsConfig) {
-				$refl = Nette\Reflection\Method::from($extension, 'getAspectsConfiguration');
-				$given = is_object($config) ? 'instance of ' . get_class($config) : gettype($config);
-				throw new UnexpectedValueException('Method ' . $refl . ' is expected to return instance of Contributte\\Aop\\DI\\AspectsConfig, but ' . $given . ' given.');
-			}
-
 			$config->load($this->compiler, $builder);
 		}
 	}
@@ -38,9 +31,8 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @param string $configFile
 	 * @param Nette\DI\CompilerExtension $extension
-	 * @return AspectsConfig
 	 */
-	public static function loadAspects($configFile, Nette\DI\CompilerExtension $extension)
+	public static function loadAspects($configFile, Nette\DI\CompilerExtension $extension): AspectsConfig
 	{
 		return new AspectsConfig($extension->loadFromFile($configFile));
 	}
@@ -50,9 +42,9 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @param Configurator $configurator
 	 */
-	public static function register(Nette\Configurator $configurator)
+	public static function register(Nette\Configurator $configurator): void
 	{
-		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
+		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {
 			$compiler->addExtension('aspects', new AspectsExtension());
 		};
 	}

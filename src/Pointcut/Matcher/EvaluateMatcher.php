@@ -39,7 +39,9 @@ class EvaluateMatcher implements Filter, RuntimeFilter
 		return $this->evaluate->serialize($this->builder);
 	}
 
-
+	/**
+	 * @return array<int, string|Filter>
+	 */
 	public function listAcceptedTypes(): array
 	{
 		return [];

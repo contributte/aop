@@ -16,7 +16,7 @@ class AfterAspect
 	/**
 	 * @Aop\Annotations\After("method(Tests\Files\Aspects\CommonService->magic)")
 	 */
-	public function log(Aop\JoinPoint\AfterMethod $after)
+	public function log(Aop\JoinPoint\AfterMethod $after): void
 	{
 		$this->calls[] = $after;
 	}

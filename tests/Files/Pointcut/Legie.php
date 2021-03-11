@@ -8,12 +8,12 @@ class Legie implements Rimmer, Lister, Kryten, Cat
 	/**
 	 * @Test()
 	 */
-	public function publicCalculation()
+	public function publicCalculation(): void
 	{
 	}
 
 
-	protected function protectedCalculation()
+	protected function protectedCalculation(): void
 	{
 	}
 
@@ -23,7 +23,7 @@ class Legie implements Rimmer, Lister, Kryten, Cat
 	}
 
 
-	public function injectBar()
+	public function injectBar(): void
 	{
 	}
 

@@ -45,7 +45,9 @@ class WithinMatcher implements Filter
 	}
 
 
-
+	/**
+	 * @return array<int, string|Filter>
+	 */
 	public function listAcceptedTypes(): array
 	{
 		if ($this->type) {

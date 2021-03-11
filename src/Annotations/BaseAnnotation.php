@@ -7,10 +7,7 @@ use Doctrine;
 abstract class BaseAnnotation extends Doctrine\Common\Annotations\Annotation implements Annotation
 {
 
-	/**
-	 * @return string
-	 */
-	public static function getClassName()
+	public static function getClassName(): string
 	{
 		return static::class;
 	}

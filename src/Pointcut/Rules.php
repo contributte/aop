@@ -67,7 +67,7 @@ class Rules implements Filter, RuntimeFilter
 
 
 	/**
-	 * @return Filter[]
+	 * @return array<int, string|Filter>
 	 */
 	public function listAcceptedTypes(): array
 	{
@@ -115,9 +115,8 @@ class Rules implements Filter, RuntimeFilter
 	/**
 	 * @param array|string|Filter $filter
 	 * @param string $operator
-	 * @return Filter
 	 */
-	public static function unwrap($filter, $operator = self::OP_AND)
+	public static function unwrap($filter, $operator = self::OP_AND): Filter
 	{
 		if (is_array($filter)) {
 			if (count($filter) > 1) {
@@ -136,7 +135,7 @@ class Rules implements Filter, RuntimeFilter
 
 
 
-	private function isMatching(array $result)
+	private function isMatching(array $result): bool
 	{
 		if ($this->operator === self::OP_AND) {
 			return array_filter($result) === $result; // all values are TRUE
