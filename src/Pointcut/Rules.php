@@ -17,7 +17,7 @@ class Rules implements Filter, RuntimeFilter
 	private string $operator;
 
 	/** @var Filter[] */
-	private array $rules;
+	private array $rules = [];
 
 	/**
 	 * @param Filter[] $rules
