@@ -5,6 +5,7 @@ namespace Tests\Files\Aspects;
 use Contributte\Aop;
 use Nette;
 use RuntimeException;
+use Throwable;
 
 class AroundBlockingAspect
 {
@@ -12,12 +13,15 @@ class AroundBlockingAspect
 	use Nette\SmartObject;
 
 	/** @var array|Aop\JoinPoint\AroundMethod[] */
-	public $calls = [];
+	public array $calls = [];
 
+	/** @var mixed[]|false */
 	public $modifyArgs = false;
 
+	/** @var mixed|false */
 	public $modifyReturn = false;
 
+	/** @var Throwable|false */
 	public $modifyThrow = false;
 
 	/**

@@ -8,7 +8,7 @@ class AroundMethod extends MethodInvocation
 {
 
 	/** @var array|callable[] */
-	private $callChain = [];
+	private array $callChain = [];
 
 	/**
 	 * @param mixed[] $arguments

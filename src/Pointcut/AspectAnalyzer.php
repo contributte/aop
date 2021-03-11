@@ -14,11 +14,9 @@ class AspectAnalyzer
 
 	use Nette\SmartObject;
 
-	/** @var Reader */
-	private $annotationReader;
+	private Reader $annotationReader;
 
-	/** @var Parser */
-	private $pointcutParser;
+	private Parser $pointcutParser;
 
 	public function __construct(Parser $parser, ?Reader $reader = null)
 	{

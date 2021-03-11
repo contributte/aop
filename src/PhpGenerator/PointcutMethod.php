@@ -21,23 +21,22 @@ use ReflectionNamedType;
 class PointcutMethod
 {
 
-	/** @var array */
-	private $before = [];
+	/** @var string[] */
+	private array $before = [];
 
-	/** @var array */
-	private $around = [];
+	/** @var string[] */
+	private array $around = [];
 
-	/** @var array */
-	private $afterReturning = [];
+	/** @var string[] */
+	private array $afterReturning = [];
 
-	/** @var array */
-	private $afterThrowing = [];
+	/** @var string[] */
+	private array $afterThrowing = [];
 
-	/** @var array */
-	private $after = [];
+	/** @var string[] */
+	private array $after = [];
 
-	/** @var Code\Method */
-	private $method;
+	private Code\Method $method;
 
 	public function __construct(Nette\Reflection\Method $from)
 	{

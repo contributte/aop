@@ -11,17 +11,13 @@ class AdviceDefinition
 
 	use Nette\SmartObject;
 
-	/** @var Method */
-	private $targetMethod;
+	private Method $targetMethod;
 
-	/** @var Method */
-	private $advice;
+	private Method $advice;
 
-	/** @var string */
-	private $adviceType;
+	private string $adviceType;
 
-	/** @var Filter */
-	private $filter;
+	private Filter $filter;
 
 	public function __construct(string $adviceType, Method $targetMethod, Method $advice, Filter $filter)
 	{

@@ -12,11 +12,9 @@ class MethodMatcher implements Filter
 
 	use Nette\SmartObject;
 
-	/** @var string */
-	private $method;
+	private string $method;
 
-	/** @var string */
-	private $visibility;
+	private ?string $visibility = null;
 
 	public function __construct(string $method)
 	{

@@ -11,7 +11,7 @@ class AfterAspect
 	use Nette\SmartObject;
 
 	/** @var array|Aop\JoinPoint\AfterMethod[] */
-	public $calls = [];
+	public array $calls = [];
 
 	/**
 	 * @Aop\Annotations\After("method(Tests\Files\Aspects\CommonService->magic)")

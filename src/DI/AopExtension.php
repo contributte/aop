@@ -15,8 +15,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class AopExtension extends Nette\DI\CompilerExtension
 {
 
+	/** @var string[]|null */
 	private ?array $classes = [];
 
+	/** @var Pointcut\ServiceDefinition[] */
 	private array $serviceDefinitions = [];
 
 	private ?string $compiledFile;

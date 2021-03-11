@@ -20,14 +20,12 @@ class MatcherFactory
 
 	use Nette\SmartObject;
 
-	/** @var ContainerBuilder */
-	private $builder;
+	private ContainerBuilder $builder;
 
-	/** @var Reader */
-	private $annotationReader;
+	private Reader $annotationReader;
 
-	/** @var array */
-	private $cache = [];
+	/** @var mixed[] */
+	private array $cache = [];
 
 	public function __construct(Nette\DI\ContainerBuilder $builder, ?Reader $annotationReader = null)
 	{

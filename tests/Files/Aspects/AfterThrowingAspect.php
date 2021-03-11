@@ -11,7 +11,7 @@ class AfterThrowingAspect
 	use Nette\SmartObject;
 
 	/** @var array|Aop\JoinPoint\AfterThrowing[] */
-	public $calls = [];
+	public array $calls = [];
 
 	/**
 	 * @Aop\Annotations\AfterThrowing("method(Tests\Files\Aspects\CommonService->magic)")

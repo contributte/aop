@@ -27,11 +27,9 @@ class Parser
 	public const TOK_STRING = 'string';
 	public const TOK_WILDCARD = 'wildcard';
 
-	/** @var Tokenizer */
-	private $tokenizer;
+	private Tokenizer $tokenizer;
 
-	/** @var MatcherFactory */
-	private $matcherFactory;
+	private MatcherFactory $matcherFactory;
 
 	public function __construct(MatcherFactory $matcherFactory)
 	{

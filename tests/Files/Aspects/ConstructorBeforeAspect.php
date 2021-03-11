@@ -11,7 +11,7 @@ class ConstructorBeforeAspect
 	use Nette\SmartObject;
 
 	/** @var array|Aop\JoinPoint\BeforeMethod[] */
-	public $calls = [];
+	public array $calls = [];
 
 	/**
 	 * @Aop\Annotations\Before("method(Tests\Files\Aspects\CommonService->__construct)")

@@ -33,11 +33,10 @@ class Criteria
 	public const CONTAINS = 'CONTAINS';
 	public const MATCHES = 'MATCHES';
 
-	/** @var string */
-	private $operator;
+	private string $operator;
 
-	/** @var array */
-	private $expressions = [];
+	/** @var array<array<string|self>|Criteria> */
+	private array $expressions = [];
 
 	/**
 	 * @throws InvalidArgumentException
