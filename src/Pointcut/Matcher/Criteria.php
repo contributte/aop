@@ -38,6 +38,8 @@ class Criteria
 	/** @var array<array<string|self>|Criteria> */
 	private array $expressions = [];
 
+	private Code\Dumper $dumper;
+
 	/**
 	 * @throws InvalidArgumentException
 	 */
@@ -48,6 +50,7 @@ class Criteria
 		}
 
 		$this->operator = $operator;
+		$this->dumper = new Code\Dumper();
 	}
 
 
@@ -173,7 +176,7 @@ class Criteria
 			return $expression->serialize($builder);
 		}
 
-		return Code\Helpers::format(
+		return $this->dumper->format(
 			'Criteria::compare(?, ?, ?)',
 			$this->doSerializeValueResolve($builder, $expression[0]),
 			$expression[1],
@@ -206,7 +209,7 @@ class Criteria
 					$targetObject = '$this';
 
 				} elseif ($m['context'] === 'context' && ($p = self::shiftAccessPath($m['path']))) {
-					$targetObject = class_exists($p['context']) || interface_exists($p['context']) ? Code\Helpers::format('$this->_contributte_aopContainer->getByType(?)', $p['context']) : Code\Helpers::format('$this->_contributte_aopContainer->getService(?)', $p['context']);
+					$targetObject = class_exists($p['context']) || interface_exists($p['context']) ? $this->dumper->format('$this->_contributte_aopContainer->getByType(?)', $p['context']) : $this->dumper->format('$this->_contributte_aopContainer->getService(?)', $p['context']);
 
 					$m['path'] = $p['path'];
 
@@ -214,7 +217,7 @@ class Criteria
 					throw new NotImplementedException();
 				}
 
-				$expression = Code\Helpers::format('PropertyAccess::createPropertyAccessor()->getValue(?, ?)', new Code\PhpLiteral($targetObject), $m['path']);
+				$expression = $this->dumper->format('PropertyAccess::createPropertyAccessor()->getValue(?, ?)', new Code\PhpLiteral($targetObject), $m['path']);
 			}
 
 			$expression = new Code\PhpLiteral($expression);
