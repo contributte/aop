@@ -26,7 +26,9 @@ class Inverse implements Filter
 		return !$this->filter->matches($method);
 	}
 
-
+	/**
+	 * @return array<int, string|Filter>
+	 */
 	public function listAcceptedTypes(): array
 	{
 		return $this->filter->listAcceptedTypes();

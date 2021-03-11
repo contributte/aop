@@ -15,6 +15,8 @@ interface Filter
 	/**
 	 * Tries to figure out types, that could be used for searching in ContainerBuilder.
 	 * Pre-filtering of services should increase speed of filtering.
+	 *
+	 * @return array<int, Filter|string>
 	 */
 	public function listAcceptedTypes(): array;
 

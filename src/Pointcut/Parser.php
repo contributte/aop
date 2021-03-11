@@ -4,6 +4,7 @@ namespace Contributte\Aop\Pointcut;
 
 use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Exceptions\ParserException;
+use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Nette;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Tokenizer\Stream;
@@ -52,7 +53,9 @@ class Parser
 	}
 
 
-
+	/**
+	 * @return Rules|mixed
+	 */
 	public function parse(string $input)
 	{
 		try {
@@ -126,8 +129,7 @@ class Parser
 	}
 
 
-
-	protected function parseClass(Stream $tokens)
+	protected function parseClass(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
 		$className = $tokens->nextValue();
@@ -137,7 +139,9 @@ class Parser
 	}
 
 
-
+	/**
+	 * @return Rules|Filter
+	 */
 	protected function parseMethod(Stream $tokens)
 	{
 		$visibility = null;
@@ -184,7 +188,7 @@ class Parser
 
 
 
-	protected function parseWithin(Stream $tokens)
+	protected function parseWithin(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
 		$within = $tokens->nextValue();
@@ -195,7 +199,7 @@ class Parser
 
 
 
-	protected function parseFilter(Stream $tokens)
+	protected function parseFilter(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
 		$filter = $tokens->nextValue();
@@ -206,7 +210,7 @@ class Parser
 
 
 
-	protected function parseSetting(Stream $tokens)
+	protected function parseSetting(Stream $tokens): Filter
 	{
 		$tokens->nextUntil('(');
 		if (!$criteria = $this->parseArguments($tokens)) {
@@ -218,7 +222,7 @@ class Parser
 
 
 
-	protected function parseEvaluate(Stream $tokens)
+	protected function parseEvaluate(Stream $tokens): Filter
 	{
 		$tokens->nextUntil('(');
 		if (!$criteria = $this->parseArguments($tokens)) {
@@ -230,7 +234,7 @@ class Parser
 
 
 
-	protected function parseClassAnnotatedWith(Stream $tokens)
+	protected function parseClassAnnotatedWith(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
 		$annotation = $tokens->nextValue();
@@ -241,7 +245,7 @@ class Parser
 
 
 
-	protected function parseMethodAnnotatedWith(Stream $tokens)
+	protected function parseMethodAnnotatedWith(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
 		$annotation = $tokens->nextValue();
@@ -252,7 +256,7 @@ class Parser
 
 
 
-	protected function parseArguments(Stream $tokens)
+	protected function parseArguments(Stream $tokens): ?Criteria
 	{
 		$operator = null;
 		$conditions = [];
@@ -366,7 +370,7 @@ class Parser
 	/**
 	 * @param mixed $value
 	 * @param Nette\Tokenizer\Token $token
-	 * @return PhpLiteral
+	 * @return string|PhpLiteral
 	 */
 	protected static function sanitizeArgumentExpression($value, $token)
 	{
@@ -383,10 +387,9 @@ class Parser
 	 * @param Stream $tokens
 	 * @param array|string $types
 	 * @param array|string $allowedToSkip
-	 * @return string|NULL
 	 * @throws ParserException
 	 */
-	protected static function nextValue(Stream $tokens, $types, $allowedToSkip = [])
+	protected static function nextValue(Stream $tokens, $types, $allowedToSkip = []): ?string
 	{
 		do {
 			if (call_user_func_array([$tokens, 'isCurrent'], (array) $types)) {

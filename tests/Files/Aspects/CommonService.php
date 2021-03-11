@@ -18,7 +18,7 @@ class CommonService
 	}
 
 
-	public function magic($argument)
+	public function magic($argument): ?int
 	{
 		$this->calls[] = func_get_args();
 

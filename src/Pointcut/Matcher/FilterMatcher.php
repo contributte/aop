@@ -32,7 +32,9 @@ class FilterMatcher implements Filter
 	}
 
 
-
+	/**
+	 * @return array<int, string|Filter>
+	 */
 	public function listAcceptedTypes(): array
 	{
 		return $this->filter->listAcceptedTypes();

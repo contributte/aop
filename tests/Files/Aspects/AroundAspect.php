@@ -19,6 +19,7 @@ class AroundAspect
 
 	/**
 	 * @Aop\Annotations\Around("method(Tests\Files\Aspects\CommonService->magic)")
+	 * @return mixed
 	 */
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{

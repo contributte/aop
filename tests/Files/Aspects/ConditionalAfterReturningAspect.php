@@ -18,7 +18,7 @@ class ConditionalAfterReturningAspect
 	/**
 	 * @Aop\Annotations\AfterReturning("method(Tests\Files\Aspects\CommonService->magic) && evaluate(this.return == 2)")
 	 */
-	public function log(Aop\JoinPoint\AfterReturning $after)
+	public function log(Aop\JoinPoint\AfterReturning $after): void
 	{
 		$this->calls[] = $after;
 

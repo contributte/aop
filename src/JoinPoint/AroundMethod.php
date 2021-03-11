@@ -23,8 +23,10 @@ class AroundMethod extends MethodInvocation
 	}
 
 
-
-	public function addChainLink($object, $method): array
+	/**
+	 * @return array<int, object|string>
+	 */
+	public function addChainLink(object $object, string $method): array
 	{
 		return $this->callChain[] = [$object, $method];
 	}

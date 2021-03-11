@@ -5,7 +5,7 @@ namespace Tests\Files;
 class TestClass
 {
 
-	public function first(int $param, string $second)
+	public function first(int $param, string $second): void
 	{
 	}
 

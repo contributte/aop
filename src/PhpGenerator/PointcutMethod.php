@@ -250,13 +250,10 @@ class PointcutMethod
 		foreach ($from->getParameters() as $paramRefl) {
 			try {
 				if (!in_array($parameters[$paramRefl->getName()]->getType(), ['boolean', 'integer', 'float', 'string', 'object', 'int', 'bool' ])) {
-					if (PHP_VERSION_ID >= 80000) {
-						/** @var ReflectionNamedType|null $typehint */
-						$typehint = $paramRefl->getType();
-						$type = $typehint === null ? '' : $typehint->getName();
-					} else {
-						$type = $paramRefl->isArray() ? 'array' : ($paramRefl->getClass() ? '\\' . $paramRefl->getClass()->getName() : '');
-					}
+
+					/** @var ReflectionNamedType|null $typehint */
+					$typehint = $paramRefl->getType();
+					$type = $typehint === null ? '' : $typehint->getName();
 
 					$parameters[$paramRefl->getName()]->setType($type);
 				}
@@ -278,6 +275,10 @@ class PointcutMethod
 		return $method;
 	}
 
+
+	/**
+	 * @return mixed
+	 */
 	public function __call(string $name, array $args)
 	{
 		return call_user_func_array([$this->method, $name], $args);

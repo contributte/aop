@@ -4,6 +4,7 @@
     <rule ref="./vendor/ninjify/coding-standard/contributte.xml">
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"></exclude>
      </rule>
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint"></rule>
 
     <!-- Specific rules -->
     <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">

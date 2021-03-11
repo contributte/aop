@@ -11,7 +11,7 @@ use Tests\Files\TestClass;
 class AdvisedClassTypeTest extends TestCase
 {
 
-	public function testSetMethodInstance()
+	public function testSetMethodInstance(): void
 	{
 		$testClass = ClassType::from(TestClass::class);
 		$method = AdvisedClassType::setMethodInstance($testClass, $testClass->getMethod('first'));

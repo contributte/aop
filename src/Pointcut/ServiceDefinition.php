@@ -4,6 +4,7 @@ namespace Contributte\Aop\Pointcut;
 
 use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Nette;
+use Nette\DI\Definitions\Definition;
 use ReflectionMethod;
 
 /**
@@ -18,13 +19,13 @@ class ServiceDefinition
 
 	use Nette\SmartObject;
 
-	/** @var \Nette\DI\ServiceDefinition */
+	/** @var Definition */
 	protected $serviceDefinition;
 
 	/** @var Nette\Reflection\ClassType */
 	private $originalType;
 
-	/** @var array|Nette\PhpGenerator\Method[] */
+	/** @var array|Method[] */
 	private $openMethods;
 
 	/** @var array */
@@ -33,7 +34,7 @@ class ServiceDefinition
 	/** @var string */
 	private $serviceId;
 
-	public function __construct(Nette\DI\Definitions\Definition $def, string $serviceId)
+	public function __construct(Definition $def, string $serviceId)
 	{
 		$this->serviceDefinition = $def;
 
@@ -59,7 +60,9 @@ class ServiceDefinition
 	}
 
 
-
+	/**
+	 * @return object[]
+	 */
 	public function getTypesWithin(): array
 	{
 		if ($this->typesWithing !== null) {
@@ -92,7 +95,7 @@ class ServiceDefinition
 					$this->openMethods[$method->getName()] = new Method($method, $this);
 				}
 			}
-		} while (!empty($type->getParentClass()) && $type = $type->getParentClass());
+		} while ($type = $type->getParentClass());
 
 		return $this->openMethods;
 	}

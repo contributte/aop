@@ -38,7 +38,9 @@ class PointcutParserTest extends TestCase
 	}
 
 
-
+	/**
+	 * @return array<string|int, array<Rules|string>>
+	 */
 	public function dataParse(): array
 	{
 		$mf = $this->getMatcherFactory();

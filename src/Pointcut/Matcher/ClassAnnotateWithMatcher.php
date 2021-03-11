@@ -42,7 +42,7 @@ class ClassAnnotateWithMatcher implements Filter
 
 
 	/**
-	 * @return array
+	 * @return array<int, string|Filter>
 	 */
 	public function listAcceptedTypes(): array
 	{

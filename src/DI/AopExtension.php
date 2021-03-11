@@ -16,23 +16,20 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class AopExtension extends Nette\DI\CompilerExtension
 {
 
-	/** @var array */
-	private $classes = [];
+	private ?array $classes = [];
 
-	/** @var array */
-	private $serviceDefinitions = [];
+	private array $serviceDefinitions = [];
 
-	/** @var string */
-	private $compiledFile;
+	private ?string $compiledFile;
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		AnnotationReader::addGlobalIgnoredName('persistent');
 	}
 
 
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$this->compiledFile = null;
@@ -82,7 +79,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 
-	public function afterCompile(Nette\PhpGenerator\ClassType $class)
+	public function afterCompile(Nette\PhpGenerator\ClassType $class): void
 	{
 		if (!$this->compiledFile) {
 			return;
@@ -94,7 +91,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 
-	private function patchService($serviceId, Code\ClassType $advisedClass, Code\PhpNamespace $cg, $constructorInject = false)
+	private function patchService($serviceId, Code\ClassType $advisedClass, Code\PhpNamespace $cg, $constructorInject = false): void
 	{
 		static $publicSetup;
 		if ($publicSetup === null) {
@@ -109,12 +106,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 		}
 
 		$factory = $def->getFactory();
-		if ($factory) {
-			$def->setFactory(new Statement($cg->getName() . '\\' . $advisedClass->getName(), $factory->arguments));
-
-		} else {
-			$def->setFactory($cg->getName() . '\\' . $advisedClass->getName());
-		}
+		$def->setFactory(new Statement($cg->getName() . '\\' . $advisedClass->getName(), $factory->arguments));
 
 		if (!$constructorInject) {
 			$statement = new Statement(AdvisedClassType::CG_INJECT_METHOD, ['@Nette\DI\Container']);
@@ -131,8 +123,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 	}
 
 
-
-	private function writeGeneratedCode(Code\PhpFile $file, Code\PhpNamespace $namespace)
+	private function writeGeneratedCode(Code\PhpFile $file, Code\PhpNamespace $namespace): string
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -152,9 +143,9 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @return array
+	 * @return array<int|string, array<string, AdviceDefinition[]>>
 	 */
-	private function findAdvisedMethods()
+	private function findAdvisedMethods(): array
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->resolve();
@@ -191,9 +182,9 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 	/**
 	 * @param array|string $types
-	 * @return array
+	 * @return array<string, string[]>
 	 */
-	private function findByTypes($types)
+	private function findByTypes($types): array
 	{
 		if ($this->classes === null) {
 			$this->classes = [];
@@ -223,12 +214,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 	}
 
 
-
-	/**
-	 * @param int $id
-	 * @return Pointcut\ServiceDefinition
-	 */
-	private function getWrappedDefinition($id)
+	private function getWrappedDefinition(string $id): Pointcut\ServiceDefinition
 	{
 		if (!isset($this->serviceDefinitions[$id])) {
 			$def = $this->getContainerBuilder()->getDefinition($id);
@@ -247,9 +233,9 @@ class AopExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @param Configurator $configurator
 	 */
-	public static function register(Nette\Configurator $configurator)
+	public static function register(Nette\Configurator $configurator): void
 	{
-		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
+		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {
 			$compiler->addExtension('aop', new AopExtension());
 		};
 	}

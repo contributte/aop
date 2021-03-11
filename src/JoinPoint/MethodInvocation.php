@@ -27,10 +27,7 @@ abstract class MethodInvocation
 
 
 
-	/**
-	 * @return object
-	 */
-	public function getTargetObject()
+	public function getTargetObject(): object
 	{
 		return $this->targetObject;
 	}
@@ -38,9 +35,9 @@ abstract class MethodInvocation
 
 
 	/**
-	 * @return array
+	 * @return mixed[]
 	 */
-	public function getArguments()
+	public function getArguments(): array
 	{
 		return $this->arguments;
 	}

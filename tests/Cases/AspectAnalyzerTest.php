@@ -23,9 +23,9 @@ class AspectAnalyzerTest extends TestCase
 {
 
 	/***
-	 * @return array
+	 * @return array<int|string, array<int, array<string, array<string, array<int, Pointcut\Rules>>>>>
 	 */
-	public function dataAnalyze()
+	public function dataAnalyze(): array
 	{
 		$data = [];
 
@@ -97,7 +97,7 @@ class AspectAnalyzerTest extends TestCase
 	/**
 	 * @dataProvider dataAnalyze
 	 */
-	public function testAnalyze(array $pointcuts, ServiceDefinition $service)
+	public function testAnalyze(array $pointcuts, ServiceDefinition $service): void
 	{
 		$builder = new Nette\DI\ContainerBuilder();
 		$annotationReader = new AnnotationReader();
@@ -111,9 +111,8 @@ class AspectAnalyzerTest extends TestCase
 
 	/**
 	 * @param string $class
-	 * @return Pointcut\ServiceDefinition
 	 */
-	private function createDefinition($class)
+	private function createDefinition($class): Pointcut\ServiceDefinition
 	{
 		$def = new Nette\DI\Definitions\ServiceDefinition();
 		$def->setClass($class);

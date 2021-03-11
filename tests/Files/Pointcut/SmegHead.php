@@ -8,12 +8,12 @@ namespace Tests\Files\Pointcut;
 class SmegHead
 {
 
-	public function injectFoo()
+	public function injectFoo(): void
 	{
 	}
 
 
-	public function bar()
+	public function bar(): void
 	{
 	}
 

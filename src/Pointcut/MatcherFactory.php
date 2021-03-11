@@ -38,9 +38,8 @@ class MatcherFactory
 
 	/**
 	 * @param mixed|string $arg
-	 * @return Filter
 	 */
-	public function getMatcher(string $type, $arg)
+	public function getMatcher(string $type, $arg): Filter
 	{
 		if (!isset($this->cache[$type][(string) $arg])) {
 			$this->cache[$type][(string) $arg] = call_user_func([$this, 'create' . ucfirst($type)], $arg);
@@ -93,9 +92,9 @@ class MatcherFactory
 
 
 
-	public function createEvaluate($evaluate)
+	public function createEvaluate($evaluate): EvaluateMatcher
 	{
-		return new Matcher\EvaluateMatcher($evaluate, $this->builder);
+		return new EvaluateMatcher($evaluate, $this->builder);
 	}
 
 
