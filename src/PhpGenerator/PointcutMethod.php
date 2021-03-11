@@ -38,9 +38,12 @@ class PointcutMethod
 
 	private Code\Method $method;
 
+	private Code\Dumper $dumper;
+
 	public function __construct(Nette\Reflection\Method $from)
 	{
 		$this->method = (new Code\Factory())->fromMethodReflection($from);
+		$this->dumper = new Code\Dumper();
 	}
 
 	public static function from(Nette\Reflection\Method $from): PointcutMethod
@@ -59,7 +62,7 @@ class PointcutMethod
 			$method->method->setVisibility($from->isPrivate() ? 'private' : ($from->isProtected() ? 'protected' : ($isInterface ? null : 'public')));
 			$method->method->setFinal($from->isFinal());
 			$method->method->setAbstract($from->isAbstract() && !$isInterface);
-			$method->method->setBody($from->isAbstract() ? false : '');
+			$method->method->setBody($from->isAbstract() ? null : '');
 		}
 
 		$method->method->setReturnReference($from->returnsReference());
@@ -86,7 +89,7 @@ class PointcutMethod
 
 		switch ($adviceDef->getAdviceType()) {
 			case Before::getClassName():
-				$this->before[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
+				$this->before[] = $this->generateRuntimeCondition($adviceDef, $this->dumper->format(
 					'$this->__getAdvice(?)->?($__before = new \Contributte\Aop\JoinPoint\BeforeMethod($this, __FUNCTION__, $__arguments));' . "\n" .
 					'$__arguments = $__before->getArguments();',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
@@ -96,7 +99,7 @@ class PointcutMethod
 				break;
 
 			case Around::getClassName():
-				$this->around[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
+				$this->around[] = $this->generateRuntimeCondition($adviceDef, $this->dumper->format(
 					'$__around->addChainLink($this->__getAdvice(?), ?);',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
 					$adviceMethod->getName()
@@ -104,7 +107,7 @@ class PointcutMethod
 				break;
 
 			case AfterReturning::getClassName():
-				$this->afterReturning[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
+				$this->afterReturning[] = $this->generateRuntimeCondition($adviceDef, $this->dumper->format(
 					'$this->__getAdvice(?)->?($__afterReturning = new \Contributte\Aop\JoinPoint\AfterReturning($this, __FUNCTION__, $__arguments, $__result));' . "\n" .
 					'$__result = $__afterReturning->getResult();',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
@@ -113,7 +116,7 @@ class PointcutMethod
 				break;
 
 			case AfterThrowing::getClassName():
-				$this->afterThrowing[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
+				$this->afterThrowing[] = $this->generateRuntimeCondition($adviceDef, $this->dumper->format(
 					'$this->__getAdvice(?)->?(new \Contributte\Aop\JoinPoint\AfterThrowing($this, __FUNCTION__, $__arguments, $__exception));',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
 					$adviceMethod->getName()
@@ -121,7 +124,7 @@ class PointcutMethod
 				break;
 
 			case After::getClassName():
-				$this->after[] = $this->generateRuntimeCondition($adviceDef, Code\Helpers::format(
+				$this->after[] = $this->generateRuntimeCondition($adviceDef, $this->dumper->format(
 					'$this->__getAdvice(?)->?(new \Contributte\Aop\JoinPoint\AfterMethod($this, __FUNCTION__, $__arguments, $__result, $__exception));',
 					$adviceMethod->getServiceDefinition()->getServiceId(),
 					$adviceMethod->getName()
@@ -154,7 +157,7 @@ class PointcutMethod
 			$condition = str_replace('$' . $name, '$__arguments[' . $i . ']', (string) $condition);
 		}
 
-		return Code\Helpers::format("if ? {\n?\n}", new Code\PhpLiteral($condition), new Code\PhpLiteral(Nette\Utils\Strings::indent($code)));
+		return $this->dumper->format("if ? {\n?\n}", new Code\PhpLiteral((string) $condition), new Code\PhpLiteral(Nette\Utils\Strings::indent($code)));
 	}
 
 
@@ -182,14 +185,14 @@ class PointcutMethod
 		}
 
 		if (!$this->around) {
-			$parentCall = Code\Helpers::format('$__result = call_user_func_array("parent::?", $__arguments);', $this->method->getName());
+			$parentCall = $this->dumper->format('$__result = call_user_func_array("parent::?", $__arguments);', $this->method->getName());
 		} else {
-			$parentCall = Code\Helpers::format('$__around = new \Contributte\Aop\JoinPoint\AroundMethod($this, __FUNCTION__, $__arguments);');
+			$parentCall = $this->dumper->format('$__around = new \Contributte\Aop\JoinPoint\AroundMethod($this, __FUNCTION__, $__arguments);');
 			foreach ($this->around as $around) {
 				$parentCall .= "\n" . $around;
 			}
 
-			$parentCall .= "\n" . Code\Helpers::format('$__result = $__around->proceed();');
+			$parentCall .= "\n" . $this->dumper->format('$__result = $__around->proceed();');
 		}
 
 		$this->method->addBody(($this->afterThrowing || $this->after) ? Nette\Utils\Strings::indent($parentCall) : $parentCall);
