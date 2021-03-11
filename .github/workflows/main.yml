@@ -11,7 +11,7 @@ on:
     - cron: "0 8 * * 1" # At 08:00 on Monday
 
 env:
-  extensions: "json, mbstring"
+  extensions: "json, mbstring, pcov"
   cache-version: "1"
   composer-version: "v2"
   composer-install: "composer update --no-interaction --no-progress --no-suggest --prefer-dist --prefer-stable"
@@ -208,8 +208,6 @@ jobs:
         php-version: ["7.4"]
         operating-system: ["ubuntu-latest"]
       fail-fast: false
-
-    if: "github.event_name == 'push'"
 
     steps:
       - name: "Checkout"
