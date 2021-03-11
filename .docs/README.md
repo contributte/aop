@@ -4,6 +4,7 @@
 
 - [Setup](#usage)
 - [Configuration](#configuration)
+- [Upgrade to v2](#upgrade-to-v2)
 - [Dictionary](#dictionary)
 - [Advice types](#advice-types)
 - [Pointcut Syntax](#pointcut-syntax)
@@ -73,6 +74,12 @@ The `aspects.neon` file should be list of unnamed services as in `aspects` secti
 
 Yeah, why not? I needed the section `aspects` for services and section `aop` for configuration.
 
+## Upgrade to v2
+There are few breaking changes you have to deal with when upgrading to v2 from v1
+ - annotations namespace changed from Contributte\Aop to Contributte\Aop\Annotations
+ - Exceptions namespace changed from Contributte\Aop to Contributte\Aop\Exceptions
+ - Contributte\Aop\Pointcut\Filter listAcceptedTypes now returns array instead of array|false
+ - added typehints on all methods/fields so if you are overriding or using something it may need adjustment, but for most projects it should not be any problems
 
 ## Dictionary
 
