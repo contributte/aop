@@ -24,7 +24,7 @@ composer require contributte/aop
 
 Enable the extension using your neon config.
 
-```yml
+```neon
 extensions:
 	aop: Contributte\Aop\DI\AopExtension
 	annotations: Nettrine\Annotations\DI\AnnotationsExtension
@@ -40,7 +40,7 @@ You can find the [documentation of annotations extension here](https://github.co
 
 This extension creates new configuration section `aspects` and it should behave exactly like services, but all the services are marked as aspects.
 
-```yml
+```neon
 aspects:
 	- MyApp\LoggingAspect(@dep, %param%)
 ```
