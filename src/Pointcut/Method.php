@@ -19,11 +19,9 @@ class Method
 	public const VISIBILITY_PROTECTED = 'protected';
 	public const VISIBILITY_PRIVATE = 'private';
 
-	/** @var Nette\Reflection\Method */
-	private $method;
+	private Nette\Reflection\Method $method;
 
-	/** @var ServiceDefinition */
-	private $serviceDefinition;
+	private ServiceDefinition $serviceDefinition;
 
 	public function __construct(Nette\Reflection\Method $method, ServiceDefinition $serviceDefinition)
 	{

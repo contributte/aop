@@ -11,11 +11,9 @@ class WithinMatcher implements Filter
 
 	use Nette\SmartObject;
 
-	/** @var string */
-	private $type;
+	private ?string $type = null;
 
-	/** @var string */
-	private $pattern;
+	private string $pattern;
 
 	public function __construct(string $type)
 	{

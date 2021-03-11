@@ -11,8 +11,7 @@ class Inverse implements Filter
 
 	use Nette\SmartObject;
 
-	/** @var Filter */
-	private $filter;
+	private Filter $filter;
 
 	public function __construct(Filter $filter)
 	{

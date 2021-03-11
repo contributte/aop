@@ -10,7 +10,8 @@ class AspectWithArguments
 
 	use Nette\SmartObject;
 
-	public $args;
+	/** @var mixed[] */
+	public array $args;
 
 	public function __construct(Nette\Http\Request $httpRequest)
 	{

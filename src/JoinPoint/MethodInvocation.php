@@ -14,7 +14,7 @@ abstract class MethodInvocation
 	protected string $targetMethod;
 
 	/** @var mixed[] $arguments */
-	protected $arguments;
+	protected array $arguments;
 
 	/**
 	 * @param mixed[] $arguments

@@ -14,11 +14,10 @@ class Rules implements Filter, RuntimeFilter
 	public const OP_AND = 'AND';
 	public const OP_OR = 'OR';
 
-	/** @var string */
-	private $operator;
+	private string $operator;
 
 	/** @var Filter[] */
-	private $rules;
+	private array $rules;
 
 	/**
 	 * @param Filter[] $rules

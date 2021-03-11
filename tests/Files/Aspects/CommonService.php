@@ -7,11 +7,12 @@ use RuntimeException;
 class CommonService
 {
 
-	public $calls = [];
+	/** @var mixed[] */
+	public array $calls = [];
 
-	public $throw = false;
+	public bool $throw = false;
 
-	public $return = 2;
+	public int $return = 2;
 
 	public function __construct()
 	{

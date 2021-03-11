@@ -11,10 +11,12 @@ class ConditionalAroundAspect
 	use Nette\SmartObject;
 
 	/** @var array|Aop\JoinPoint\AroundMethod[] */
-	public $calls = [];
+	public array $calls = [];
 
+	/** @var mixed[]|false */
 	public $modifyArgs = false;
 
+	/** @var mixed|false */
 	public $modifyReturn = false;
 
 	/**

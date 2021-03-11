@@ -12,11 +12,9 @@ class SettingMatcher implements Filter
 
 	use Nette\SmartObject;
 
-	/** @var Criteria */
-	private $settings;
+	private Criteria $settings;
 
-	/** @var ContainerBuilder */
-	private $builder;
+	private ContainerBuilder $builder;
 
 	public function __construct(Criteria $criteria, Nette\DI\ContainerBuilder $builder)
 	{

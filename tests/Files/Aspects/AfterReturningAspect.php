@@ -11,8 +11,9 @@ class AfterReturningAspect
 	use Nette\SmartObject;
 
 	/** @var array|Aop\JoinPoint\AfterReturning[] */
-	public $calls = [];
+	public array $calls = [];
 
+	/** @var mixed|false */
 	public $modifyReturn = false;
 
 	/**

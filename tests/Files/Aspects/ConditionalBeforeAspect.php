@@ -11,8 +11,9 @@ class ConditionalBeforeAspect
 	use Nette\SmartObject;
 
 	/** @var array|Aop\JoinPoint\BeforeMethod[] */
-	public $calls = [];
+	public array $calls = [];
 
+	/** @var mixed[]|false */
 	public $modifyArgs = false;
 
 	/**

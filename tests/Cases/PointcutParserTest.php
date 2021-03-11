@@ -19,8 +19,7 @@ use Tests\Files\Pointcut\PointcutTestingAspect;
 class PointcutParserTest extends TestCase
 {
 
-	/** @var Pointcut\MatcherFactory */
-	private $matcherFactory;
+	private ?Pointcut\MatcherFactory $matcherFactory = null;
 
 	public function getMatcherFactory(): Pointcut\MatcherFactory
 	{

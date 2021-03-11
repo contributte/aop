@@ -19,20 +19,17 @@ class ServiceDefinition
 
 	use Nette\SmartObject;
 
-	/** @var Definition */
-	protected $serviceDefinition;
+	protected Definition $serviceDefinition;
 
-	/** @var Nette\Reflection\ClassType */
-	private $originalType;
+	private Nette\Reflection\ClassType $originalType;
 
-	/** @var array|Method[] */
-	private $openMethods;
+	/** @var Method[]|null */
+	private ?array $openMethods = null;
 
-	/** @var array */
-	private $typesWithing;
+	/** @var string[]|object[]|null */
+	private ?array $typesWithing = null;
 
-	/** @var string */
-	private $serviceId;
+	private string $serviceId;
 
 	public function __construct(Definition $def, string $serviceId)
 	{
