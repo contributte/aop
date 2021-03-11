@@ -17,7 +17,7 @@ class Legie implements Rimmer, Lister, Kryten, Cat
 	{
 	}
 
-
+	//phpcs:ignore
 	private function privateCalculation()
 	{
 	}
