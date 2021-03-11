@@ -45,7 +45,7 @@ class PointcutParserTest extends TestCase
 
 		$data = [];
 
-		$data[] = [
+		$data['Exact method'] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'deletePost'),
@@ -53,7 +53,7 @@ class PointcutParserTest extends TestCase
 			'method(Tests\Files\Pointcut\CommonClass->deletePost())',
 		];
 
-		$data[] = [
+		$data['public method name'] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'public methodName'),
@@ -61,7 +61,7 @@ class PointcutParserTest extends TestCase
 			'method(public Tests\Files\Pointcut\CommonClass->methodName())',
 		];
 
-		$data[] = [
+		$data['protected method name'] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'protected methodName'),
@@ -69,12 +69,12 @@ class PointcutParserTest extends TestCase
 			'method(protected Tests\Files\Pointcut\CommonClass->methodName())',
 		];
 
-		$data[] = [
+		$data['commonclass->*'] = [
 			$mf->getMatcher('class', CommonClass::class),
 			'method(Tests\Files\Pointcut\CommonClass->*())',
 		];
 
-		$data[] = [
+		$data['commonclass->public *'] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', 'public *'),
@@ -82,7 +82,7 @@ class PointcutParserTest extends TestCase
 			'method(public Tests\Files\Pointcut\CommonClass->*())',
 		];
 
-		$data[] = [
+		$data['Example\MyPackage*->method delete*'] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', 'Example\MyPackage*'),
 				$mf->getMatcher('method', 'delete*'),
@@ -90,12 +90,12 @@ class PointcutParserTest extends TestCase
 			'method(Example\MyPackage*->delete*())',
 		];
 
-		$data[] = [
+		$data['method delete*'] = [
 			$mf->getMatcher('method', 'delete*'),
 			'method(*->delete*())',
 		];
 
-		$data[] = [
+		$data['commonclass->*[!inject]*'] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', CommonClass::class),
 				$mf->getMatcher('method', '[!inject]*'),
@@ -103,7 +103,7 @@ class PointcutParserTest extends TestCase
 			'method(Tests\Files\Pointcut\CommonClass->[!inject]*())',
 		];
 
-		$data[] = [
+		$data['PackageClass->update(title="Contributte")'] = [
 			new Pointcut\Rules([
 				$mf->getMatcher('class', PackageClass::class),
 				$mf->getMatcher('method', 'update'),
@@ -114,29 +114,19 @@ class PointcutParserTest extends TestCase
 			'method(Tests\Files\Pointcut\PackageClass->update(title == "Contributte", override == TRUE))',
 		];
 
-		$data[] = [
+		$data['CommonClass'] = [
 			$mf->getMatcher('class', CommonClass::class),
 			'class(\Tests\Files\Pointcut\CommonClass)',
 		];
 
-		$data[] = [
+		$data['Class wildcard'] = [
 			$mf->getMatcher('class', 'Example\MyPackage\Service\*'),
 			'class(Example\MyPackage\Service\*)',
 		];
 
-		$data[] = [
+		$data['within LoggerInterface'] = [
 			$mf->getMatcher('within', LoggerInterface::class),
 			'within(Tests\Files\Pointcut\LoggerInterface)',
-		];
-
-		$data[] = [
-			$mf->getMatcher('classAnnotatedWith', 'Doctrine\ORM\Mapping\Entity'),
-			'classAnnotatedWith(Doctrine\ORM\Mapping\Entity)',
-		];
-
-		$data[] = [
-			$mf->getMatcher('methodAnnotatedWith', 'Acme\Demo\Annotations\Special'),
-			'methodAnnotatedWith(Acme\Demo\Annotations\Special)',
 		];
 
 		$data[] = [
@@ -271,6 +261,26 @@ class PointcutParserTest extends TestCase
 	{
 		$parser = new Parser($this->getMatcherFactory());
 		$this->assertEquals($expected, $parser->parse($input));
+	}
+
+	public function testParseClassAnnotatedWith(): void
+	{
+		$mf = $this->getMatcherFactory();
+		$parser = new Parser($this->getMatcherFactory());
+		$this->assertEquals(
+			$mf->getMatcher('classAnnotatedWith', 'Doctrine\ORM\Mapping\Entity'),
+			$parser->parse('classAnnotatedWith(Doctrine\ORM\Mapping\Entity)')
+		);
+	}
+
+	public function testParseMethodAnnotatedWith(): void
+	{
+		$mf = $this->getMatcherFactory();
+		$parser = new Parser($this->getMatcherFactory());
+		$this->assertEquals(
+			$mf->getMatcher('classAnnotatedWith', 'Acme\Demo\Annotations\Special'),
+			$parser->parse('classAnnotatedWith(Acme\Demo\Annotations\Special)')
+		);
 	}
 
 }
