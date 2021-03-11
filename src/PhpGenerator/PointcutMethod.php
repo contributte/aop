@@ -13,7 +13,11 @@ use Contributte\Aop\Pointcut\RuntimeFilter;
 use Nette;
 use Nette\PhpGenerator as Code;
 use ReflectionException;
+use ReflectionNamedType;
 
+/**
+ * @method string getName()
+ */
 class PointcutMethod
 {
 
@@ -67,8 +71,10 @@ class PointcutMethod
 		}
 
 		if ($from->hasReturnType()) {
-			$method->method->setReturnType(($from->getReturnType()->getName()));
-			$method->method->setReturnNullable($from->getReturnType()->allowsNull());
+			/** @var ReflectionNamedType $returnType */
+			$returnType = $from->getReturnType();
+			$method->method->setReturnType($returnType->getName());
+			$method->method->setReturnNullable($returnType->allowsNull());
 		}
 
 		return $method;
@@ -240,13 +246,14 @@ class PointcutMethod
 	public static function expandTypeHints(Nette\Reflection\Method $from, PointcutMethod $method): PointcutMethod
 	{
 		$parameters = $method->method->getParameters();
-		/** @var Code\Parameter[] $parameters */
 
 		foreach ($from->getParameters() as $paramRefl) {
 			try {
-				if (!in_array($parameters[$paramRefl->getName()]->getTypeHint(), ['boolean', 'integer', 'float', 'string', 'object', 'int', 'bool' ])) {
+				if (!in_array($parameters[$paramRefl->getName()]->getType(), ['boolean', 'integer', 'float', 'string', 'object', 'int', 'bool' ])) {
 					if (PHP_VERSION_ID >= 80000) {
-						$type = $paramRefl->getType() ? $paramRefl->getType()->getName() : '';
+						/** @var ReflectionNamedType|null $typehint */
+						$typehint = $paramRefl->getType();
+						$type = $typehint === null ? '' : $typehint->getName();
 					} else {
 						$type = $paramRefl->isArray() ? 'array' : ($paramRefl->getClass() ? '\\' . $paramRefl->getClass()->getName() : '');
 					}

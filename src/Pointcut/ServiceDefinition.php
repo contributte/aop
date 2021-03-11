@@ -19,7 +19,7 @@ class ServiceDefinition
 	use Nette\SmartObject;
 
 	/** @var \Nette\DI\ServiceDefinition */
-	private $serviceDefinition;
+	protected $serviceDefinition;
 
 	/** @var Nette\Reflection\ClassType */
 	private $originalType;

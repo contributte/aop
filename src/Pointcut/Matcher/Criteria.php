@@ -200,12 +200,7 @@ class Criteria
 					$targetObject = '$this';
 
 				} elseif ($m['context'] === 'context' && ($p = self::shiftAccessPath($m['path']))) {
-					if (class_exists($p['context']) || interface_exists($p['context'])) {
-						$targetObject = Code\Helpers::format('$this->_contributte_aopContainer->getByType(?)', $p['context']);
-
-					} else {
-						$targetObject = Code\Helpers::format('$this->_contributte_aopContainer->getService(?)', $p['context']);
-					}
+					$targetObject = class_exists($p['context']) || interface_exists($p['context']) ? Code\Helpers::format('$this->_contributte_aopContainer->getByType(?)', $p['context']) : Code\Helpers::format('$this->_contributte_aopContainer->getService(?)', $p['context']);
 
 					$m['path'] = $p['path'];
 

@@ -7,6 +7,9 @@ use Contributte\Aop\Pointcut;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use Nette\Configurator;
+use Nette\DI\Definitions\FactoryDefinition;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator as Code;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -95,25 +98,26 @@ class AopExtension extends Nette\DI\CompilerExtension
 	{
 		static $publicSetup;
 		if ($publicSetup === null) {
-			$refl = new Nette\Reflection\Property('Nette\DI\ServiceDefinition', 'setup');
+			$refl = new Nette\Reflection\Property(ServiceDefinition::class, 'setup');
 			$publicSetup = $refl->isPublic();
 		}
 
+		/** @var ServiceDefinition|FactoryDefinition $def */
 		$def = $this->getContainerBuilder()->getDefinition($serviceId);
-		if ($def instanceof Nette\DI\Definitions\FactoryDefinition) {
+		if ($def instanceof FactoryDefinition) {
 			$def = $def->getResultDefinition();
 		}
 
 		$factory = $def->getFactory();
 		if ($factory) {
-			$def->setFactory(new Nette\DI\Statement($cg->getName() . '\\' . $advisedClass->getName(), $factory->arguments));
+			$def->setFactory(new Statement($cg->getName() . '\\' . $advisedClass->getName(), $factory->arguments));
 
 		} else {
 			$def->setFactory($cg->getName() . '\\' . $advisedClass->getName());
 		}
 
 		if (!$constructorInject) {
-			$statement = new Nette\DI\Statement(AdvisedClassType::CG_INJECT_METHOD, ['@Nette\DI\Container']);
+			$statement = new Statement(AdvisedClassType::CG_INJECT_METHOD, ['@Nette\DI\Container']);
 
 			if ($publicSetup) {
 				array_unshift($def->setup, $statement);
@@ -165,15 +169,11 @@ class AopExtension extends Nette\DI\CompilerExtension
 		foreach ($builder->findByTag(AspectsExtension::ASPECT_TAG) as $aspectId => $meta) {
 			$advices = $analyzer->analyze($aspectService = $this->getWrappedDefinition($aspectId));
 
+			/** @var Pointcut\Filter[] $filters */
 			foreach ($advices as $advice => $filters) {
-				/** @var Pointcut\Filter[] $filters */
 				foreach ($filters as $adviceType => $filter) {
 					$types = $filter->listAcceptedTypes();
-					if ($types !== []) {
-						$services = $this->findByTypes($types);
-					} else { // this cannot be done in any other way sadly...
-						$services = array_keys($builder->getDefinitions());
-					}
+					$services = $types !== [] ? $this->findByTypes($types) : array_keys($builder->getDefinitions());
 
 					foreach ($services as $serviceId) {
 						foreach ($this->getWrappedDefinition($serviceId)->match($filter) as $method) {
@@ -200,7 +200,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 			foreach ($this->getContainerBuilder()->getDefinitions() as $name => $def) {
 				if ($def->getType() !== null) {
 					$additional = [];
-					if ($def instanceof Nette\DI\Definitions\FactoryDefinition) {
+					if ($def instanceof FactoryDefinition) {
 						$this->classes[strtolower($def->getResultDefinition()->getType())][] = (string) $name;
 					}
 
@@ -232,7 +232,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 	{
 		if (!isset($this->serviceDefinitions[$id])) {
 			$def = $this->getContainerBuilder()->getDefinition($id);
-			if ($def instanceof Nette\DI\Definitions\FactoryDefinition) {
+			if ($def instanceof FactoryDefinition) {
 				$def = $def->getResultDefinition();
 			}
 

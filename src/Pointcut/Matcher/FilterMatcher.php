@@ -33,9 +33,6 @@ class FilterMatcher implements Filter
 
 
 
-	/**
-	 * @return array|bool
-	 */
 	public function listAcceptedTypes(): array
 	{
 		return $this->filter->listAcceptedTypes();

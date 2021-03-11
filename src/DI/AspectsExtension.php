@@ -16,7 +16,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$config = new AspectsConfig($this->getConfig());
-		$config->disablePrefixing()->load($this->compiler, $builder);
+		$config->load($this->compiler, $builder);
 
 		foreach ($this->compiler->getExtensions() as $extension) {
 			if (!$extension instanceof IAspectsProvider) {

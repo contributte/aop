@@ -14,22 +14,10 @@ class AspectsConfig
 	/** @var array */
 	private $aspectsList;
 
-	/** @var bool */
-	private $prefix = true;
-
 	public function __construct(array $aspectsList)
 	{
 		$this->aspectsList = $aspectsList;
 	}
-
-
-
-	public function disablePrefixing(): self
-	{
-		$this->prefix = false;
-		return $this;
-	}
-
 
 
 	public function load(Nette\DI\Compiler $compiler, Nette\DI\ContainerBuilder $containerBuilder): void
