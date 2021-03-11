@@ -5,6 +5,9 @@ namespace Tests\Files\Pointcut;
 class BaseClass
 {
 
+	/**
+	 * @param mixed $x
+	 */
 	public function __construct($x)
 	{
 	}

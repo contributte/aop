@@ -95,6 +95,7 @@ class AspectAnalyzerTest extends TestCase
 
 
 	/**
+	 * @param array<string, Pointcut\Rules[]> $pointcuts
 	 * @dataProvider dataAnalyze
 	 */
 	public function testAnalyze(array $pointcuts, ServiceDefinition $service): void
@@ -109,13 +110,10 @@ class AspectAnalyzerTest extends TestCase
 
 
 
-	/**
-	 * @param string $class
-	 */
-	private function createDefinition($class): Pointcut\ServiceDefinition
+	private function createDefinition(string $class): Pointcut\ServiceDefinition
 	{
 		$def = new Nette\DI\Definitions\ServiceDefinition();
-		$def->setClass($class);
+		$def->setType($class);
 
 		return new Pointcut\ServiceDefinition($def, 'abc');
 	}

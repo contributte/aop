@@ -4,6 +4,7 @@ namespace Contributte\Aop\Pointcut;
 
 use Contributte\Aop\Annotations\AdviceAnnotation;
 use Contributte\Aop\Exceptions\InvalidAspectExceptions;
+use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Nette;
@@ -57,8 +58,8 @@ class AspectAnalyzer
 
 
 	/**
-	 * @param array $annotations
-	 * @return array|AdviceAnnotation[]
+	 * @param Annotation[] $annotations
+	 * @return AdviceAnnotation[]
 	 */
 	private function filterAopAnnotations(array $annotations): array
 	{

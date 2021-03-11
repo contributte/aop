@@ -3,6 +3,7 @@
 namespace Contributte\Aop\Pointcut;
 
 use Contributte\Aop\Pointcut\Matcher\ClassAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Contributte\Aop\Pointcut\Matcher\EvaluateMatcher;
 use Contributte\Aop\Pointcut\Matcher\FilterMatcher;
 use Contributte\Aop\Pointcut\Matcher\MethodAnnotateWithMatcher;
@@ -57,56 +58,56 @@ class MatcherFactory
 
 
 
-	public function createMethod($method): MethodMatcher
+	public function createMethod(string $method): MethodMatcher
 	{
 		return new MethodMatcher($method);
 	}
 
 
 
-	public function createArguments($criteria): EvaluateMatcher
+	public function createArguments(Criteria $criteria): EvaluateMatcher
 	{
 		return new EvaluateMatcher($criteria, $this->builder);
 	}
 
 
 
-	public function createWithin($within): WithinMatcher
+	public function createWithin(string $within): WithinMatcher
 	{
 		return new WithinMatcher($within);
 	}
 
 
 
-	public function createFilter($filterClass): FilterMatcher
+	public function createFilter(string $filterClass): FilterMatcher
 	{
 		return new FilterMatcher($filterClass);
 	}
 
 
 
-	public function createSetting($setting): SettingMatcher
+	public function createSetting(Criteria $setting): SettingMatcher
 	{
 		return new SettingMatcher($setting, $this->builder);
 	}
 
 
 
-	public function createEvaluate($evaluate): EvaluateMatcher
+	public function createEvaluate(Criteria $evaluate): EvaluateMatcher
 	{
 		return new EvaluateMatcher($evaluate, $this->builder);
 	}
 
 
 
-	public function createClassAnnotatedWith($annotation): ClassAnnotateWithMatcher
+	public function createClassAnnotatedWith(string $annotation): ClassAnnotateWithMatcher
 	{
 		return new ClassAnnotateWithMatcher($annotation, $this->annotationReader);
 	}
 
 
 
-	public function createMethodAnnotatedWith($annotation): MethodAnnotateWithMatcher
+	public function createMethodAnnotatedWith(string $annotation): MethodAnnotateWithMatcher
 	{
 		return new MethodAnnotateWithMatcher($annotation, $this->annotationReader);
 	}

@@ -6,7 +6,6 @@ use Contributte\Aop\PhpGenerator\AdvisedClassType;
 use Contributte\Aop\Pointcut;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
-use Nette\Configurator;
 use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
@@ -90,8 +89,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 	}
 
 
-
-	private function patchService($serviceId, Code\ClassType $advisedClass, Code\PhpNamespace $cg, $constructorInject = false): void
+	private function patchService(string $serviceId, Code\ClassType $advisedClass, Code\PhpNamespace $cg, bool $constructorInject = false): void
 	{
 		static $publicSetup;
 		if ($publicSetup === null) {
@@ -181,10 +179,10 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param array|string $types
+	 * @param string[]|Pointcut\Filter[] $types
 	 * @return array<string, string[]>
 	 */
-	private function findByTypes($types): array
+	private function findByTypes(array $types): array
 	{
 		if ($this->classes === null) {
 			$this->classes = [];
@@ -230,9 +228,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 
-	/**
-	 * @param Configurator $configurator
-	 */
 	public static function register(Nette\Configurator $configurator): void
 	{
 		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {

@@ -40,10 +40,9 @@ class Criteria
 	private $expressions = [];
 
 	/**
-	 * @param string $operator
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct($operator = self::TYPE_AND)
+	public function __construct(string $operator = self::TYPE_AND)
 	{
 		if (!in_array($operator = strtoupper($operator), [self::TYPE_AND, self::TYPE_OR], true)) {
 			throw new InvalidArgumentException('Given operator \'' . $operator . '\' cannot be evaluated.');
@@ -103,7 +102,9 @@ class Criteria
 	}
 
 
-
+	/**
+	 * @param bool[] $result
+	 */
 	private function isMatching(array $result): bool
 	{
 		if ($this->operator === self::TYPE_AND) {
@@ -116,7 +117,7 @@ class Criteria
 
 
 	/**
-	 * @param array|Criteria $expression
+	 * @param array<int, Code\PhpLiteral|string>|Criteria $expression
 	 */
 	private function doEvaluate(ContainerBuilder $builder, $expression): bool
 	{
@@ -133,6 +134,7 @@ class Criteria
 
 
 	/**
+	 * @param Code\PhpLiteral|string $expression
 	 * @return mixed
 	 */
 	private function doEvaluateValueResolve(ContainerBuilder $builder, $expression)
@@ -163,7 +165,7 @@ class Criteria
 
 
 	/**
-	 * @param array|Criteria $expression
+	 * @param array<int, Code\PhpLiteral|string>|Criteria $expression
 	 * @return string|Code\Literal
 	 */
 	private function doSerialize(ContainerBuilder $builder, $expression)
@@ -182,6 +184,7 @@ class Criteria
 
 
 	/**
+	 * @param string|Code\PhpLiteral $expression
 	 * @return mixed
 	 */
 	private function doSerializeValueResolve(ContainerBuilder $builder, $expression)
@@ -270,7 +273,6 @@ class Criteria
 
 
 	/**
-	 * @param string $path
 	 * @return array<string, string>|NULL
 	 */
 	private static function shiftAccessPath(string $path): ?array
@@ -284,7 +286,10 @@ class Criteria
 	}
 
 
-
+	/**
+	 * @param mixed $left
+	 * @param mixed|string $right
+	 */
 	public static function compare($left, string $operator, $right): bool
 	{
 		switch (strtoupper($operator)) {

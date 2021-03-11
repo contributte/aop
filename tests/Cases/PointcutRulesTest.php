@@ -57,7 +57,7 @@ class PointcutRulesTest extends TestCase
 	/**
 	 * @dataProvider dataMatchWithin
 	 */
-	public function testMatchWithin($expected, Pointcut\Filter $rules, Pointcut\ServiceDefinition $def): void
+	public function testMatchWithin(bool $expected, Pointcut\Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
@@ -89,7 +89,7 @@ class PointcutRulesTest extends TestCase
 	/**
 	 * @dataProvider dataMatchMethod
 	 */
-	public function testMatchMethod($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
+	public function testMatchMethod(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
@@ -115,7 +115,7 @@ class PointcutRulesTest extends TestCase
 	/**
 	 * @dataProvider dataMatchFilter
 	 */
-	public function testMatchFilter($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
+	public function testMatchFilter(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
@@ -134,7 +134,7 @@ class PointcutRulesTest extends TestCase
 	/**
 	 * @dataProvider dataMatchClassAnnotateWith
 	 */
-	public function testMatchClassAnnotateWith($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
+	public function testMatchClassAnnotateWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
@@ -153,7 +153,7 @@ class PointcutRulesTest extends TestCase
 	/**
 	 * @dataProvider dataMatchMethodAnnotateWith
 	 */
-	public function testMatchMethodAnnotateWith($expected, Filter $rules, Pointcut\ServiceDefinition $def): void
+	public function testMatchMethodAnnotateWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
@@ -181,10 +181,7 @@ class PointcutRulesTest extends TestCase
 		return unserialize(sprintf('O:%d:"%s":0:{}', strlen(Method::class), Method::class));
 	}
 
-	/**
-	 * @param string $class
-	 */
-	private function createDefinition($class): Pointcut\ServiceDefinition
+	private function createDefinition(string $class): Pointcut\ServiceDefinition
 	{
 		$def = new ServiceDefinition();
 		$def->setType($class);

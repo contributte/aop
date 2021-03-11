@@ -12,10 +12,9 @@ class FilterMatcher implements Filter
 
 	use Nette\SmartObject;
 
-	/** @var Filter */
-	private $filter;
+	private Filter $filter;
 
-	public function __construct($filterClass)
+	public function __construct(string $filterClass)
 	{
 		if (!in_array(Filter::class, class_implements($filterClass), true)) {
 			throw new InvalidArgumentException('Given class \'' . $filterClass . '\' must implement Contributte\\Aop\\Pointcut\\Filter.');

@@ -255,7 +255,6 @@ class Parser
 	}
 
 
-
 	protected function parseArguments(Stream $tokens): ?Criteria
 	{
 		$operator = null;
@@ -369,10 +368,9 @@ class Parser
 
 	/**
 	 * @param mixed $value
-	 * @param Nette\Tokenizer\Token $token
 	 * @return string|PhpLiteral
 	 */
-	protected static function sanitizeArgumentExpression($value, $token)
+	protected static function sanitizeArgumentExpression($value, Nette\Tokenizer\Token $token)
 	{
 		if ($token->type === self::TOK_STRING || is_numeric($value) || preg_match('~^(TRUE|FALSE)\z~i', $value)) {
 			return new PhpLiteral($value);
@@ -384,9 +382,8 @@ class Parser
 
 
 	/**
-	 * @param Stream $tokens
-	 * @param array|string $types
-	 * @param array|string $allowedToSkip
+	 * @param string[]|string $types
+	 * @param string[]|string $allowedToSkip
 	 * @throws ParserException
 	 */
 	protected static function nextValue(Stream $tokens, $types, $allowedToSkip = []): ?string
