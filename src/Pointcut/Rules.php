@@ -69,7 +69,7 @@ class Rules implements Filter, RuntimeFilter
 
 
 	/**
-	 * @return array<int, string|Filter>
+	 * @return string[]
 	 */
 	public function listAcceptedTypes(): array
 	{
@@ -115,15 +115,16 @@ class Rules implements Filter, RuntimeFilter
 
 
 	/**
-	 * @param Filter[]|string|Filter|Rules $filter
+	 * @param Filter[] $filter
 	 */
-	public static function unwrap($filter, string $operator = self::OP_AND): Filter
+	public static function unwrap(array $filter, string $operator = self::OP_AND): Filter
 	{
 		if (is_array($filter)) {
 			if (count($filter) > 1) {
 				return new Rules($filter, $operator);
 			}
 
+			/** @var Filter $filter */
 			$filter = reset($filter);
 		}
 

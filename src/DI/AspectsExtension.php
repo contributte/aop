@@ -13,7 +13,7 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		$config = new AspectsConfig($this->getConfig());
+		$config = new AspectsConfig((array) $this->getConfig());
 		$config->load($this->compiler, $builder);
 
 		foreach ($this->compiler->getExtensions() as $extension) {

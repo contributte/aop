@@ -15,7 +15,7 @@ class MyPointcutFilter implements Filter
 
 
 	/**
-	 * @return Filter[]
+	 * @return string[]
 	 */
 	public function listAcceptedTypes(): array
 	{

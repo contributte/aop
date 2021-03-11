@@ -16,7 +16,8 @@ class FilterMatcher implements Filter
 
 	public function __construct(string $filterClass)
 	{
-		if (!in_array(Filter::class, class_implements($filterClass), true)) {
+		$implements = class_implements($filterClass);
+		if ($implements === false || !in_array(Filter::class, $implements, true)) {
 			throw new InvalidArgumentException('Given class \'' . $filterClass . '\' must implement Contributte\\Aop\\Pointcut\\Filter.');
 		}
 
@@ -32,7 +33,7 @@ class FilterMatcher implements Filter
 
 
 	/**
-	 * @return array<int, string|Filter>
+	 * @return string[]
 	 */
 	public function listAcceptedTypes(): array
 	{

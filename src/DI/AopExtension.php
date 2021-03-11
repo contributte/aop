@@ -15,7 +15,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class AopExtension extends Nette\DI\CompilerExtension
 {
 
-	/** @var string[]|null */
+	/** @var array<string, string[]>|null */
 	private ?array $classes = [];
 
 	/** @var Pointcut\ServiceDefinition[] */
@@ -51,10 +51,11 @@ class AopExtension extends Nette\DI\CompilerExtension
 			$advisedClass = AdvisedClassType::fromServiceDefinition($service, $cg);
 			$constructorInject = false;
 
-			/** @var AdviceDefinition[] $methodAdvices */
 			foreach ($pointcuts as $methodAdvices) {
+				/** @var AdviceDefinition $methodAdvice */
+				$methodAdvice = reset($methodAdvices);
 				/** @var Pointcut\Method $targetMethod */
-				$targetMethod = reset($methodAdvices)->getTargetMethod();
+				$targetMethod = $methodAdvice->getTargetMethod();
 
 				$newMethod = $targetMethod->getPointcutCode();
 				AdvisedClassType::setMethodInstance($advisedClass, $newMethod->getMethod());
@@ -143,7 +144,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @return array<int|string, array<string, AdviceDefinition[]>>
+	 * @return array<string, array<string, AdviceDefinition[]>>
 	 */
 	private function findAdvisedMethods(): array
 	{
@@ -181,8 +182,8 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param string[]|Pointcut\Filter[] $types
-	 * @return array<string, string[]>
+	 * @param string[] $types
+	 * @return array<string, string>
 	 */
 	private function findByTypes(array $types): array
 	{
@@ -192,10 +193,13 @@ class AopExtension extends Nette\DI\CompilerExtension
 				if ($def->getType() !== null) {
 					$additional = [];
 					if ($def instanceof FactoryDefinition) {
-						$this->classes[strtolower($def->getResultDefinition()->getType())][] = (string) $name;
+						$this->classes[strtolower((string) $def->getResultDefinition()->getType())][] = (string) $name;
 					}
 
-					foreach (class_parents($def->getType()) + class_implements($def->getType()) + [$def->getType()] + $additional as $parent) {
+					$defParents = class_parents($def->getType()) ?: [];
+					$defImplements = class_implements($def->getType()) ?: [];
+
+					foreach ($defParents + $defImplements + [$def->getType()] + $additional as $parent) {
 						$this->classes[strtolower($parent)][] = (string) $name;
 					}
 				}

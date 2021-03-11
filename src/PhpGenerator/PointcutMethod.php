@@ -9,6 +9,7 @@ use Contributte\Aop\Annotations\Around;
 use Contributte\Aop\Annotations\Before;
 use Contributte\Aop\DI\AdviceDefinition;
 use Contributte\Aop\Exceptions\InvalidArgumentException;
+use Contributte\Aop\Exceptions\NotImplementedException;
 use Contributte\Aop\Pointcut\RuntimeFilter;
 use Nette;
 use Nette\PhpGenerator as Code;
@@ -284,7 +285,13 @@ class PointcutMethod
 	 */
 	public function __call(string $name, array $args)
 	{
-		return call_user_func_array([$this->method, $name], $args);
+		$callable = [$this->method, $name];
+
+		if (!is_callable($callable)) {
+			throw new NotImplementedException('Method does not exist!');
+		}
+
+		return call_user_func_array($callable, $args);
 	}
 
 }
