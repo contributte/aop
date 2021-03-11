@@ -2,12 +2,13 @@
 
 namespace Contributte\Aop\JoinPoint;
 
+use Contributte\Aop\Exceptions\UnexpectedValueException;
 use Contributte\Aop\PhpGenerator\AdvisedClassType;
 
 class AroundMethod extends MethodInvocation
 {
 
-	/** @var array|callable[] */
+	/** @var callable[] */
 	private array $callChain = [];
 
 	/**
@@ -29,11 +30,16 @@ class AroundMethod extends MethodInvocation
 
 
 	/**
-	 * @return array<int, object|string>
+	 * @return callable[]
 	 */
 	public function addChainLink(object $object, string $method): array
 	{
-		return $this->callChain[] = [$object, $method];
+		$callable = [$object, $method];
+		if (is_callable($callable)) {
+			$this->callChain[] = $callable;
+		}
+
+		return $this->callChain;
 	}
 
 
@@ -43,10 +49,16 @@ class AroundMethod extends MethodInvocation
 	public function proceed()
 	{
 		if ($callback = array_shift($this->callChain)) {
-			return call_user_func([$callback[0], $callback[1]], $this);
+			return call_user_func($callback, $this);
 		}
 
-		return call_user_func_array([$this->targetObject, AdvisedClassType::CG_PUBLIC_PROXY_PREFIX . $this->targetMethod], $this->getArguments());
+		$callable = [$this->targetObject, AdvisedClassType::CG_PUBLIC_PROXY_PREFIX . $this->targetMethod];
+
+		if (!is_callable($callable)) {
+			throw new UnexpectedValueException('Cannot proceed, compiler error!');
+		}
+
+		return call_user_func_array($callable, $this->getArguments());
 	}
 
 }

@@ -53,7 +53,7 @@ class Method
 
 
 	/**
-	 * @return object[]
+	 * @return string[]
 	 */
 	public function getTypesWithin(): array
 	{
@@ -67,7 +67,10 @@ class Method
 	 */
 	public function getAnnotations(Reader $reader): array
 	{
-		return $reader->getMethodAnnotations($this->method);
+		/** @var Annotation[] $annotations */
+		$annotations = $reader->getMethodAnnotations($this->method);
+
+		return $annotations;
 	}
 
 
@@ -77,7 +80,10 @@ class Method
 	 */
 	public function getClassAnnotations(Reader $reader): array
 	{
-		return $reader->getClassAnnotations($this->serviceDefinition->getTypeReflection());
+		/** @var Annotation[] $annotations */
+		$annotations = $reader->getClassAnnotations($this->serviceDefinition->getTypeReflection());
+
+		return $annotations;
 	}
 
 

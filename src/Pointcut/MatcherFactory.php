@@ -41,7 +41,11 @@ class MatcherFactory
 	public function getMatcher(string $type, $arg): Filter
 	{
 		if (!isset($this->cache[$type][(string) $arg])) {
-			$this->cache[$type][(string) $arg] = call_user_func([$this, 'create' . ucfirst($type)], $arg);
+			$callable = [$this, 'create' . ucfirst($type)];
+
+			if (is_callable($callable)) {
+				$this->cache[$type][(string) $arg] = call_user_func($callable, $arg);
+			}
 		}
 
 		return $this->cache[$type][(string) $arg];

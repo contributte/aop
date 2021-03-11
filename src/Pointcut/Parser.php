@@ -137,10 +137,7 @@ class Parser
 	}
 
 
-	/**
-	 * @return Rules|Filter
-	 */
-	protected function parseMethod(Stream $tokens)
+	protected function parseMethod(Stream $tokens): Filter
 	{
 		$visibility = null;
 		$arguments = [];
@@ -267,7 +264,9 @@ class Parser
 				$operator = $tokens->currentValue();
 				continue;
 
-			} elseif ($tokens->isCurrent('(')) {
+			}
+
+			if ($tokens->isCurrent('(')) {
 				if ($conditions || $tokens->isNext('(')) {
 					$conditions[] = $this->parseArguments($tokens);
 				}
@@ -304,7 +303,9 @@ class Parser
 						if ($tokens->isCurrent(')')) {
 							break;
 
-						} elseif ($tokens->isCurrent(self::TOK_IDENTIFIER, self::TOK_STRING)) {
+						}
+
+						if ($tokens->isCurrent(self::TOK_IDENTIFIER, self::TOK_STRING)) {
 							$right[] = self::sanitizeArgumentExpression($tokens->currentValue(), $token);
 
 						} elseif (!$tokens->isCurrent(',', self::TOK_WHITESPACE)) {

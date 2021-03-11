@@ -38,7 +38,7 @@ class EvaluateMatcher implements Filter, RuntimeFilter
 	}
 
 	/**
-	 * @return array<int, string|Filter>
+	 * @return string[]
 	 */
 	public function listAcceptedTypes(): array
 	{

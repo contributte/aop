@@ -26,7 +26,7 @@ class ServiceDefinition
 	/** @var Method[]|null */
 	private ?array $openMethods = null;
 
-	/** @var string[]|object[]|null */
+	/** @var string[]|null */
 	private ?array $typesWithing = null;
 
 	private string $serviceId;
@@ -58,7 +58,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return object[]
+	 * @return array<string, string>
 	 */
 	public function getTypesWithin(): array
 	{
@@ -66,7 +66,12 @@ class ServiceDefinition
 			return $this->typesWithing;
 		}
 
-		return $this->typesWithing = class_parents($class = $this->originalType->getName()) + class_implements($class) + [$class => $class];
+		$class = $this->originalType->getName();
+
+		$classParents = class_parents($class) ?: [];
+		$classImplements = class_implements($class) ?: [];
+
+		return $this->typesWithing = $classParents + $classImplements + [$class => $class];
 	}
 
 

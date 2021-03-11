@@ -57,7 +57,7 @@ class MethodMatcher implements Filter
 
 
 	/**
-	 * @return array<int, string|Filter>
+	 * @return string[]
 	 */
 	public function listAcceptedTypes(): array
 	{

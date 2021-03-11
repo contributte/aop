@@ -35,7 +35,7 @@ class Criteria
 
 	private string $operator;
 
-	/** @var array<array<string|self>|Criteria> */
+	/** @var array<self|array{0: string|Code\PhpLiteral, 1: string|null, 2: string|Code\PhpLiteral|null|array<int, Code\PhpLiteral|string>}> */
 	private array $expressions = [];
 
 	private Code\Dumper $dumper;
@@ -56,9 +56,8 @@ class Criteria
 
 
 	/**
-	 * @param string|self $left
-	 * @param string|self|null $right
-	 * @return Criteria
+	 * @param string|Code\PhpLiteral|self $left
+	 * @param string|Code\PhpLiteral|array<string|Code\PhpLiteral>|null $right
 	 * @throws InvalidArgumentException
 	 */
 	public function where($left, ?string $comparison = null, $right = null): self
@@ -68,7 +67,7 @@ class Criteria
 			return $this;
 		}
 
-		if (!self::isValidComparison($comparison = strtoupper($comparison))) {
+		if (!self::isValidComparison($comparison = strtoupper((string) $comparison))) {
 			throw new InvalidArgumentException('Given comparison \'' . $comparison . '\' cannot be evaluated.');
 		}
 
@@ -93,6 +92,7 @@ class Criteria
 		}
 
 		$logical = [];
+		/** @var self|array{0: string|Code\PhpLiteral, 1: string|null, 2: string|Code\PhpLiteral|null} $expression */
 		foreach ($this->expressions as $expression) {
 			$logical[] = $this->doEvaluate($builder, $expression);
 			if (!$this->isMatching($logical)) {
@@ -119,7 +119,7 @@ class Criteria
 
 
 	/**
-	 * @param array<int, Code\PhpLiteral|string>|Criteria $expression
+	 * @param self|array{0: string|Code\PhpLiteral, 1: string|null, 2: string|Code\PhpLiteral|null} $expression
 	 */
 	private function doEvaluate(ContainerBuilder $builder, $expression): bool
 	{
@@ -136,7 +136,7 @@ class Criteria
 
 
 	/**
-	 * @param Code\PhpLiteral|string $expression
+	 * @param string|Code\PhpLiteral $expression
 	 * @return mixed
 	 */
 	private function doEvaluateValueResolve(ContainerBuilder $builder, $expression)
@@ -157,6 +157,7 @@ class Criteria
 		}
 
 		$serialised = [];
+		/** @var self|array{0: string|Code\PhpLiteral, 1: string|null, 2: string|Code\PhpLiteral|null} $expression */
 		foreach ($this->expressions as $expression) {
 			$serialised[] = $this->doSerialize($builder, $expression);
 		}
@@ -167,7 +168,7 @@ class Criteria
 
 
 	/**
-	 * @param array<int, Code\PhpLiteral|string>|Criteria $expression
+	 * @param array{0: string|Code\PhpLiteral, 1: string|null, 2: string|Code\PhpLiteral|null}|Criteria $expression
 	 * @return string|Code\Literal
 	 */
 	private function doSerialize(ContainerBuilder $builder, $expression)
@@ -325,16 +326,16 @@ class Criteria
 				if ($right instanceof SplObjectStorage || $right instanceof Collection) {
 					return $left !== null && $right->contains($left);
 
-				} else {
-					if ($right instanceof Traversable) {
-						$right = iterator_to_array($right);
-
-					} elseif (!is_array($right)) {
-						throw new InvalidArgumentException('Right value is expected to be array or instance of Traversable');
-					}
-
-					return in_array($left, $right, true);
 				}
+
+				if ($right instanceof Traversable) {
+					$right = iterator_to_array($right);
+
+				} elseif (!is_array($right)) {
+					throw new InvalidArgumentException('Right value is expected to be array or instance of Traversable');
+				}
+
+				return in_array($left, $right, true);
 			case self::CONTAINS:
 				return self::compare($right, self::IN, $left);
 
