@@ -1,5 +1,6 @@
 parameters:
     treatPhpDocTypesAsCertain: false
+    checkGenericClassInNonGenericObjectType: false
 includes:
 	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
 	- vendor/phpstan/phpstan-nette/extension.neon

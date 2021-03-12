@@ -5,6 +5,7 @@ namespace Contributte\Aop\Pointcut;
 use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Nette;
 use Nette\DI\Definitions\Definition;
+use ReflectionClass;
 use ReflectionMethod;
 
 /**
@@ -12,7 +13,6 @@ use ReflectionMethod;
  *
  * @property string $serviceId
  * @property array|Method[] $openMethods
- * @property Nette\Reflection\ClassType $typeReflection
  */
 class ServiceDefinition
 {
@@ -21,7 +21,7 @@ class ServiceDefinition
 
 	protected Definition $serviceDefinition;
 
-	private Nette\Reflection\ClassType $originalType;
+	private ReflectionClass $originalType;
 
 	/** @var Method[]|null */
 	private ?array $openMethods = null;
@@ -35,11 +35,13 @@ class ServiceDefinition
 	{
 		$this->serviceDefinition = $def;
 
-		if (empty($def->getType())) {
+		if ($def->getType() === null) {
 			throw new InvalidArgumentException('Given service definition has unresolved class, please specify service type explicitly.');
 		}
 
-		$this->originalType = Nette\Reflection\ClassType::from($def->getType());
+		/** @var class-string $type */
+		$type = $def->getType();
+		$this->originalType = new ReflectionClass($type);
 		$this->serviceId = $serviceId;
 	}
 
@@ -51,7 +53,7 @@ class ServiceDefinition
 	}
 
 
-	public function getTypeReflection(): Nette\Reflection\ClassType
+	public function getTypeReflection(): ReflectionClass
 	{
 		return $this->originalType;
 	}

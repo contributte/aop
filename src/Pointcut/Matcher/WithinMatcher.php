@@ -21,7 +21,7 @@ class WithinMatcher implements Filter
 			$this->pattern = str_replace('\\*', '.*', preg_quote($type));
 
 		} else {
-			$this->type = Nette\Reflection\ClassType::from($type)->getName();
+			$this->type = trim($type, '\\');
 		}
 	}
 
