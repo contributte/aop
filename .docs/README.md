@@ -78,9 +78,9 @@ Yeah, why not? I needed the section `aspects` for services and section `aop` for
 There are few breaking changes you have to deal with when upgrading to v2 from v1
  - annotations namespace changed from Contributte\Aop to Contributte\Aop\Annotations
  - Exceptions namespace changed from Contributte\Aop to Contributte\Aop\Exceptions
+ - Dropped nette\reflection so all methods that were returning Nette\Reflection objects are now returning raw php \Reflection* objects
  - Contributte\Aop\Pointcut\Filter listAcceptedTypes now returns array instead of array|false
  - added typehints on all methods/fields so if you are overriding or using something it may need adjustment, but for most projects it should not be any problems
-
 ## Dictionary
 
 <dl>
