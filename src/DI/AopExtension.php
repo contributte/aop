@@ -10,6 +10,7 @@ use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator as Code;
+use ReflectionProperty;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class AopExtension extends Nette\DI\CompilerExtension
@@ -96,7 +97,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 	{
 		static $publicSetup;
 		if ($publicSetup === null) {
-			$refl = new Nette\Reflection\Property(ServiceDefinition::class, 'setup');
+			$refl = new ReflectionProperty(ServiceDefinition::class, 'setup');
 			$publicSetup = $refl->isPublic();
 		}
 

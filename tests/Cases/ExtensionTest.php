@@ -23,6 +23,7 @@ use Nettrine\Annotations\DI\AnnotationsExtension;
 use Nettrine\Cache\DI\CacheExtension;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
+use ReflectionProperty;
 use RuntimeException;
 use Tests\Files\Aspects\AfterAspect;
 use Tests\Files\Aspects\AfterReturningAspect;
@@ -446,8 +447,7 @@ class ExtensionTest extends TestCase
 	private static function getAspects($service): array
 	{
 		try {
-			$propRefl = (Nette\Reflection\ClassType::from($service))
-				->getProperty('_contributte_aopAdvices'); // internal property
+			$propRefl = new ReflectionProperty($service, '_contributte_aopAdvices');
 
 			$propRefl->setAccessible(true);
 			return $propRefl->getValue($service);

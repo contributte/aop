@@ -5,6 +5,7 @@ namespace Tests\Cases;
 use Contributte\Aop\Pointcut\Method;
 use Contributte\Aop\Pointcut\ServiceDefinition;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 use Tests\Files\Pointcut\InheritedClass;
 
 class ServiceDefinitionTest extends TestCase
@@ -13,7 +14,7 @@ class ServiceDefinitionTest extends TestCase
 	public function testInheritedConstructor(): void
 	{
 		$definition = $this->createDefinition(InheritedClass::class);
-		$this->assertEquals($definition->getOpenMethods(), ['__construct' => new Method(\Nette\Reflection\Method::from(InheritedClass::class, '__construct'), $definition)]);
+		$this->assertEquals($definition->getOpenMethods(), ['__construct' => new Method(new ReflectionMethod(InheritedClass::class, '__construct'), $definition)]);
 	}
 
 	private function createDefinition(string $type): ServiceDefinition

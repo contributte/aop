@@ -6,6 +6,7 @@ use Contributte\Aop\PhpGenerator\PointcutMethod;
 use Doctrine\Common\Annotations\Annotation;
 use Doctrine\Common\Annotations\Reader;
 use Nette;
+use ReflectionMethod;
 
 /**
  * @property-read array|string[] $typesWithin
@@ -19,11 +20,11 @@ class Method
 	public const VISIBILITY_PROTECTED = 'protected';
 	public const VISIBILITY_PRIVATE = 'private';
 
-	private Nette\Reflection\Method $method;
+	private ReflectionMethod $method;
 
 	private ServiceDefinition $serviceDefinition;
 
-	public function __construct(Nette\Reflection\Method $method, ServiceDefinition $serviceDefinition)
+	public function __construct(ReflectionMethod $method, ServiceDefinition $serviceDefinition)
 	{
 		$this->method = $method;
 		$this->serviceDefinition = $serviceDefinition;
@@ -111,10 +112,16 @@ class Method
 	 */
 	public function getParameterNames(): array
 	{
-		return array_keys($this->method->getParameters());
+		$names = [];
+
+		foreach ($this->method->getParameters() as $parameter) {
+			$names[] = $parameter->getName();
+		}
+
+		return $names;
 	}
 
-	public function unwrap(): Nette\Reflection\Method
+	public function unwrap(): ReflectionMethod
 	{
 		return $this->method;
 	}

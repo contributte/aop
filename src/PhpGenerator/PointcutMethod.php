@@ -14,6 +14,7 @@ use Contributte\Aop\Pointcut\RuntimeFilter;
 use Nette;
 use Nette\PhpGenerator as Code;
 use ReflectionException;
+use ReflectionMethod;
 use ReflectionNamedType;
 
 /**
@@ -41,13 +42,13 @@ class PointcutMethod
 
 	private Code\Dumper $dumper;
 
-	public function __construct(Nette\Reflection\Method $from)
+	public function __construct(ReflectionMethod $from)
 	{
 		$this->method = (new Code\Factory())->fromMethodReflection($from);
 		$this->dumper = new Code\Dumper();
 	}
 
-	public static function from(Nette\Reflection\Method $from): PointcutMethod
+	public static function from(ReflectionMethod $from): PointcutMethod
 	{
 		$method = new self($from);
 		$params = [];
@@ -57,7 +58,7 @@ class PointcutMethod
 		}
 
 		$method->method->setParameters($params);
-		if ($from instanceof Nette\Reflection\Method) {
+		if ($from instanceof ReflectionMethod) {
 			$isInterface = $from->getDeclaringClass()->isInterface();
 			$method->method->setStatic($from->isStatic());
 			$method->method->setVisibility($from->isPrivate() ? 'private' : ($from->isProtected() ? 'protected' : ($isInterface ? null : 'public')));
@@ -246,7 +247,7 @@ class PointcutMethod
 	/**
 	 * @throws ReflectionException
 	 */
-	public static function expandTypeHints(Nette\Reflection\Method $from, PointcutMethod $method): PointcutMethod
+	public static function expandTypeHints(ReflectionMethod $from, PointcutMethod $method): PointcutMethod
 	{
 		$parameters = $method->method->getParameters();
 

@@ -3,6 +3,8 @@
 namespace Contributte\Aop\JoinPoint;
 
 use Nette;
+use ReflectionClass;
+use ReflectionMethod;
 
 abstract class MethodInvocation
 {
@@ -44,15 +46,15 @@ abstract class MethodInvocation
 	}
 
 
-	public function getTargetObjectReflection(): Nette\Reflection\ClassType
+	public function getTargetObjectReflection(): ReflectionClass
 	{
-		return Nette\Reflection\ClassType::from($this->targetObject);
+		return new ReflectionClass($this->targetObject);
 	}
 
 
-	public function getTargetReflection(): Nette\Reflection\Method
+	public function getTargetReflection(): ReflectionMethod
 	{
-		return Nette\Reflection\Method::from($this->targetObject, $this->targetMethod);
+		return new ReflectionMethod($this->targetObject, $this->targetMethod);
 	}
 
 }
