@@ -11,6 +11,7 @@ use Contributte\Aop\DI\AdviceDefinition;
 use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Exceptions\NotImplementedException;
 use Contributte\Aop\Pointcut\RuntimeFilter;
+use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use Nette\PhpGenerator as Code;
 use ReflectionException;
@@ -71,6 +72,14 @@ class PointcutMethod
 		$method->method->setVariadic($from->isVariadic());
 		$docComment = $from->getDocComment();
 		if ($docComment !== false) {
+			$annotations = (new AnnotationReader())->getMethodAnnotations($from);
+			foreach ($annotations as $annotation) {
+				$annotationFqn = get_class($annotation);
+				$annotationShortClassName = Nette\Utils\Strings::after($annotationFqn, '\\', -1);
+
+				$docComment = str_replace('@' . $annotationShortClassName, '@' . $annotationFqn, $docComment);
+			}
+
 			$method->method->setComment(Code\Helpers::unformatDocComment($docComment));
 		}
 
@@ -83,7 +92,6 @@ class PointcutMethod
 
 		return $method;
 	}
-
 
 	public function addAdvice(AdviceDefinition $adviceDef): void
 	{
@@ -151,7 +159,9 @@ class PointcutMethod
 		if (!$filter instanceof RuntimeFilter) {
 			return $code;
 
-		} elseif (!$condition = $filter->createCondition()) {
+		}
+
+		if (!$condition = $filter->createCondition()) {
 			return $code;
 		}
 
