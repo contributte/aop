@@ -2,6 +2,7 @@
 
 namespace Contributte\Aop\JoinPoint;
 
+use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use ReflectionClass;
 use ReflectionMethod;
@@ -18,6 +19,8 @@ abstract class MethodInvocation
 	/** @var mixed[] $arguments */
 	protected array $arguments;
 
+	private AnnotationReader $annotationReader;
+
 	/**
 	 * @param mixed[] $arguments
 	 */
@@ -26,6 +29,7 @@ abstract class MethodInvocation
 		$this->targetObject = $targetObject;
 		$this->targetMethod = $targetMethod;
 		$this->arguments = $arguments;
+		$this->annotationReader = new AnnotationReader();
 	}
 
 
@@ -55,6 +59,24 @@ abstract class MethodInvocation
 	public function getTargetReflection(): ReflectionMethod
 	{
 		return new ReflectionMethod($this->targetObject, $this->targetMethod);
+	}
+
+
+	/**
+	 * @param class-string $name
+	 */
+	public function getAnnotation(string $name): ?object
+	{
+		return $this->annotationReader->getMethodAnnotation($this->getTargetReflection(), $name);
+	}
+
+
+	/**
+	 * @return object[]
+	 */
+	public function getAnnotations(): array
+	{
+		return $this->annotationReader->getMethodAnnotations($this->getTargetReflection());
 	}
 
 }

@@ -3,6 +3,7 @@
 namespace Tests\Files\Aspects;
 
 use RuntimeException;
+use Tests\Files\Annotations\TestAnnotation;
 
 class CommonService
 {
@@ -19,6 +20,9 @@ class CommonService
 	}
 
 
+	/**
+	 * @TestAnnotation
+	 */
 	public function magic(?int $argument): ?int
 	{
 		$this->calls[] = func_get_args();
