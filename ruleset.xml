@@ -3,6 +3,7 @@
     <!-- Contributte Coding Standard -->
     <rule ref="./vendor/ninjify/coding-standard/contributte.xml">
         <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"></exclude>
+        <exclude name="SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse"></exclude> <!-- does not work with php 8 attributes -->
      </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint" />
     <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint" />

@@ -16,9 +16,8 @@ class BeforeAspect
 	/** @var mixed[]|false */
 	public $modifyArgs = false;
 
-	/**
-	 * @Aop\Annotations\Before("method(Tests\Files\Aspects\CommonService->magic)")
-	 */
+	#[Aop\Attributes\Before('method(Tests\Files\Aspects\CommonService->magic)')]
+
 	public function log(Aop\JoinPoint\BeforeMethod $before): void
 	{
 		$this->calls[] = $before;

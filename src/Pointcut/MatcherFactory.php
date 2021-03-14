@@ -2,16 +2,14 @@
 
 namespace Contributte\Aop\Pointcut;
 
-use Contributte\Aop\Pointcut\Matcher\ClassAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\ClassAttributedWithMatcher;
 use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Contributte\Aop\Pointcut\Matcher\EvaluateMatcher;
 use Contributte\Aop\Pointcut\Matcher\FilterMatcher;
-use Contributte\Aop\Pointcut\Matcher\MethodAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\MethodAttributedWithMatcher;
 use Contributte\Aop\Pointcut\Matcher\MethodMatcher;
 use Contributte\Aop\Pointcut\Matcher\SettingMatcher;
 use Contributte\Aop\Pointcut\Matcher\WithinMatcher;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\Reader;
 use Nette;
 use Nette\DI\ContainerBuilder;
 
@@ -22,15 +20,12 @@ class MatcherFactory
 
 	private ContainerBuilder $builder;
 
-	private Reader $annotationReader;
-
 	/** @var mixed[] */
 	private array $cache = [];
 
-	public function __construct(Nette\DI\ContainerBuilder $builder, ?Reader $annotationReader = null)
+	public function __construct(Nette\DI\ContainerBuilder $builder)
 	{
 		$this->builder = $builder;
-		$this->annotationReader = $annotationReader ?: new AnnotationReader();
 	}
 
 
@@ -102,16 +97,16 @@ class MatcherFactory
 
 
 
-	public function createClassAnnotatedWith(string $annotation): ClassAnnotateWithMatcher
+	public function createClassAttributedWith(string $attributte): ClassAttributedWithMatcher
 	{
-		return new ClassAnnotateWithMatcher($annotation, $this->annotationReader);
+		return new ClassAttributedWithMatcher($attributte);
 	}
 
 
 
-	public function createMethodAnnotatedWith(string $annotation): MethodAnnotateWithMatcher
+	public function createMethodAttributedWith(string $attribute): MethodAttributedWithMatcher
 	{
-		return new MethodAnnotateWithMatcher($annotation, $this->annotationReader);
+		return new MethodAttributedWithMatcher($attribute);
 	}
 
 }

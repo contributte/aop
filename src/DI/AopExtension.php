@@ -4,7 +4,6 @@ namespace Contributte\Aop\DI;
 
 use Contributte\Aop\PhpGenerator\AdvisedClassType;
 use Contributte\Aop\Pointcut;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use Nette\DI\Definitions\FactoryDefinition;
 use Nette\DI\Definitions\ServiceDefinition;
@@ -23,13 +22,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 	private array $serviceDefinitions = [];
 
 	private ?string $compiledFile;
-
-	public function loadConfiguration(): void
-	{
-		AnnotationReader::addGlobalIgnoredName('persistent');
-	}
-
-
 
 	public function beforeCompile(): void
 	{
@@ -152,9 +144,8 @@ class AopExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$builder->resolve();
 
-		$annotationReader = new AnnotationReader();
-		$matcherFactory = new Pointcut\MatcherFactory($builder, $annotationReader);
-		$analyzer = new Pointcut\AspectAnalyzer(new Pointcut\Parser($matcherFactory), $annotationReader);
+		$matcherFactory = new Pointcut\MatcherFactory($builder);
+		$analyzer = new Pointcut\AspectAnalyzer(new Pointcut\Parser($matcherFactory));
 
 		$advisedMethods = [];
 		$this->classes = null;

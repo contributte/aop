@@ -13,9 +13,8 @@ class ConstructorBeforeAspect
 	/** @var array|Aop\JoinPoint\BeforeMethod[] */
 	public array $calls = [];
 
-	/**
-	 * @Aop\Annotations\Before("method(Tests\Files\Aspects\CommonService->__construct)")
-	 */
+	#[Aop\Attributes\Before('method(Tests\Files\Aspects\CommonService->__construct)')]
+
 	public function log(Aop\JoinPoint\BeforeMethod $before): void
 	{
 		$this->calls[] = $before;

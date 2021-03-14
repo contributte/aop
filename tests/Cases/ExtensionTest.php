@@ -19,8 +19,6 @@ use Contributte\Aop\JoinPoint\ExceptionAware;
 use Contributte\Aop\JoinPoint\MethodInvocation;
 use Contributte\Aop\JoinPoint\ResultAware;
 use Nette;
-use Nettrine\Annotations\DI\AnnotationsExtension;
-use Nettrine\Cache\DI\CacheExtension;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use ReflectionProperty;
@@ -56,10 +54,6 @@ class ExtensionTest extends TestCase
 		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 		$config->addConfig(__DIR__ . '/../config/' . $configFile . '.neon');
 
-		$config->onCompile[] = function (Nette\Configurator $config, Nette\DI\Compiler $compiler): void {
-			$compiler->addExtension('annotations', new AnnotationsExtension());
-			$compiler->addExtension('nettrine.cache', new CacheExtension());
-		};
 		AspectsExtension::register($config);
 		AopExtension::register($config);
 

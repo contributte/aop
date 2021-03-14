@@ -3,9 +3,8 @@
 namespace Contributte\Aop\Pointcut;
 
 use Contributte\Aop\PhpGenerator\PointcutMethod;
-use Doctrine\Common\Annotations\Annotation;
-use Doctrine\Common\Annotations\Reader;
 use Nette;
+use ReflectionAttribute;
 use ReflectionMethod;
 
 /**
@@ -41,8 +40,15 @@ class Method
 
 	public function getVisibility(): string
 	{
-		return $this->method->isPublic() ? self::VISIBILITY_PUBLIC
-			: ($this->method->isProtected() ? self::VISIBILITY_PROTECTED : self::VISIBILITY_PRIVATE);
+		if ($this->method->isPublic()) {
+			return self::VISIBILITY_PUBLIC;
+		}
+
+		if ($this->method->isProtected()) {
+			return self::VISIBILITY_PROTECTED;
+		}
+
+		return self::VISIBILITY_PRIVATE;
 	}
 
 
@@ -64,27 +70,21 @@ class Method
 
 
 	/**
-	 * @return Annotation[]
+	 * @return ReflectionAttribute[]
 	 */
-	public function getAnnotations(Reader $reader): array
+	public function getAttributes(): array
 	{
-		/** @var Annotation[] $annotations */
-		$annotations = $reader->getMethodAnnotations($this->method);
-
-		return $annotations;
+		return $this->method->getAttributes();
 	}
 
 
 
 	/**
-	 * @return Annotation[]
+	 * @return ReflectionAttribute[]
 	 */
-	public function getClassAnnotations(Reader $reader): array
+	public function getClassAttributes(): array
 	{
-		/** @var Annotation[] $annotations */
-		$annotations = $reader->getClassAnnotations($this->serviceDefinition->getTypeReflection());
-
-		return $annotations;
+		return $this->serviceDefinition->getTypeReflection()->getAttributes();
 	}
 
 
