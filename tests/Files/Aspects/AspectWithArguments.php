@@ -19,9 +19,8 @@ class AspectWithArguments
 	}
 
 
-	/**
-	 * @Aop\Annotations\After("method(Tests\Files\Aspects\CommonService->magic)")
-	 */
+	#[Aop\Attributes\After('method(Tests\Files\Aspects\CommonService->magic)')]
+
 	public function log(Aop\JoinPoint\AfterMethod $after): void
 	{
 		// pass

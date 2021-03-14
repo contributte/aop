@@ -2,13 +2,14 @@
 
 namespace Tests\Files\Pointcut;
 
-use Doctrine\Common\Annotations\Annotation;
+use Attribute;
+use Contributte\Aop\Attributes\BaseAttribute;
 
 /**
- * @Annotation
  * @Target({"CLASS", "METHOD"})
  */
-class Test extends Annotation
+#[Attribute]
+class Test extends BaseAttribute
 {
 
 }

@@ -13,9 +13,9 @@ class AfterThrowingAspect
 	/** @var array|Aop\JoinPoint\AfterThrowing[] */
 	public array $calls = [];
 
-	/**
-	 * @Aop\Annotations\AfterThrowing("method(Tests\Files\Aspects\CommonService->magic)")
-	 */
+
+	#[Aop\Attributes\AfterThrowing('method(Tests\Files\Aspects\CommonService->magic)')]
+
 	public function log(Aop\JoinPoint\AfterThrowing $after): void
 	{
 		$this->calls[] = $after;

@@ -16,9 +16,8 @@ class ConditionalBeforeAspect
 	/** @var mixed[]|false */
 	public $modifyArgs = false;
 
-	/**
-	 * @Aop\Annotations\Before("method(Tests\Files\Aspects\CommonService->magic($argument == 1))")
-	 */
+	#[Aop\Attributes\Before('method(Tests\Files\Aspects\CommonService->magic($argument == 1))')]
+
 	public function log(Aop\JoinPoint\BeforeMethod $before): void
 	{
 		$this->calls[] = $before;

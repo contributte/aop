@@ -36,7 +36,7 @@ class Parser
 		$this->tokenizer = new Tokenizer([
 			self::TOK_BRACKET => '[\\(\\)]',
 			self::TOK_VISIBILITY => '(?:public|protected|private)(?=[\t ]+)',
-			self::TOK_KEYWORD => '(?:classAnnotatedWith|class|methodAnnotatedWith|method|within|filter|setting|evaluate)(?=\\()',
+			self::TOK_KEYWORD => '(?:classAttributedWith|class|methodAttributedWith|method|within|filter|setting|evaluate)(?=\\()',
 			self::TOK_OPERATOR => '(?:===?|!==?|<=|>=|<|>|n?in|contains|matches)',
 			self::TOK_LOGIC => '(?:\\&\\&|\\|\\||,)',
 			self::TOK_NOT => '!',
@@ -229,24 +229,24 @@ class Parser
 
 
 
-	protected function parseClassAnnotatedWith(Stream $tokens): Filter
+	protected function parseClassAttributedWith(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
-		$annotation = $tokens->nextValue();
+		$attributte = $tokens->nextValue();
 		$tokens->nextToken(); // )
 
-		return $this->matcherFactory->getMatcher('classAnnotatedWith', $annotation);
+		return $this->matcherFactory->getMatcher('classAttributedWith', $attributte);
 	}
 
 
 
-	protected function parseMethodAnnotatedWith(Stream $tokens): Filter
+	protected function parseMethodAttributedWith(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
-		$annotation = $tokens->nextValue();
+		$attribute = $tokens->nextValue();
 		$tokens->nextToken(); // )
 
-		return $this->matcherFactory->getMatcher('methodAnnotatedWith', $annotation);
+		return $this->matcherFactory->getMatcher('methodAttributedWith', $attribute);
 	}
 
 

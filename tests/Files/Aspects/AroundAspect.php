@@ -20,9 +20,10 @@ class AroundAspect
 	public $modifyReturn = false;
 
 	/**
-	 * @Aop\Annotations\Around("method(Tests\Files\Aspects\CommonService->magic)")
 	 * @return mixed
 	 */
+	#[Aop\Attributes\Around('method(Tests\Files\Aspects\CommonService->magic)')]
+
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{
 		$this->calls[] = $around;

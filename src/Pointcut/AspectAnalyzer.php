@@ -2,25 +2,20 @@
 
 namespace Contributte\Aop\Pointcut;
 
-use Contributte\Aop\Annotations\AdviceAnnotation;
+use Contributte\Aop\Attributes\AdviceAttribute;
 use Contributte\Aop\Exceptions\InvalidAspectExceptions;
-use Doctrine\Common\Annotations\Annotation;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\Reader;
 use Nette;
+use ReflectionAttribute;
 
 class AspectAnalyzer
 {
 
 	use Nette\SmartObject;
 
-	private Reader $annotationReader;
-
 	private Parser $pointcutParser;
 
-	public function __construct(Parser $parser, ?Reader $reader = null)
+	public function __construct(Parser $parser)
 	{
-		$this->annotationReader = $reader ?: new AnnotationReader();
 		$this->pointcutParser = $parser;
 	}
 
@@ -34,13 +29,13 @@ class AspectAnalyzer
 	{
 		$pointcuts = [];
 		foreach ($service->getOpenMethods() as $method) {
-			if (!$annotations = $this->filterAopAnnotations($method->getAnnotations($this->annotationReader))) {
+			if (!$attributes = $this->getAopAdviceAttributes($method->getAttributes())) {
 				continue;
 			}
 
 			$rules = [];
-			foreach ($annotations as $annotation) {
-				$rules[get_class($annotation)] = $this->pointcutParser->parse($annotation->value);
+			foreach ($attributes as $attr) {
+				$rules[get_class($attr)] = $this->pointcutParser->parse($attr->getValue());
 			}
 
 			$pointcuts[$method->getName()] = $rules;
@@ -56,14 +51,20 @@ class AspectAnalyzer
 
 
 	/**
-	 * @param Annotation[] $annotations
-	 * @return AdviceAnnotation[]
+	 * @param ReflectionAttribute[] $attributes
+	 * @return AdviceAttribute[]
 	 */
-	private function filterAopAnnotations(array $annotations): array
+	private function getAopAdviceAttributes(array $attributes): array
 	{
-		return array_filter($annotations, function ($annotation) {
-			return $annotation instanceof AdviceAnnotation;
-		});
+		$result = [];
+		foreach ($attributes as $attribute) {
+			$instance = $attribute->newInstance();
+			if ($instance instanceof AdviceAttribute) {
+				$result[] = $instance;
+			}
+		}
+
+		return $result;
 	}
 
 }

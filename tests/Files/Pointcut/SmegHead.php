@@ -2,9 +2,7 @@
 
 namespace Tests\Files\Pointcut;
 
-/**
- * @Test()
- */
+#[Test]
 class SmegHead
 {
 

@@ -2,7 +2,8 @@
 
 namespace Tests\Files\Aspects;
 
-use Contributte\Aop;
+use Contributte\Aop\Attributes\After;
+use Contributte\Aop\JoinPoint\AfterMethod;
 use Nette;
 
 class AfterAspect
@@ -10,13 +11,12 @@ class AfterAspect
 
 	use Nette\SmartObject;
 
-	/** @var array|Aop\JoinPoint\AfterMethod[] */
+	/** @var array|AfterMethod[] */
 	public array $calls = [];
 
-	/**
-	 * @Aop\Annotations\After("method(Tests\Files\Aspects\CommonService->magic)")
-	 */
-	public function log(Aop\JoinPoint\AfterMethod $after): void
+	#[After('method(Tests\Files\Aspects\CommonService->magic)')]
+
+	public function log(AfterMethod $after): void
 	{
 		$this->calls[] = $after;
 	}

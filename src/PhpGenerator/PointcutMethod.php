@@ -2,16 +2,15 @@
 
 namespace Contributte\Aop\PhpGenerator;
 
-use Contributte\Aop\Annotations\After;
-use Contributte\Aop\Annotations\AfterReturning;
-use Contributte\Aop\Annotations\AfterThrowing;
-use Contributte\Aop\Annotations\Around;
-use Contributte\Aop\Annotations\Before;
+use Contributte\Aop\Attributes\After;
+use Contributte\Aop\Attributes\AfterReturning;
+use Contributte\Aop\Attributes\AfterThrowing;
+use Contributte\Aop\Attributes\Around;
+use Contributte\Aop\Attributes\Before;
 use Contributte\Aop\DI\AdviceDefinition;
 use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Exceptions\NotImplementedException;
 use Contributte\Aop\Pointcut\RuntimeFilter;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use Nette\PhpGenerator as Code;
 use ReflectionException;
@@ -72,14 +71,6 @@ class PointcutMethod
 		$method->method->setVariadic($from->isVariadic());
 		$docComment = $from->getDocComment();
 		if ($docComment !== false) {
-			$annotations = (new AnnotationReader())->getMethodAnnotations($from);
-			foreach ($annotations as $annotation) {
-				$annotationFqn = get_class($annotation);
-				$annotationShortClassName = Nette\Utils\Strings::after($annotationFqn, '\\', -1);
-
-				$docComment = str_replace('@' . $annotationShortClassName, '@' . $annotationFqn, $docComment);
-			}
-
 			$method->method->setComment(Code\Helpers::unformatDocComment($docComment));
 		}
 

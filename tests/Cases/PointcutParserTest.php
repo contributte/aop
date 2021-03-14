@@ -265,23 +265,23 @@ class PointcutParserTest extends TestCase
 		$this->assertEquals($expected, $parser->parse($input));
 	}
 
-	public function testParseClassAnnotatedWith(): void
+	public function testParseClassAttributedWith(): void
 	{
 		$mf = $this->getMatcherFactory();
 		$parser = new Parser($this->getMatcherFactory());
 		$this->assertEquals(
-			$mf->getMatcher('classAnnotatedWith', 'Doctrine\ORM\Mapping\Entity'),
-			$parser->parse('classAnnotatedWith(Doctrine\ORM\Mapping\Entity)')
+			$mf->getMatcher('classAttributedWith', 'Doctrine\ORM\Mapping\Entity'),
+			$parser->parse('classAttributedWith(Doctrine\ORM\Mapping\Entity)')
 		);
 	}
 
-	public function testParseMethodAnnotatedWith(): void
+	public function testParseMethodAttributedWith(): void
 	{
 		$mf = $this->getMatcherFactory();
 		$parser = new Parser($this->getMatcherFactory());
 		$this->assertEquals(
-			$mf->getMatcher('classAnnotatedWith', 'Acme\Demo\Annotations\Special'),
-			$parser->parse('classAnnotatedWith(Acme\Demo\Annotations\Special)')
+			$mf->getMatcher('classAttributedWith', 'Acme\Demo\Annotations\Special'),
+			$parser->parse('classAttributedWith(Acme\Demo\Annotations\Special)')
 		);
 	}
 

@@ -16,9 +16,8 @@ class AfterReturningAspect
 	/** @var mixed|false */
 	public $modifyReturn = false;
 
-	/**
-	 * @Aop\Annotations\AfterReturning("method(Tests\Files\Aspects\CommonService->magic)")
-	 */
+	#[Aop\Attributes\AfterReturning('method(Tests\Files\Aspects\CommonService->magic)')]
+
 	public function log(Aop\JoinPoint\AfterReturning $after): void
 	{
 		$this->calls[] = $after;

@@ -10,15 +10,14 @@ namespace Tests\Cases;
 
 use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\Filter;
-use Contributte\Aop\Pointcut\Matcher\ClassAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\ClassAttributedWithMatcher;
 use Contributte\Aop\Pointcut\Matcher\FilterMatcher;
-use Contributte\Aop\Pointcut\Matcher\MethodAnnotateWithMatcher;
+use Contributte\Aop\Pointcut\Matcher\MethodAttributedWithMatcher;
 use Contributte\Aop\Pointcut\Matcher\MethodMatcher;
 use Contributte\Aop\Pointcut\Matcher\SettingMatcher;
 use Contributte\Aop\Pointcut\Matcher\WithinMatcher;
 use Contributte\Aop\Pointcut\Method;
 use Contributte\Aop\Pointcut\Rules;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Nette\Bridges\ApplicationLatte\Template;
 use Nette\DI\ContainerBuilder;
 use Nette\DI\Definitions\ServiceDefinition;
@@ -123,18 +122,17 @@ class PointcutRulesTest extends TestCase
 	/**
 	 * @return array<int|string, array<int, bool|Rules>>
 	 */
-	public function dataMatchClassAnnotateWith(): array
+	public function dataMatchClassAttributedWith(): array
 	{
 		$data = [];
-		$reader = new AnnotationReader();
-		$data[] = [true, new Rules([new ClassAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(SmegHead::class)];
-		$data[] = [false, new Rules([new ClassAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(Legie::class)];
+		$data[] = [true, new Rules([new ClassAttributedWithMatcher(Test::class)]), $this->createDefinition(SmegHead::class)];
+		$data[] = [false, new Rules([new ClassAttributedWithMatcher(Test::class)]), $this->createDefinition(Legie::class)];
 		return $data;
 	}
 	/**
-	 * @dataProvider dataMatchClassAnnotateWith
+	 * @dataProvider dataMatchClassAttributedWith
 	 */
-	public function testMatchClassAnnotateWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
+	public function testMatchClassAttributedWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}
@@ -142,18 +140,17 @@ class PointcutRulesTest extends TestCase
 	/**
 	 * @return array<int|string, array<int, bool|Rules>>
 	 */
-	public function dataMatchMethodAnnotateWith(): array
+	public function dataMatchMethodAttributedWith(): array
 	{
 		$data = [];
-		$reader = new AnnotationReader();
-		$data[] = [true, new Rules([new MethodAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(Legie::class)];
-		$data[] = [false, new Rules([new MethodAnnotateWithMatcher(Test::class, $reader)]), $this->createDefinition(SmegHead::class)];
+		$data[] = [true, new Rules([new MethodAttributedWithMatcher(Test::class)]), $this->createDefinition(Legie::class)];
+		$data[] = [false, new Rules([new MethodAttributedWithMatcher(Test::class)]), $this->createDefinition(SmegHead::class)];
 		return $data;
 	}
 	/**
-	 * @dataProvider dataMatchMethodAnnotateWith
+	 * @dataProvider dataMatchMethodAttributedWith
 	 */
-	public function testMatchMethodAnnotateWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
+	public function testMatchMethodAttributedWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
 	}

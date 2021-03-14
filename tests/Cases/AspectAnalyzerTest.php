@@ -2,14 +2,13 @@
 
 namespace Tests\Cases;
 
-use Contributte\Aop\Annotations\After;
-use Contributte\Aop\Annotations\AfterReturning;
-use Contributte\Aop\Annotations\AfterThrowing;
-use Contributte\Aop\Annotations\Around;
-use Contributte\Aop\Annotations\Before;
+use Contributte\Aop\Attributes\After;
+use Contributte\Aop\Attributes\AfterReturning;
+use Contributte\Aop\Attributes\AfterThrowing;
+use Contributte\Aop\Attributes\Around;
+use Contributte\Aop\Attributes\Before;
 use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\ServiceDefinition;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Nette;
 use PHPUnit\Framework\TestCase;
 use Tests\Files\Aspects\AfterAspect;
@@ -101,9 +100,8 @@ class AspectAnalyzerTest extends TestCase
 	public function testAnalyze(array $pointcuts, ServiceDefinition $service): void
 	{
 		$builder = new Nette\DI\ContainerBuilder();
-		$annotationReader = new AnnotationReader();
-		$matcherFactory = new Pointcut\MatcherFactory($builder, $annotationReader);
-		$analyzer = new Pointcut\AspectAnalyzer(new Pointcut\Parser($matcherFactory), $annotationReader);
+		$matcherFactory = new Pointcut\MatcherFactory($builder);
+		$analyzer = new Pointcut\AspectAnalyzer(new Pointcut\Parser($matcherFactory));
 
 		$this->assertEquals($pointcuts, $analyzer->analyze($service));
 	}

@@ -5,9 +5,8 @@ namespace Tests\Files\Pointcut;
 class Legie implements Rimmer, Lister, Kryten, Cat
 {
 
-	/**
-	 * @Test()
-	 */
+	#[Test]
+
 	public function publicCalculation(): void
 	{
 	}

@@ -4,8 +4,6 @@ php:
 services:
 	cacheStorage:
 		class: Nette\Caching\Storages\MemoryStorage
-annotations:
-    debug: false
 http:
 	frames: null
 
