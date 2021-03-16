@@ -4,10 +4,7 @@ namespace Contributte\Aop\Attributes;
 
 use Attribute;
 
-/**
- * @Target("CLASS")
- */
-#[Attribute]
+#[Attribute(Attribute::TARGET_CLASS)]
 class Aspect extends BaseAttribute
 {
 

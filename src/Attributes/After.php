@@ -4,10 +4,7 @@ namespace Contributte\Aop\Attributes;
 
 use Attribute;
 
-/**
- * @Target("METHOD")
- */
-#[Attribute]
+#[Attribute(Attribute::TARGET_METHOD)]
 class After extends BaseAttribute implements AdviceAttribute
 {
 
