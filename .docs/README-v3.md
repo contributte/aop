@@ -4,7 +4,7 @@
 
 - [Setup](#usage)
 - [Configuration](#configuration)
-- [Upgrade to v2](#upgrade-to-v2)
+- [Upgrade to v3](#upgrade-to-v3)
 - [Dictionary](#dictionary)
 - [Advice types](#advice-types)
 - [Pointcut Syntax](#pointcut-syntax)
@@ -27,14 +27,8 @@ Enable the extension using your neon config.
 ```neon
 extensions:
 	aop: Contributte\Aop\DI\AopExtension
-	annotations: Nettrine\Annotations\DI\AnnotationsExtension
 	aspects: Contributte\Aop\DI\AspectsExtension
-	nettrine.cache: Nettrine\Cache\DI\CacheExtension
 ```
-Nettrine cache is there because of annotations, you can avoid it if you want.
-
-You can find the [documentation of annotations extension here](https://github.com/nettrine/annotations/tree/master/.docs).
-
 
 ## Configuration
 
@@ -74,12 +68,14 @@ The `aspects.neon` file should be list of unnamed services as in `aspects` secti
 
 Yeah, why not? I needed the section `aspects` for services and section `aop` for configuration.
 
-## Upgrade to v2
-There are few breaking changes you have to deal with when upgrading to v2 from v1
- - annotations namespace changed from Contributte\Aop to Contributte\Aop\Annotations
- - Exceptions namespace changed from Contributte\Aop to Contributte\Aop\Exceptions
- - Contributte\Aop\Pointcut\Filter listAcceptedTypes now returns array instead of array|false
- - added typehints on all methods/fields so if you are overriding or using something it may need adjustment, but for most projects it should not be any problems
+
+## Upgrade to v3
+There are few breaking changes you have to deal with when upgrading to v3 from v2
+
+- Dropped nette\reflection so all methods that were returning Nette\Reflection objects are now returning raw php \Reflection* objects
+- Dropped nettrine\annotations we're using native php attributes now
+
+
 ## Dictionary
 
 <dl>
@@ -175,13 +171,13 @@ Examples:
 
 And don't forget to have a look at [Symfony/PropertyAccess](http://symfony.com/doc/current/components/property_access/index.html).
 
-#### classAnnotatedWith(`Some\Annotation`)
+#### classAttributedWith(`Some\Attribute`)
 
-Matches all classes, that are annotated with this annotation. It uses [Nettrine/Annotations](https://github.com/netrrine/Annotations) for reading them.
+Matches all classes, that have this attribute.
 
-#### methodAnnotatedWith(`Some\Annotation`)
+#### methodAttributedWith(`Some\Attribute`)
 
-Matches all methods, that are annotated with this annotation.
+Matches all methods, that have this attribute.
 
 
 ## Join points
@@ -201,7 +197,7 @@ For every type of advice, there is a join point class in namespace `Contributte\
 Let's utilize what we've learned so far and write some aspects.
 
 ```php
-use Contributte\Aop; // annotations can recognize imports, because they behave like classes
+use Contributte\Aop;
 
 class BeforeAspect
 {
@@ -212,9 +208,7 @@ class BeforeAspect
 		$this->db = $db;
 	}
 
-	/**
-	 * @Aop\Annotations\Before("method(CommonService->magic)")
-	 */
+	 #[Aop\Attributes\Before("method(CommonService->magic)")]
 	public function log(Aop\JoinPoint\BeforeMethod $before)
 	{
 		$this->db->insert('log', array('something' => $before->arguments[1]));
@@ -231,9 +225,7 @@ This aspect will add an advice `log` to method `magic` of class `CommonService`,
 class AroundAspect
 {
 
-	/**
-	 * @Contributte\Aop\Annotations\Around("method(CommonService->magic)")
-	 */
+	 #[Contributte\Aop\Attributes\Around("method(CommonService->magic)")]
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{
 		// I can change the arguments here
