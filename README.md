@@ -32,11 +32,11 @@ For details on how to use this package, check out our [documentation](.docs).
 
 ## Versions
 
-| State       | Version       | Branch   | Nette | PHP      |
-|-------------|---------------|----------|-------|----------|
-| dev         | `^3.0`        | `master` | 3.0+  | `>=8.0`  |
-| stable      | `^2.0`        | `v2`     | 3.0+  | `>=7.4`  |
-| stable      | `^1.0`        | `v1`     | 3.0+  | `>=7.2`  |
+| State       | Version       | Branch   | Nette | PHP      | README |
+|-------------|---------------|----------|-------|----------|--------|
+| dev         | `^3.0`        | `master` | 3.0+  | `>=8.0`  | [README-v3](.docs/README-v3.md)|
+| stable      | `^2.0`        | `v2`     | 3.0+  | `>=7.4`  |[README-v2](.docs/README-v2.md)|
+| stable      | `^1.0`        | `v1`     | 3.0+  | `>=7.2`  |[README-v1](.docs/README-v1.md)|
 
 ## Development
 
