@@ -5,10 +5,7 @@ namespace Tests\Files\Pointcut;
 use Attribute;
 use Contributte\Aop\Attributes\BaseAttribute;
 
-/**
- * @Target({"CLASS", "METHOD"})
- */
-#[Attribute]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
 class Test extends BaseAttribute
 {
 

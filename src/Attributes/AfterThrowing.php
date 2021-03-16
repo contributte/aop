@@ -4,10 +4,7 @@ namespace Contributte\Aop\Attributes;
 
 use Attribute;
 
-/**
- * @Target("METHOD")
- */
-#[Attribute]
+#[Attribute(Attribute::TARGET_METHOD)]
 class AfterThrowing extends BaseAttribute implements AdviceAttribute
 {
 
