@@ -23,7 +23,6 @@ class ConditionalAroundAspect
 	 * @return mixed
 	 */
 	#[Aop\Attributes\Around('method(Tests\Files\Aspects\CommonService->magic($argument == 1))')]
-
 	public function log(Aop\JoinPoint\AroundMethod $around)
 	{
 		$this->calls[] = $around;
