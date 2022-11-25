@@ -302,7 +302,6 @@ class Parser
 					while ($token = $tokens->nextToken()) {
 						if ($tokens->isCurrent(')')) {
 							break;
-
 						}
 
 						if ($tokens->isCurrent(self::TOK_IDENTIFIER, self::TOK_STRING)) {

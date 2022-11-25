@@ -80,7 +80,7 @@ class AopExtension extends Nette\DI\CompilerExtension
 			return;
 		}
 
-		$init = $class->methods['initialize'];
+		$init = $class->getMethods()['initialize'];
 		$init->addBody('require_once ?;', [$this->compiledFile]);
 	}
 
