@@ -336,6 +336,7 @@ class Criteria
 				}
 
 				return in_array($left, $right, true);
+
 			case self::CONTAINS:
 				return self::compare($right, self::IN, $left);
 
