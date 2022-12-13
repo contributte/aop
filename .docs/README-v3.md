@@ -72,8 +72,8 @@ Yeah, why not? I needed the section `aspects` for services and section `aop` for
 ## Upgrade to v3
 There are few breaking changes you have to deal with when upgrading to v3 from v2
 
-- Dropped nette\reflection so all methods that were returning Nette\Reflection objects are now returning raw php \Reflection* objects
-- Dropped nettrine\annotations we're using native php attributes now
+- Dropped [nette/reflection](https://github.com/nette/reflection) so all methods that were returning Nette\Reflection objects are now returning raw php \Reflection* objects
+- Dropped [nettrine/annotations](https://github.com/contributte/doctrine-annotations) we're using native php attributes now
 
 
 ## Dictionary

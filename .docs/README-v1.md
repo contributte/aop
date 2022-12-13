@@ -33,7 +33,7 @@ extensions:
 ```
 Nettrine cache is there because of annotations, you can avoid it if you want.
 
-You can find the [documentation of annotations extension here](https://github.com/nettrine/annotations/tree/master/.docs).
+You can find the [documentation of annotations extension here](https://github.com/contributte/doctrine-annotations/tree/master/.docs).
 
 
 ## Configuration
@@ -172,7 +172,7 @@ And don't forget to have a look at [Symfony/PropertyAccess](http://symfony.com/d
 
 #### classAnnotatedWith(`Some\Annotation`)
 
-Matches all classes, that are annotated with this annotation. It uses [Nettrine/Annotations](https://github.com/netrrine/Annotations) for reading them.
+Matches all classes, that are annotated with this annotation. It uses [nettrine/annotations](https://github.com/contributte/doctrine-annotations) for reading them.
 
 #### methodAnnotatedWith(`Some\Annotation`)
 
