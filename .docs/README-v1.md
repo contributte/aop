@@ -18,7 +18,6 @@ This extension is here to provide [AOP functionality](http://en.wikipedia.org/wi
 
 
 ```bash
-$ composer require contributte/aop
 composer require contributte/aop
 ```
 
