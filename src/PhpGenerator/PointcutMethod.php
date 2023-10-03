@@ -188,7 +188,7 @@ class PointcutMethod
 		}
 
 		if (!$this->around) {
-			$parentCall = $this->dumper->format('$__result = call_user_func_array("parent::?", $__arguments);', $this->method->getName());
+			$parentCall = $this->dumper->format('$__result = call_user_func_array([parent::class, ?], $__arguments);', $this->method->getName());
 		} else {
 			$parentCall = $this->dumper->format('$__around = new \Contributte\Aop\JoinPoint\AroundMethod($this, __FUNCTION__, $__arguments);');
 			foreach ($this->around as $around) {
