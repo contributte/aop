@@ -1,13 +1,27 @@
+includes:
+	#- vendor/contributte/phpstan/phpstan.neon
+	#- vendor/phpstan/phpstan-deprecation-rules/rules.neon
+	#- vendor/phpstan/phpstan-strict-rules/rules.neon
+	- vendor/phpstan/phpstan-nette/extension.neon
+	- vendor/phpstan/phpstan-nette/rules.neon
+
 parameters:
+	level: 7
+	phpVersion: 80100
+
+	scanDirectories:
+		- src
+
+	fileExtensions:
+		- php
+
+	paths:
+		- src
+		- .docs
+
 	treatPhpDocTypesAsCertain: false
 	checkGenericClassInNonGenericObjectType: false
 
 	ignoreErrors:
 		- '#^Property Contributte\\Aop\\Pointcut\\Matcher\\FilterMatcher\:\:\$filter \(Contributte\\Aop\\Pointcut\\Filter\) does not accept object\.$#'
 		- '#^If condition is always false\.$#'
-
-includes:
-#	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
-	- vendor/phpstan/phpstan-nette/extension.neon
-	- vendor/phpstan/phpstan-nette/rules.neon
-#	- vendor/phpstan/phpstan-strict-rules/rules.neon

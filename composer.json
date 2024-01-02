@@ -46,9 +46,7 @@
     "tracy/tracy": "~2.8",
     "doctrine/collections": "~1.6",
     "ninjify/qa": "^0.13",
-    "phpstan/phpstan-nette": "^1.0",
-    "phpstan/phpstan-strict-rules": "^1.0",
-    "phpstan/phpstan-deprecation-rules": "^1.0",
+    "contributte/phpstan": "^0.2.0",
     "phpunit/phpunit": "^9.5"
   },
   "autoload": {
