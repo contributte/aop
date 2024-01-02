@@ -19,31 +19,28 @@ use Tests\Files\Pointcut\PointcutTestingAspect;
 class PointcutParserTest extends TestCase
 {
 
-	private ?Pointcut\MatcherFactory $matcherFactory = null;
+	private static ?Pointcut\MatcherFactory $matcherFactory = null;
 
-	public function getMatcherFactory(): Pointcut\MatcherFactory
+	public static function getMatcherFactory(): Pointcut\MatcherFactory
 	{
-		if ($this->matcherFactory === null) {
-			$this->matcherFactory = new Pointcut\MatcherFactory(new Nette\DI\ContainerBuilder());
+		if (self::$matcherFactory === null) {
+			self::$matcherFactory = new Pointcut\MatcherFactory(new Nette\DI\ContainerBuilder());
 		}
 
-		return $this->matcherFactory;
+		return self::$matcherFactory;
 	}
-
-
 
 	protected function tearDown(): void
 	{
-		$this->matcherFactory = null;
+		self::$matcherFactory = null;
 	}
-
 
 	/**
 	 * @return array<string|int, array<Pointcut\Rules|string>>
 	 */
-	public function dataParse(): array
+	public static function dataParse(): array
 	{
-		$mf = $this->getMatcherFactory();
+		$mf = self::getMatcherFactory();
 
 		$data = [];
 
@@ -226,7 +223,7 @@ class PointcutParserTest extends TestCase
 				]),
 			], Pointcut\Rules::OP_OR),
 			'(Tests\Files\Pointcut\PointcutTestingAspect->pointcutTestingTargetClasses && within(Tests\Files\Pointcut\LoggerInterface))' . // intentionally no space after )
-				'|| Tests\Files\Pointcut\PointcutTestingAspect->otherPointcutTestingTargetClass',
+			'|| Tests\Files\Pointcut\PointcutTestingAspect->otherPointcutTestingTargetClass',
 		];
 
 		$data[] = [
@@ -253,8 +250,6 @@ class PointcutParserTest extends TestCase
 
 		return $data;
 	}
-
-
 
 	/**
 	 * @dataProvider dataParse

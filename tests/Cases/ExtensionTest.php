@@ -18,6 +18,7 @@ use Contributte\Aop\JoinPoint\BeforeMethod;
 use Contributte\Aop\JoinPoint\ExceptionAware;
 use Contributte\Aop\JoinPoint\MethodInvocation;
 use Contributte\Aop\JoinPoint\ResultAware;
+use Contributte\Tester\Utils\Neonkit;
 use Nette;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
@@ -51,15 +52,30 @@ class ExtensionTest extends TestCase
 		$config = new Nette\Configurator();
 		$tmpDir = __DIR__ . '/../tmp/' . uniqid();
 		$config->setTempDirectory($tmpDir);
-		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 		$config->addConfig(__DIR__ . '/../config/' . $configFile . '.neon');
+
+		$config->onCompile[] = function (Nette\Configurator $config, Nette\DI\Compiler $compiler): void {
+			$compiler->addConfig(Neonkit::load(<<<'NEON'
+				php:
+					date.timezone: Europe/Prague
+
+				services:
+					cacheStorage:
+						class: Nette\Caching\Storages\MemoryStorage
+				http:
+					frames: null
+
+				session:
+					autoStart: false
+			NEON
+			));
+		};
 
 		AspectsExtension::register($config);
 		AopExtension::register($config);
 
 		return $config->createContainer();
 	}
-
 
 
 	public function testAspectConfiguration(): void
@@ -75,7 +91,6 @@ class ExtensionTest extends TestCase
 	}
 
 
-
 	public function testIfAspectAppliedOnCreatedObject(): void
 	{
 		$dic = $this->createContainer('factory');
@@ -85,7 +100,6 @@ class ExtensionTest extends TestCase
 		$this->assertNotEquals(CommonService::class, get_class($service));
 		$this->assertNotEquals(CommonService::class, get_class($createdObject));
 	}
-
 
 
 	public function testFunctionalBefore(): void
@@ -111,14 +125,12 @@ class ExtensionTest extends TestCase
 	}
 
 
-
 	public function testFunctionalConstructor(): void
 	{
 		$dic = $this->createContainer('constructor');
 		$service = $dic->getByType(CommonService::class);
 		self::assertAspectInvocation($service, ConstructorBeforeAspect::class, 0, new BeforeMethod($service, '__construct', [$dic]));
 	}
-
 
 
 	public function testFunctionalBefore_conditional(): void
@@ -139,8 +151,6 @@ class ExtensionTest extends TestCase
 		self::assertAspectInvocation($service, ConditionalBeforeAspect::class, 1, null);
 		self::assertAspectInvocation($service, ConditionalBeforeAspect::class, 2, null);
 	}
-
-
 
 	public function testFunctionalAround(): void
 	{
@@ -165,7 +175,6 @@ class ExtensionTest extends TestCase
 	}
 
 
-
 	public function testFunctionalAround_conditional(): void
 	{
 		$dic = $this->createContainer('around.conditional');
@@ -184,7 +193,6 @@ class ExtensionTest extends TestCase
 		self::assertAspectInvocation($service, ConditionalAroundAspect::class, 1, null);
 		self::assertAspectInvocation($service, ConditionalAroundAspect::class, 2, null);
 	}
-
 
 
 	public function testFunctionalAround_blocking(): void
@@ -231,7 +239,6 @@ class ExtensionTest extends TestCase
 	}
 
 
-
 	public function testFunctionalAfterReturning(): void
 	{
 		$dic = $this->createContainer('afterReturning');
@@ -254,7 +261,6 @@ class ExtensionTest extends TestCase
 		$this->assertSame([2], $service->calls[2]);
 		self::assertAspectInvocation($service, AfterReturningAspect::class, 2, new AfterReturning($service, 'magic', [2], 9));
 	}
-
 
 
 	public function testFunctionalAfterReturning_conditional(): void
@@ -281,7 +287,6 @@ class ExtensionTest extends TestCase
 	}
 
 
-
 	public function testFunctionalAfterThrowing(): void
 	{
 		$dic = $this->createContainer('afterThrowing');
@@ -298,7 +303,6 @@ class ExtensionTest extends TestCase
 		$this->assertSame([2], $service->calls[0]);
 		self::assertAspectInvocation($service, AfterThrowingAspect::class, 0, new AfterThrowing($service, 'magic', [2], new RuntimeException("Something's fucky")));
 	}
-
 
 
 	public function testFunctionalAfter(): void
@@ -322,7 +326,6 @@ class ExtensionTest extends TestCase
 		$this->assertSame([2], $service->calls[1]);
 		self::assertAspectInvocation($service, AfterAspect::class, 1, new AfterMethod($service, 'magic', [2], null, new RuntimeException("Something's fucky")));
 	}
-
 
 
 	public function testFunctionalAll(): void
@@ -351,7 +354,6 @@ class ExtensionTest extends TestCase
 		self::assertAspectInvocation($service, AfterThrowingAspect::class, 0, new AfterThrowing($service, 'magic', [3], new RuntimeException("Something's fucky")));
 		self::assertAspectInvocation($service, AfterAspect::class, 1, new AfterMethod($service, 'magic', [3], null, new RuntimeException("Something's fucky")));
 	}
-
 
 
 	public function testFunctionalAll_doubled(): void
@@ -389,7 +391,6 @@ class ExtensionTest extends TestCase
 		self::assertAspectInvocation($service, AfterAspect::class, 1, new AfterMethod($service, 'magic', [3], null, new RuntimeException("Something's fucky")));
 		self::assertAspectInvocation($service, SecondAfterAspect::class, 1, new AfterMethod($service, 'magic', [3], null, new RuntimeException("Something's fucky")));
 	}
-
 
 
 	private static function assertAspectInvocation(object $service, string $adviceClass, int $adviceCallIndex, ?MethodInvocation $joinPoint = null): object
@@ -431,7 +432,6 @@ class ExtensionTest extends TestCase
 
 		return $advice;
 	}
-
 
 
 	/**

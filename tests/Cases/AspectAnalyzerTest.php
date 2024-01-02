@@ -24,7 +24,7 @@ class AspectAnalyzerTest extends TestCase
 	/***
 	 * @return array<int|string, array<int, array<string, array<string, array<int, Pointcut\Rules>>>>>
 	 */
-	public function dataAnalyze(): array
+	public static function dataAnalyze(): array
 	{
 		$data = [];
 
@@ -37,7 +37,7 @@ class AspectAnalyzerTest extends TestCase
 					]),
 				],
 			],
-			$this->createDefinition(BeforeAspect::class),
+			self::createDefinition(BeforeAspect::class),
 		];
 
 		$data[] = [
@@ -49,7 +49,7 @@ class AspectAnalyzerTest extends TestCase
 					]),
 				],
 			],
-			$this->createDefinition(AroundAspect::class),
+			self::createDefinition(AroundAspect::class),
 		];
 
 		$data[] = [
@@ -61,7 +61,7 @@ class AspectAnalyzerTest extends TestCase
 					]),
 				],
 			],
-			$this->createDefinition(AfterReturningAspect::class),
+			self::createDefinition(AfterReturningAspect::class),
 		];
 
 		$data[] = [
@@ -73,7 +73,7 @@ class AspectAnalyzerTest extends TestCase
 					]),
 				],
 			],
-			$this->createDefinition(AfterThrowingAspect::class),
+			self::createDefinition(AfterThrowingAspect::class),
 		];
 
 		$data[] = [
@@ -85,13 +85,11 @@ class AspectAnalyzerTest extends TestCase
 					]),
 				],
 			],
-			$this->createDefinition(AfterAspect::class),
+			self::createDefinition(AfterAspect::class),
 		];
 
 		return $data;
 	}
-
-
 
 	/**
 	 * @param array<string, Pointcut\Rules[]> $pointcuts
@@ -106,9 +104,7 @@ class AspectAnalyzerTest extends TestCase
 		$this->assertEquals($pointcuts, $analyzer->analyze($service));
 	}
 
-
-
-	private function createDefinition(string $class): Pointcut\ServiceDefinition
+	private static function createDefinition(string $class): Pointcut\ServiceDefinition
 	{
 		$def = new Nette\DI\Definitions\ServiceDefinition();
 		$def->setType($class);
