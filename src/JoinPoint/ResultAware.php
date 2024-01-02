@@ -5,9 +5,6 @@ namespace Contributte\Aop\JoinPoint;
 interface ResultAware
 {
 
-	/**
-	 * @return mixed
-	 */
-	public function getResult();
+	public function getResult(): mixed;
 
 }

@@ -9,6 +9,18 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 
 	public const ASPECT_TAG = 'contributte.aspect';
 
+	public static function loadAspects(string $configFile, Nette\DI\CompilerExtension $extension): AspectsConfig
+	{
+		return new AspectsConfig($extension->loadFromFile($configFile));
+	}
+
+	public static function register(Nette\Configurator $configurator): void
+	{
+		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {
+			$compiler->addExtension('aspects', new AspectsExtension());
+		};
+	}
+
 	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
@@ -23,22 +35,6 @@ class AspectsExtension extends Nette\DI\CompilerExtension
 
 			$config->load($this->compiler, $builder);
 		}
-	}
-
-
-
-	public static function loadAspects(string $configFile, Nette\DI\CompilerExtension $extension): AspectsConfig
-	{
-		return new AspectsConfig($extension->loadFromFile($configFile));
-	}
-
-
-
-	public static function register(Nette\Configurator $configurator): void
-	{
-		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {
-			$compiler->addExtension('aspects', new AspectsExtension());
-		};
 	}
 
 }

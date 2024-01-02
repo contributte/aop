@@ -27,28 +27,20 @@ class AdviceDefinition
 		$this->filter = $filter;
 	}
 
-
-
 	public function getAdviceType(): string
 	{
 		return $this->adviceType;
 	}
-
-
 
 	public function getTargetMethod(): Method
 	{
 		return $this->targetMethod;
 	}
 
-
-
 	public function getAdvice(): Method
 	{
 		return $this->advice;
 	}
-
-
 
 	public function getFilter(): Filter
 	{

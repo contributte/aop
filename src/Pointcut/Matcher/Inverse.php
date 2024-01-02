@@ -18,8 +18,6 @@ class Inverse implements Filter
 		$this->filter = $filter;
 	}
 
-
-
 	public function matches(Method $method): bool
 	{
 		return !$this->filter->matches($method);

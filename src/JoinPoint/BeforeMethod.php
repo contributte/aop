@@ -5,10 +5,7 @@ namespace Contributte\Aop\JoinPoint;
 class BeforeMethod extends MethodInvocation
 {
 
-	/**
-	 * @param mixed|string $value
-	 */
-	public function setArgument(int $index, $value): void
+	public function setArgument(int $index, mixed $value): void
 	{
 		$this->arguments[$index] = $value;
 	}

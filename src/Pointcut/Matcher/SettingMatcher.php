@@ -22,8 +22,6 @@ class SettingMatcher implements Filter
 		$this->builder = $builder;
 	}
 
-
-
 	public function matches(Method $method): bool
 	{
 		return $this->settings->evaluate($this->builder);

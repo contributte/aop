@@ -23,14 +23,10 @@ class EvaluateMatcher implements Filter, RuntimeFilter
 		$this->builder = $builder;
 	}
 
-
-
 	public function matches(Method $method): bool
 	{
 		return true;
 	}
-
-
 
 	public function createCondition(): ?Nette\PhpGenerator\Literal
 	{

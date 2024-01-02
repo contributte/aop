@@ -1,36 +1,27 @@
-<?xml version="1.0"?>
-<ruleset>
-    <!-- Contributte Coding Standard -->
-    <rule ref="./vendor/ninjify/coding-standard/contributte.xml">
-        <exclude name="SlevomatCodingStandard.Classes.SuperfluousInterfaceNaming.SuperfluousSuffix"></exclude>
-        <exclude name="SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse"></exclude> <!-- does not work with php 8 attributes -->
-     </rule>
-    <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint" />
-    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint" />
-    <rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint" />
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Contributte" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+	<!-- Rulesets -->
+	<rule ref="./vendor/contributte/qa/ruleset-8.0.xml">
+		<exclude name="SlevomatCodingStandard.Namespaces.ReferenceUsedNamesOnly.PartialUse"/>
+	</rule>
 
-    <!-- Specific rules -->
-    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
-        <properties>
-            <property name="rootNamespaces" type="array" value="
-				src=>Contributte\Aop,
-				tests=>Tests,
-			"/>
-        </properties>
-    </rule>
-    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
-    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
-    <rule ref="Squiz.Classes.ClassFileName.NoMatch">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
-    <rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration.MissingVariable">
-        <exclude-pattern>*/tests/*</exclude-pattern>
-    </rule>
+	<!-- Rules -->
+	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
+		<properties>
+			<property name="rootNamespaces" type="array">
+				<element key="src" value="Contributte\Aop"/>
+				<element key="tests" value="Tests"/>
+			</property>
+			<property name="extensions" type="array">
+				<element key="php" value="php"/>
+				<element key="phpt" value="phpt"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHint"/>
+	<rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint"/>
+	<rule ref="SlevomatCodingStandard.TypeHints.PropertyTypeHint"/>
+
+	<!-- Excludes -->
+	<exclude-pattern>/tests</exclude-pattern>
 </ruleset>

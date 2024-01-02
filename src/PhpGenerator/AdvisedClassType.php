@@ -22,8 +22,6 @@ class AdvisedClassType
 		return $method;
 	}
 
-
-
 	public static function generatePublicProxyMethod(Code\ClassType $class, Code\Method $originalMethod): void
 	{
 		$proxyMethod = new Code\Method(self::CG_PUBLIC_PROXY_PREFIX . $originalMethod->getName());
@@ -39,13 +37,11 @@ class AdvisedClassType
 			$args[$parameter->getName()] = $parameter;
 		}
 
-		$proxyMethod->addBody('return parent::?(?);', [ $originalMethod->getName(), new Code\PhpLiteral(implode(', ', $argumentsPass))]);
+		$proxyMethod->addBody('return parent::?(?);', [$originalMethod->getName(), new Code\PhpLiteral(implode(', ', $argumentsPass))]);
 
 		$proxyMethod->setParameters($args);
 		self::setMethodInstance($class, $proxyMethod);
 	}
-
-
 
 	public static function fromServiceDefinition(ServiceDefinition $service, Code\PhpNamespace $namespace): Code\ClassType
 	{

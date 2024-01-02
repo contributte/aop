@@ -44,8 +44,6 @@ class MethodMatcher implements Filter
 		$this->method = $method;
 	}
 
-
-
 	public function matches(Method $method): bool
 	{
 		if ($this->visibility !== null && $this->visibility !== $method->getVisibility()) {
@@ -54,7 +52,6 @@ class MethodMatcher implements Filter
 
 		return preg_match('~^' . $this->method . '\z~i', $method->getName()) > 0;
 	}
-
 
 	/**
 	 * @return string[]

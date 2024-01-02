@@ -18,8 +18,6 @@ class ClassAttributedWithMatcher implements Filter
 		$this->attributeClass = $attributeClass;
 	}
 
-
-
 	public function matches(Method $method): bool
 	{
 		foreach ($method->getClassAttributes() as $attribute) {
@@ -32,8 +30,6 @@ class ClassAttributedWithMatcher implements Filter
 
 		return false;
 	}
-
-
 
 	/**
 	 * @return string[]

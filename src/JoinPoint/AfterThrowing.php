@@ -15,10 +15,9 @@ class AfterThrowing extends MethodInvocation implements ExceptionAware
 	public function __construct(object $targetObject, string $targetMethod, array $arguments = [], ?Throwable $exception = null)
 	{
 		parent::__construct($targetObject, $targetMethod, $arguments);
+
 		$this->exception = $exception;
 	}
-
-
 
 	public function getException(): ?Throwable
 	{

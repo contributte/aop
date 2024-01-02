@@ -28,12 +28,7 @@ class MatcherFactory
 		$this->builder = $builder;
 	}
 
-
-
-	/**
-	 * @param mixed|string $arg
-	 */
-	public function getMatcher(string $type, $arg): Filter
+	public function getMatcher(string $type, mixed $arg): Filter
 	{
 		if (!isset($this->cache[$type][(string) $arg])) {
 			$callable = [$this, 'create' . ucfirst($type)];
@@ -46,63 +41,45 @@ class MatcherFactory
 		return $this->cache[$type][(string) $arg];
 	}
 
-
-
 	public function createClass(string $class): WithinMatcher
 	{
 		return new WithinMatcher($class);
 	}
-
-
 
 	public function createMethod(string $method): MethodMatcher
 	{
 		return new MethodMatcher($method);
 	}
 
-
-
 	public function createArguments(Criteria $criteria): EvaluateMatcher
 	{
 		return new EvaluateMatcher($criteria, $this->builder);
 	}
-
-
 
 	public function createWithin(string $within): WithinMatcher
 	{
 		return new WithinMatcher($within);
 	}
 
-
-
 	public function createFilter(string $filterClass): FilterMatcher
 	{
 		return new FilterMatcher($filterClass);
 	}
-
-
 
 	public function createSetting(Criteria $setting): SettingMatcher
 	{
 		return new SettingMatcher($setting, $this->builder);
 	}
 
-
-
 	public function createEvaluate(Criteria $evaluate): EvaluateMatcher
 	{
 		return new EvaluateMatcher($evaluate, $this->builder);
 	}
 
-
-
 	public function createClassAttributedWith(string $attributte): ClassAttributedWithMatcher
 	{
 		return new ClassAttributedWithMatcher($attributte);
 	}
-
-
 
 	public function createMethodAttributedWith(string $attribute): MethodAttributedWithMatcher
 	{

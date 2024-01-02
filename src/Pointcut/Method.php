@@ -29,14 +29,10 @@ class Method
 		$this->serviceDefinition = $serviceDefinition;
 	}
 
-
-
 	public function getName(): string
 	{
 		return $this->method->getName();
 	}
-
-
 
 	public function getVisibility(): string
 	{
@@ -51,13 +47,10 @@ class Method
 		return self::VISIBILITY_PRIVATE;
 	}
 
-
-
 	public function getClassName(): string
 	{
 		return $this->serviceDefinition->getTypeReflection()->getName();
 	}
-
 
 	/**
 	 * @return string[]
@@ -67,8 +60,6 @@ class Method
 		return $this->serviceDefinition->getTypesWithin();
 	}
 
-
-
 	/**
 	 * @return ReflectionAttribute[]
 	 */
@@ -76,8 +67,6 @@ class Method
 	{
 		return $this->method->getAttributes();
 	}
-
-
 
 	/**
 	 * @return ReflectionAttribute[]
@@ -87,25 +76,20 @@ class Method
 		return $this->serviceDefinition->getTypeReflection()->getAttributes();
 	}
 
-
-
 	public function getServiceDefinition(): ServiceDefinition
 	{
 		return $this->serviceDefinition;
 	}
-
 
 	public function getCode(): PointcutMethod
 	{
 		return PointcutMethod::expandTypeHints($this->method, PointcutMethod::from($this->method));
 	}
 
-
 	public function getPointcutCode(): PointcutMethod
 	{
 		return PointcutMethod::expandTypeHints($this->method, PointcutMethod::from($this->method));
 	}
-
 
 	/**
 	 * @return string[]

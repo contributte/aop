@@ -31,14 +31,31 @@ class Rules implements Filter, RuntimeFilter
 		$this->operator = $operator;
 	}
 
+	/**
+	 * @param Filter[] $filter
+	 */
+	public static function unwrap(array $filter, string $operator = self::OP_AND): Filter
+	{
+		if (is_array($filter)) {
+			if (count($filter) > 1) {
+				return new Rules($filter, $operator);
+			}
 
+			/** @var Filter $filter */
+			$filter = reset($filter);
+		}
+
+		if ($filter instanceof Rules && count($filter->rules) === 1) {
+			return self::unwrap($filter->rules);
+		}
+
+		return $filter;
+	}
 
 	public function addRule(Filter $rule): void
 	{
 		$this->rules[] = $rule;
 	}
-
-
 
 	/**
 	 * @return Filter[]
@@ -47,7 +64,6 @@ class Rules implements Filter, RuntimeFilter
 	{
 		return $this->rules;
 	}
-
 
 	public function matches(Method $method): bool
 	{
@@ -66,8 +82,6 @@ class Rules implements Filter, RuntimeFilter
 		return $this->isMatching($logical);
 	}
 
-
-
 	/**
 	 * @return string[]
 	 */
@@ -83,8 +97,6 @@ class Rules implements Filter, RuntimeFilter
 
 		return array_filter($types);
 	}
-
-
 
 	public function createCondition(): ?Code\Literal
 	{
@@ -111,30 +123,6 @@ class Rules implements Filter, RuntimeFilter
 
 		return new Code\PhpLiteral('(' . $conds . ')');
 	}
-
-
-
-	/**
-	 * @param Filter[] $filter
-	 */
-	public static function unwrap(array $filter, string $operator = self::OP_AND): Filter
-	{
-		if (is_array($filter)) {
-			if (count($filter) > 1) {
-				return new Rules($filter, $operator);
-			}
-
-			/** @var Filter $filter */
-			$filter = reset($filter);
-		}
-
-		if ($filter instanceof Rules && count($filter->rules) === 1) {
-			return self::unwrap($filter->rules);
-		}
-
-		return $filter;
-	}
-
 
 	/**
 	 * @param bool[] $result

@@ -45,7 +45,7 @@
     "latte/latte": "~2.10|^3.0",
     "tracy/tracy": "~2.8",
     "doctrine/collections": "~1.6",
-    "ninjify/qa": "^0.13",
+    "contributte/qa": "^0.4.0",
     "contributte/phpstan": "^0.2.0",
     "contributte/phpunit": "^0.2.0"
   },

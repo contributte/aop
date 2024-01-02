@@ -19,8 +19,6 @@ class AspectAnalyzer
 		$this->pointcutParser = $parser;
 	}
 
-
-
 	/**
 	 * @return array<string, array<string, Rules|mixed>>
 	 * @throws InvalidAspectExceptions
@@ -35,7 +33,7 @@ class AspectAnalyzer
 
 			$rules = [];
 			foreach ($attributes as $attr) {
-				$rules[get_class($attr)] = $this->pointcutParser->parse($attr->getValue());
+				$rules[$attr::class] = $this->pointcutParser->parse($attr->getValue());
 			}
 
 			$pointcuts[$method->getName()] = $rules;
@@ -47,8 +45,6 @@ class AspectAnalyzer
 
 		return $pointcuts;
 	}
-
-
 
 	/**
 	 * @param ReflectionAttribute[] $attributes

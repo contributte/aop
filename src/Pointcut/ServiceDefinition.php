@@ -45,19 +45,15 @@ class ServiceDefinition
 		$this->serviceId = $serviceId;
 	}
 
-
-
 	public function getServiceId(): string
 	{
 		return $this->serviceId;
 	}
 
-
 	public function getTypeReflection(): ReflectionClass
 	{
 		return $this->originalType;
 	}
-
 
 	/**
 	 * @return array<string, string>
@@ -75,8 +71,6 @@ class ServiceDefinition
 
 		return $this->typesWithing = $classParents + $classImplements + [$class => $class];
 	}
-
-
 
 	/**
 	 * @return Method[]
@@ -103,8 +97,6 @@ class ServiceDefinition
 
 		return $this->openMethods;
 	}
-
-
 
 	/**
 	 * @return Method[]

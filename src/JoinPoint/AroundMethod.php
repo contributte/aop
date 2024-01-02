@@ -19,15 +19,10 @@ class AroundMethod extends MethodInvocation
 		parent::__construct($targetObject, $targetMethod, $arguments);
 	}
 
-
-	/**
-	 * @param mixed|string $value
-	 */
-	public function setArgument(int $index, $value): void
+	public function setArgument(int $index, mixed $value): void
 	{
 		$this->arguments[$index] = $value;
 	}
-
 
 	/**
 	 * @return callable[]
@@ -42,11 +37,7 @@ class AroundMethod extends MethodInvocation
 		return $this->callChain;
 	}
 
-
-	/**
-	 * @return mixed
-	 */
-	public function proceed()
+	public function proceed(): mixed
 	{
 		if ($callback = array_shift($this->callChain)) {
 			return call_user_func($callback, $this);

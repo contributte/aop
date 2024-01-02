@@ -28,14 +28,10 @@ abstract class MethodInvocation
 		$this->arguments = $arguments;
 	}
 
-
-
 	public function getTargetObject(): object
 	{
 		return $this->targetObject;
 	}
-
-
 
 	/**
 	 * @return mixed[]
@@ -45,12 +41,10 @@ abstract class MethodInvocation
 		return $this->arguments;
 	}
 
-
 	public function getTargetObjectReflection(): ReflectionClass
 	{
 		return new ReflectionClass($this->targetObject);
 	}
-
 
 	public function getTargetReflection(): ReflectionMethod
 	{

@@ -18,7 +18,6 @@ class MethodAttributedWithMatcher implements Filter
 		$this->attributeClass = $attributeClass;
 	}
 
-
 	public function matches(Method $method): bool
 	{
 		foreach ($method->getAttributes() as $attribute) {

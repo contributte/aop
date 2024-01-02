@@ -50,11 +50,7 @@ class Parser
 		$this->matcherFactory = $matcherFactory;
 	}
 
-
-	/**
-	 * @return Rules|mixed
-	 */
-	public function parse(string $input)
+	public function parse(string $input): mixed
 	{
 		try {
 			$tokens = $this->tokenizer->tokenize($input);
@@ -67,13 +63,41 @@ class Parser
 		return $this->doParse($tokens);
 	}
 
+	protected static function sanitizeArgumentExpression(mixed $value, Nette\Tokenizer\Token $token): string|PhpLiteral
+	{
+		if ($token->type === self::TOK_STRING || is_numeric($value) || preg_match('~^(TRUE|FALSE)\z~i', $value)) {
+			return new PhpLiteral($value);
+		}
 
+		return $value;
+	}
 
 	/**
-	 * @return Rules|mixed
+	 * @param string[]|string $types
+	 * @param string[]|string $allowedToSkip
 	 * @throws ParserException
 	 */
-	protected function doParse(Stream $tokens)
+	protected static function nextValue(Stream $tokens, array|string $types, array|string $allowedToSkip = []): ?string
+	{
+		do {
+			if (call_user_func_array([$tokens, 'isCurrent'], (array) $types)) {
+				return $tokens->currentValue();
+			}
+
+			if (!$allowedToSkip || !call_user_func_array([$tokens, 'isCurrent'], (array) $allowedToSkip)) {
+				$type = $tokens->currentToken();
+
+				throw new ParserException('Unexpected token ' . $type->type . ' at offset ' . $type->offset);
+			}
+		} while ($tokens->nextToken());
+
+		throw new ParserException('Expected token ' . implode(', ', (array) $types));
+	}
+
+	/**
+	 * @throws ParserException
+	 */
+	protected function doParse(Stream $tokens): mixed
 	{
 		$inverseNext = false;
 		$operator = null;
@@ -112,6 +136,7 @@ class Parser
 				}
 
 				$operator = $tokens->currentValue();
+
 				continue;
 			}
 		}
@@ -126,7 +151,6 @@ class Parser
 		return Rules::unwrap($rules, $operator ? : Rules::OP_AND);
 	}
 
-
 	protected function parseClass(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
@@ -135,7 +159,6 @@ class Parser
 
 		return $this->matcherFactory->getMatcher('class', $className);
 	}
-
 
 	protected function parseMethod(Stream $tokens): Filter
 	{
@@ -170,7 +193,6 @@ class Parser
 
 		if ($method === '*' && empty($visibility) && !$arguments) {
 			return $this->matcherFactory->getMatcher('class', $className);
-
 		} elseif ($className === '*' && !$arguments) {
 			return $this->matcherFactory->getMatcher('method', $visibility . $method);
 		}
@@ -181,8 +203,6 @@ class Parser
 		], $arguments), Rules::OP_AND);
 	}
 
-
-
 	protected function parseWithin(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
@@ -192,8 +212,6 @@ class Parser
 		return $this->matcherFactory->getMatcher('within', $within);
 	}
 
-
-
 	protected function parseFilter(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
@@ -202,8 +220,6 @@ class Parser
 
 		return $this->matcherFactory->getMatcher('filter', $filter);
 	}
-
-
 
 	protected function parseSetting(Stream $tokens): Filter
 	{
@@ -215,8 +231,6 @@ class Parser
 		return $this->matcherFactory->getMatcher('setting', $criteria);
 	}
 
-
-
 	protected function parseEvaluate(Stream $tokens): Filter
 	{
 		$tokens->nextUntil('(');
@@ -227,8 +241,6 @@ class Parser
 		return $this->matcherFactory->getMatcher('evaluate', $criteria);
 	}
 
-
-
 	protected function parseClassAttributedWith(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
@@ -238,8 +250,6 @@ class Parser
 		return $this->matcherFactory->getMatcher('classAttributedWith', $attributte);
 	}
 
-
-
 	protected function parseMethodAttributedWith(Stream $tokens): Filter
 	{
 		$tokens->nextUntil(self::TOK_IDENTIFIER);
@@ -248,7 +258,6 @@ class Parser
 
 		return $this->matcherFactory->getMatcher('methodAttributedWith', $attribute);
 	}
-
 
 	protected function parseArguments(Stream $tokens): ?Criteria
 	{
@@ -262,8 +271,8 @@ class Parser
 				}
 
 				$operator = $tokens->currentValue();
-				continue;
 
+				continue;
 			}
 
 			if ($tokens->isCurrent('(')) {
@@ -290,6 +299,7 @@ class Parser
 			if ($tokens->isCurrent(self::TOK_LOGIC, ')')) {
 				$tokens->position -= 1;
 				$conditions[] = [$left, Matcher\Criteria::EQ, new PhpLiteral('TRUE')];
+
 				continue;
 			}
 
@@ -317,6 +327,7 @@ class Parser
 					}
 
 					$conditions[] = [$left, $comparator, $right];
+
 					continue;
 				}
 			}
@@ -362,42 +373,6 @@ class Parser
 		}
 
 		return $criteria;
-	}
-
-	/**
-	 * @param mixed $value
-	 * @return string|PhpLiteral
-	 */
-	protected static function sanitizeArgumentExpression($value, Nette\Tokenizer\Token $token)
-	{
-		if ($token->type === self::TOK_STRING || is_numeric($value) || preg_match('~^(TRUE|FALSE)\z~i', $value)) {
-			return new PhpLiteral($value);
-		}
-
-		return $value;
-	}
-
-
-
-	/**
-	 * @param string[]|string $types
-	 * @param string[]|string $allowedToSkip
-	 * @throws ParserException
-	 */
-	protected static function nextValue(Stream $tokens, $types, $allowedToSkip = []): ?string
-	{
-		do {
-			if (call_user_func_array([$tokens, 'isCurrent'], (array) $types)) {
-				return $tokens->currentValue();
-			}
-
-			if (!$allowedToSkip || !call_user_func_array([$tokens, 'isCurrent'], (array) $allowedToSkip)) {
-				$type = $tokens->currentToken();
-				throw new ParserException('Unexpected token ' . $type->type . ' at offset ' . $type->offset);
-			}
-		} while ($tokens->nextToken());
-
-		throw new ParserException('Expected token ' . implode(', ', (array) $types));
 	}
 
 }

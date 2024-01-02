@@ -23,6 +23,13 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 	private ?string $compiledFile;
 
+	public static function register(Nette\Configurator $configurator): void
+	{
+		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {
+			$compiler->addExtension('aop', new AopExtension());
+		};
+	}
+
 	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
@@ -72,8 +79,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 		require_once $this->compiledFile = $this->writeGeneratedCode($file, $cg);
 	}
 
-
-
 	public function afterCompile(Nette\PhpGenerator\ClassType $class): void
 	{
 		if (!$this->compiledFile) {
@@ -83,7 +88,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 		$init = $class->getMethods()['initialize'];
 		$init->addBody('require_once ?;', [$this->compiledFile]);
 	}
-
 
 	private function patchService(string $serviceId, Code\ClassType $advisedClass, Code\PhpNamespace $cg, bool $constructorInject = false): void
 	{
@@ -116,7 +120,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 		}
 	}
 
-
 	private function writeGeneratedCode(Code\PhpFile $file, Code\PhpNamespace $namespace): string
 	{
 		$builder = $this->getContainerBuilder();
@@ -133,8 +136,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 		return $cached;
 	}
-
-
 
 	/**
 	 * @return array<string, array<string, AdviceDefinition[]>>
@@ -170,8 +171,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 
 		return $advisedMethods;
 	}
-
-
 
 	/**
 	 * @param string[] $types
@@ -209,7 +208,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 		return array_unique($services);
 	}
 
-
 	private function getWrappedDefinition(string $id): Pointcut\ServiceDefinition
 	{
 		if (!isset($this->serviceDefinitions[$id])) {
@@ -222,15 +220,6 @@ class AopExtension extends Nette\DI\CompilerExtension
 		}
 
 		return $this->serviceDefinitions[$id];
-	}
-
-
-
-	public static function register(Nette\Configurator $configurator): void
-	{
-		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler): void {
-			$compiler->addExtension('aop', new AopExtension());
-		};
 	}
 
 }

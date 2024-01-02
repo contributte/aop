@@ -24,13 +24,10 @@ class FilterMatcher implements Filter
 		$this->filter = new $filterClass();
 	}
 
-
-
 	public function matches(Method $method): bool
 	{
 		return $this->filter->matches($method);
 	}
-
 
 	/**
 	 * @return string[]

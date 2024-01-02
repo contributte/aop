@@ -11,8 +11,13 @@ use Contributte\Aop\DI\AdviceDefinition;
 use Contributte\Aop\Exceptions\InvalidArgumentException;
 use Contributte\Aop\Exceptions\NotImplementedException;
 use Contributte\Aop\Pointcut\RuntimeFilter;
-use Nette;
+use Nette\DI\Container;
 use Nette\PhpGenerator as Code;
+use Nette\PhpGenerator\Dumper;
+use Nette\PhpGenerator\Factory;
+use Nette\PhpGenerator\Helpers;
+use Nette\PhpGenerator\PhpLiteral;
+use Nette\Utils\Strings;
 use ReflectionException;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -40,19 +45,19 @@ class PointcutMethod
 
 	private Code\Method $method;
 
-	private Code\Dumper $dumper;
+	private Dumper $dumper;
 
 	public function __construct(ReflectionMethod $from)
 	{
-		$this->method = (new Code\Factory())->fromMethodReflection($from);
-		$this->dumper = new Code\Dumper();
+		$this->method = (new Factory())->fromMethodReflection($from);
+		$this->dumper = new Dumper();
 	}
 
 	public static function from(ReflectionMethod $from): PointcutMethod
 	{
 		$method = new self($from);
 		$params = [];
-		$factory = new Code\Factory();
+		$factory = new Factory();
 		foreach ($from->getParameters() as $param) {
 			$params[$param->getName()] = $factory->fromParameterReflection($param);
 		}
@@ -71,7 +76,7 @@ class PointcutMethod
 		$method->method->setVariadic($from->isVariadic());
 		$docComment = $from->getDocComment();
 		if ($docComment !== false) {
-			$method->method->setComment(Code\Helpers::unformatDocComment($docComment));
+			$method->method->setComment(Helpers::unformatDocComment($docComment));
 		}
 
 		if ($from->hasReturnType()) {
@@ -79,6 +84,40 @@ class PointcutMethod
 			$returnType = $from->getReturnType();
 			$method->method->setReturnType($returnType->getName());
 			$method->method->setReturnNullable($returnType->allowsNull());
+		}
+
+		return $method;
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public static function expandTypeHints(ReflectionMethod $from, PointcutMethod $method): PointcutMethod
+	{
+		$parameters = $method->method->getParameters();
+
+		foreach ($from->getParameters() as $paramRefl) {
+			try {
+				if (!in_array($parameters[$paramRefl->getName()]->getType(), ['boolean', 'integer', 'float', 'string', 'object', 'int', 'bool'], true)) {
+					/** @var ReflectionNamedType|null $typehint */
+					$typehint = $paramRefl->getType();
+					$type = $typehint === null ? '' : $typehint->getName();
+
+					$parameters[$paramRefl->getName()]->setType($type);
+				}
+			} catch (ReflectionException $e) {
+				if (preg_match('#Class (.+) does not exist#', $e->getMessage(), $m)) {
+					$parameters[$paramRefl->getName()]->setType('\\' . $m[1]);
+				} else {
+					throw $e;
+				}
+			}
+		}
+
+		$method->method->setParameters($parameters);
+
+		if (!$method->method->getVisibility()) {
+			$method->method->setVisibility('public');
 		}
 
 		return $method;
@@ -137,33 +176,10 @@ class PointcutMethod
 		}
 	}
 
-
 	public function getMethod(): Code\Method
 	{
 		return $this->method;
 	}
-
-
-	private function generateRuntimeCondition(AdviceDefinition $adviceDef, string $code): string
-	{
-		$filter = $adviceDef->getFilter();
-		if (!$filter instanceof RuntimeFilter) {
-			return $code;
-
-		}
-
-		if (!$condition = $filter->createCondition()) {
-			return $code;
-		}
-
-		foreach ($adviceDef->getTargetMethod()->getParameterNames() as $i => $name) {
-			$condition = str_replace('$' . $name, '$__arguments[' . $i . ']', (string) $condition);
-		}
-
-		return $this->dumper->format("if ? {\n?\n}", new Code\PhpLiteral((string) $condition), new Code\PhpLiteral(Nette\Utils\Strings::indent($code)));
-	}
-
-
 
 	public function beforePrint(): void
 	{
@@ -171,7 +187,7 @@ class PointcutMethod
 
 		if (strtolower($this->method->getName()) === '__construct') {
 			$this->method->addParameter('_contributte_aopContainer')
-				->setType(Nette\DI\Container::class);
+				->setType(Container::class);
 			$this->method->addBody('$this->_contributte_aopContainer = $_contributte_aopContainer;');
 		}
 
@@ -198,7 +214,7 @@ class PointcutMethod
 			$parentCall .= "\n" . $this->dumper->format('$__result = $__around->proceed();');
 		}
 
-		$this->method->addBody(($this->afterThrowing || $this->after) ? Nette\Utils\Strings::indent($parentCall) : $parentCall);
+		$this->method->addBody(($this->afterThrowing || $this->after) ? Strings::indent($parentCall) : $parentCall);
 
 		if ($this->afterThrowing || $this->after) {
 			$this->method->addBody('} catch (\Exception $__exception) {');
@@ -206,7 +222,7 @@ class PointcutMethod
 
 		if ($this->afterThrowing) {
 			foreach ($this->afterThrowing as $afterThrowing) {
-				$this->method->addBody(Nette\Utils\Strings::indent($afterThrowing));
+				$this->method->addBody(Strings::indent($afterThrowing));
 			}
 		}
 
@@ -220,7 +236,7 @@ class PointcutMethod
 			}
 
 			foreach ($this->afterReturning as $afterReturning) {
-				$this->method->addBody(($this->afterThrowing || $this->after) ? Nette\Utils\Strings::indent($afterReturning) : $afterReturning);
+				$this->method->addBody(($this->afterThrowing || $this->after) ? Strings::indent($afterReturning) : $afterReturning);
 			}
 
 			if ($this->afterThrowing || $this->after) {
@@ -243,49 +259,28 @@ class PointcutMethod
 		}
 	}
 
-
-
-	/**
-	 * @throws ReflectionException
-	 */
-	public static function expandTypeHints(ReflectionMethod $from, PointcutMethod $method): PointcutMethod
+	private function generateRuntimeCondition(AdviceDefinition $adviceDef, string $code): string
 	{
-		$parameters = $method->method->getParameters();
-
-		foreach ($from->getParameters() as $paramRefl) {
-			try {
-				if (!in_array($parameters[$paramRefl->getName()]->getType(), ['boolean', 'integer', 'float', 'string', 'object', 'int', 'bool' ])) {
-
-					/** @var ReflectionNamedType|null $typehint */
-					$typehint = $paramRefl->getType();
-					$type = $typehint === null ? '' : $typehint->getName();
-
-					$parameters[$paramRefl->getName()]->setType($type);
-				}
-			} catch (ReflectionException $e) {
-				if (preg_match('#Class (.+) does not exist#', $e->getMessage(), $m)) {
-					$parameters[$paramRefl->getName()]->setType('\\' . $m[1]);
-				} else {
-					throw $e;
-				}
-			}
+		$filter = $adviceDef->getFilter();
+		if (!$filter instanceof RuntimeFilter) {
+			return $code;
 		}
 
-		$method->method->setParameters($parameters);
-
-		if (!$method->method->getVisibility()) {
-			$method->method->setVisibility('public');
+		if (!$condition = $filter->createCondition()) {
+			return $code;
 		}
 
-		return $method;
+		foreach ($adviceDef->getTargetMethod()->getParameterNames() as $i => $name) {
+			$condition = str_replace('$' . $name, '$__arguments[' . $i . ']', (string) $condition);
+		}
+
+		return $this->dumper->format("if ? {\n?\n}", new PhpLiteral((string) $condition), new PhpLiteral(Strings::indent($code)));
 	}
-
 
 	/**
 	 * @param mixed[] $args
-	 * @return mixed
 	 */
-	public function __call(string $name, array $args)
+	public function __call(string $name, array $args): mixed
 	{
 		$callable = [$this->method, $name];
 

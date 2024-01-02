@@ -15,7 +15,6 @@ class BaseAttribute
 		$this->value = $value;
 	}
 
-
 	public static function getClassName(): string
 	{
 		return static::class;

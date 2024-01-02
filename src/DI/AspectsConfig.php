@@ -22,12 +22,12 @@ class AspectsConfig
 		$this->aspectsList = $aspectsList;
 	}
 
-
 	public function load(Nette\DI\Compiler $compiler, Nette\DI\ContainerBuilder $containerBuilder): void
 	{
 		foreach ($this->aspectsList as $def) {
 			if ( (!is_array($def)) && !is_string($def) && (!$def instanceof stdClass || empty($def->value)) && !$def instanceof Nette\DI\Statement) {
 				$serialised = Nette\Utils\Json::encode($def);
+
 				throw new UnexpectedValueException('The service definition ' . $serialised . ' is expected to be an array or Neon entity.');
 			}
 

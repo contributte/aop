@@ -10,8 +10,6 @@ interface Filter
 	 */
 	public function matches(Method $method): bool;
 
-
-
 	/**
 	 * Tries to figure out types, that could be used for searching in ContainerBuilder.
 	 * Pre-filtering of services should increase speed of filtering.

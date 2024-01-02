@@ -25,8 +25,6 @@ class WithinMatcher implements Filter
 		}
 	}
 
-
-
 	public function matches(Method $method): bool
 	{
 		if ($this->type !== null) {
@@ -41,7 +39,6 @@ class WithinMatcher implements Filter
 
 		return false;
 	}
-
 
 	/**
 	 * @return string[]
