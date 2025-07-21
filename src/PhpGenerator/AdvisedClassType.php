@@ -36,7 +36,9 @@ class AdvisedClassType
 				$promotedParameter = $parameter;
 				$parameter = new Code\Parameter($promotedParameter->getName());
 				$parameter->setType($promotedParameter->getType());
-				$parameter->setDefaultValue($promotedParameter->getDefaultValue());
+				if($promotedParameter->hasDefaultValue()) {
+					$parameter->setDefaultValue($promotedParameter->getDefaultValue());
+				}
 				$parameter->setNullable($promotedParameter->isNullable());
 			}
 			/** @var Code\Parameter $parameter */
