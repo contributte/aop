@@ -7,7 +7,7 @@ includes:
 
 parameters:
 	level: 7
-	phpVersion: 80100
+	phpVersion: 80200
 
 	scanDirectories:
 		- src
@@ -20,7 +20,6 @@ parameters:
 		- .docs
 
 	treatPhpDocTypesAsCertain: false
-	checkGenericClassInNonGenericObjectType: false
 
 	ignoreErrors:
 		- '#^Property Contributte\\Aop\\Pointcut\\Matcher\\FilterMatcher\:\:\$filter \(Contributte\\Aop\\Pointcut\\Filter\) does not accept object\.$#'
