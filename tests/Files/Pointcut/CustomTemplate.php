@@ -12,8 +12,9 @@ class CustomTemplate implements Nette\Application\UI\ITemplate
 	}
 
 
-	public function setFile(string $file): void
+	public function setFile(string $file): static
 	{
+		return $this;
 	}
 
 

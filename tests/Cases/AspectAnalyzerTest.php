@@ -10,6 +10,7 @@ use Contributte\Aop\Attributes\Before;
 use Contributte\Aop\Pointcut;
 use Contributte\Aop\Pointcut\ServiceDefinition;
 use Nette;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tests\Files\Aspects\AfterAspect;
 use Tests\Files\Aspects\AfterReturningAspect;
@@ -93,8 +94,8 @@ class AspectAnalyzerTest extends TestCase
 
 	/**
 	 * @param array<string, Pointcut\Rules[]> $pointcuts
-	 * @dataProvider dataAnalyze
 	 */
+	#[DataProvider('dataAnalyze')]
 	public function testAnalyze(array $pointcuts, ServiceDefinition $service): void
 	{
 		$builder = new Nette\DI\ContainerBuilder();

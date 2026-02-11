@@ -8,6 +8,7 @@ use Contributte\Aop\Pointcut\Matcher\Criteria;
 use Contributte\Aop\Pointcut\Parser;
 use Nette;
 use Nette\PhpGenerator\PhpLiteral;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tests\Files\Pointcut\CommonClass;
 use Tests\Files\Pointcut\FeedAggregator;
@@ -30,7 +31,7 @@ class PointcutParserTest extends TestCase
 		return self::$matcherFactory;
 	}
 
-	protected function tearDown(): void
+	public static function tearDownAfterClass(): void
 	{
 		self::$matcherFactory = null;
 	}
@@ -251,9 +252,7 @@ class PointcutParserTest extends TestCase
 		return $data;
 	}
 
-	/**
-	 * @dataProvider dataParse
-	 */
+	#[DataProvider('dataParse')]
 	public function testParse(Filter $expected, string $input): void
 	{
 		$parser = new Parser($this->getMatcherFactory());
