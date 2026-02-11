@@ -17,7 +17,7 @@ class AdvisedClassType
 	public static function setMethodInstance(Code\ClassType $class, Code\Method $method): Code\Method
 	{
 		$methods = [$method->getName() => $method] + $class->getMethods();
-		$class->setMethods($methods);
+		$class->setMethods(array_values($methods));
 
 		return $method;
 	}
@@ -32,23 +32,24 @@ class AdvisedClassType
 		$argumentsPass = [];
 		$args = [];
 		foreach ($originalMethod->getParameters() as $parameter) {
-			if($parameter instanceof Code\PromotedParameter) {
+			if ($parameter instanceof Code\PromotedParameter) {
 				$promotedParameter = $parameter;
 				$parameter = new Code\Parameter($promotedParameter->getName());
 				$parameter->setType($promotedParameter->getType());
-				if($promotedParameter->hasDefaultValue()) {
+				if ($promotedParameter->hasDefaultValue()) {
 					$parameter->setDefaultValue($promotedParameter->getDefaultValue());
 				}
+
 				$parameter->setNullable($promotedParameter->isNullable());
 			}
-			/** @var Code\Parameter $parameter */
+
 			$argumentsPass[] = '$' . $parameter->getName();
 			$args[$parameter->getName()] = $parameter;
 		}
 
 		$proxyMethod->addBody('return parent::?(?);', [$originalMethod->getName(), new Code\PhpLiteral(implode(', ', $argumentsPass))]);
 
-		$proxyMethod->setParameters($args);
+		$proxyMethod->setParameters(array_values($args));
 		self::setMethodInstance($class, $proxyMethod);
 	}
 

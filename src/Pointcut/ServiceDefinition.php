@@ -21,6 +21,7 @@ class ServiceDefinition
 
 	protected Definition $serviceDefinition;
 
+	/** @var ReflectionClass<object> */
 	private ReflectionClass $originalType;
 
 	/** @var Method[]|null */
@@ -50,6 +51,9 @@ class ServiceDefinition
 		return $this->serviceId;
 	}
 
+	/**
+	 * @return ReflectionClass<object>
+	 */
 	public function getTypeReflection(): ReflectionClass
 	{
 		return $this->originalType;

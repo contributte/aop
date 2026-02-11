@@ -62,15 +62,13 @@ class PointcutMethod
 			$params[$param->getName()] = $factory->fromParameterReflection($param);
 		}
 
-		$method->method->setParameters($params);
-		if ($from instanceof ReflectionMethod) {
-			$isInterface = $from->getDeclaringClass()->isInterface();
+		$method->method->setParameters(array_values($params));
+		$isInterface = $from->getDeclaringClass()->isInterface();
 			$method->method->setStatic($from->isStatic());
 			$method->method->setVisibility($from->isPrivate() ? 'private' : ($from->isProtected() ? 'protected' : ($isInterface ? null : 'public')));
 			$method->method->setFinal($from->isFinal());
-			$method->method->setAbstract($from->isAbstract() && !$isInterface);
-			$method->method->setBody($from->isAbstract() ? null : '');
-		}
+		$method->method->setAbstract($from->isAbstract() && !$isInterface);
+		$method->method->setBody($from->isAbstract() ? null : '');
 
 		$method->method->setReturnReference($from->returnsReference());
 		$method->method->setVariadic($from->isVariadic());
@@ -114,7 +112,7 @@ class PointcutMethod
 			}
 		}
 
-		$method->method->setParameters($parameters);
+		$method->method->setParameters(array_values($parameters));
 
 		if (!$method->method->getVisibility()) {
 			$method->method->setVisibility('public');

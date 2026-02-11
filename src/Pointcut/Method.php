@@ -61,7 +61,7 @@ class Method
 	}
 
 	/**
-	 * @return ReflectionAttribute[]
+	 * @return array<ReflectionAttribute<object>>
 	 */
 	public function getAttributes(): array
 	{
@@ -69,7 +69,7 @@ class Method
 	}
 
 	/**
-	 * @return ReflectionAttribute[]
+	 * @return array<ReflectionAttribute<object>>
 	 */
 	public function getClassAttributes(): array
 	{
