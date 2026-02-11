@@ -17,6 +17,7 @@ use Nette\DI\ContainerBuilder;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\PhpGenerator\ClassType;
 use Nette\PhpGenerator\PhpLiteral;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Tests\Files\Pointcut\Cat;
 use Tests\Files\Pointcut\CustomTemplate;
@@ -47,9 +48,7 @@ class PointcutRulesTest extends TestCase
 		return $data;
 	}
 
-	/**
-	 * @dataProvider dataMatchWithin
-	 */
+	#[DataProvider('dataMatchWithin')]
 	public function testMatchWithin(bool $expected, Pointcut\Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
@@ -79,9 +78,7 @@ class PointcutRulesTest extends TestCase
 		return $data;
 	}
 
-	/**
-	 * @dataProvider dataMatchMethod
-	 */
+	#[DataProvider('dataMatchMethod')]
 	public function testMatchMethod(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
@@ -105,9 +102,7 @@ class PointcutRulesTest extends TestCase
 		$data[] = [false, new Rules([new FilterMatcher(MyPointcutFilter::class)]), self::createDefinition(SmegHead::class)];
 		return $data;
 	}
-	/**
-	 * @dataProvider dataMatchFilter
-	 */
+	#[DataProvider('dataMatchFilter')]
 	public function testMatchFilter(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
@@ -123,9 +118,7 @@ class PointcutRulesTest extends TestCase
 		$data[] = [false, new Rules([new ClassAttributedWithMatcher(Test::class)]), self::createDefinition(Legie::class)];
 		return $data;
 	}
-	/**
-	 * @dataProvider dataMatchClassAttributedWith
-	 */
+	#[DataProvider('dataMatchClassAttributedWith')]
 	public function testMatchClassAttributedWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
@@ -141,9 +134,7 @@ class PointcutRulesTest extends TestCase
 		$data[] = [false, new Rules([new MethodAttributedWithMatcher(Test::class)]), self::createDefinition(SmegHead::class)];
 		return $data;
 	}
-	/**
-	 * @dataProvider dataMatchMethodAttributedWith
-	 */
+	#[DataProvider('dataMatchMethodAttributedWith')]
 	public function testMatchMethodAttributedWith(bool $expected, Filter $rules, Pointcut\ServiceDefinition $def): void
 	{
 		$this->assertSame($expected, (bool) $def->match($rules));
