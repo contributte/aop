@@ -47,7 +47,7 @@ class AspectAnalyzer
 	}
 
 	/**
-	 * @param ReflectionAttribute[] $attributes
+	 * @param array<ReflectionAttribute<object>> $attributes
 	 * @return AdviceAttribute[]
 	 */
 	private function getAopAdviceAttributes(array $attributes): array

@@ -36,20 +36,18 @@ class Rules implements Filter, RuntimeFilter
 	 */
 	public static function unwrap(array $filter, string $operator = self::OP_AND): Filter
 	{
-		if (is_array($filter)) {
-			if (count($filter) > 1) {
-				return new Rules($filter, $operator);
-			}
-
-			/** @var Filter $filter */
-			$filter = reset($filter);
+		if (count($filter) > 1) {
+			return new Rules($filter, $operator);
 		}
 
-		if ($filter instanceof Rules && count($filter->rules) === 1) {
-			return self::unwrap($filter->rules);
+		/** @var Filter $unwrapped */
+		$unwrapped = reset($filter);
+
+		if ($unwrapped instanceof Rules && count($unwrapped->rules) === 1) {
+			return self::unwrap($unwrapped->rules);
 		}
 
-		return $filter;
+		return $unwrapped;
 	}
 
 	public function addRule(Filter $rule): void

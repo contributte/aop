@@ -41,6 +41,9 @@ abstract class MethodInvocation
 		return $this->arguments;
 	}
 
+	/**
+	 * @return ReflectionClass<object>
+	 */
 	public function getTargetObjectReflection(): ReflectionClass
 	{
 		return new ReflectionClass($this->targetObject);

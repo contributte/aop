@@ -206,7 +206,7 @@ class Criteria
 	}
 
 	/**
-	 * @return array<string, string>|NULL
+	 * @return array<int|string, string>|null
 	 */
 	private static function shiftAccessPath(string $path): ?array
 	{
