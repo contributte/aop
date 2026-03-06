@@ -2,7 +2,7 @@
 
 <p align=center>
   <a href="https://github.com/contributte/aop/actions"><img src="https://github.com/contributte/aop/workflows/build/badge.svg"></a>
-  <a href="https://coveralls.io/r/contributte/aop"><img src="https://badgen.net/coveralls/c/github/contributte/aop?cache=300"></a>
+  <a href="https://codecov.io/gh/contributte/aop"><img src="https://badgen.net/codecov/c/github/contributte/aop"></a>
   <a href="https://packagist.org/packages/contributte/aop"><img src="https://badgen.net/packagist/dm/contributte/aop"></a>
   <a href="https://packagist.org/packages/contributte/aop"><img src="https://badgen.net/packagist/v/contributte/aop"></a>
 </p>
